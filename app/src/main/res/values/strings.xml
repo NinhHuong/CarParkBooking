@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">Car-Park Booking</string>
+
+    <string name="home_open_ticket">Open tickets</string>
+    <string name="home_map">Map</string>
+    <string name="home_history">History</string>
+    <string name="home_profile">Profile</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <!--booked ticket list-->
+    <string name="gara_total">Total:</string>
+    <string name="gara_booked">Booked:</string>
+    <string name="ticket_expired">Expired!</string>
+    <string name="btn_checkin">Check in</string>
+    <string name="btn_checkout">Check out</string>
+    <string name="dialog_token_title">Enter token in gara: </string>
+    <string name="invalid_token_message">Invalid token! Please try again</string>
+    <string name="error_network">Turn on internet to continue!</string>
+</resources>
