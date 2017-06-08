@@ -15,16 +15,18 @@ import io.realm.annotations.PrimaryKey;
  */
 
 public class GarageModel extends RealmObject {
-    public static String KEY_SERVER_ID = "id";
-    public static String KEY_SERVER_NAME = "name";
-    public static String KEY_SERVER_ADDRESS = "address";
-    public static String KEY_SERVER_PICTURE = "picture";
-    public static String KEY_SERVER_TOTAL = "total_slot";
-    public static String KEY_SERVER_BUSY = "busy_slot";
-    public static String KEY_SERVER_BOOKING = "booking_slot";
-    public static String KEY_SERVER_LOCATION_X = "location_x";
-    public static String KEY_SERVER_LOCATION_Y = "location_y";
-    public static String KEY_SERVER_LOCATION_Z = "location_z";
+    private static String KEY_SERVER_ID = "id";
+    private static String KEY_SERVER_NAME = "name";
+    private static String KEY_SERVER_ADDRESS = "address";
+    private static String KEY_SERVER_PICTURE = "picture";
+    private static String KEY_SERVER_TOTAL = "total_slot";
+    private static String KEY_SERVER_BUSY = "busy_slot";
+    private static String KEY_SERVER_BOOKING = "booking_slot";
+    private static String KEY_SERVER_LOCATION_X = "location_x";
+    private static String KEY_SERVER_LOCATION_Y = "location_y";
+    private static String KEY_SERVER_LOCATION_Z = "location_z";
+    public static String KEY_SERVER_LIST_GARAGE = "garageList";
+
     private static String TAG = GarageModel.class.getSimpleName();
     
     @PrimaryKey

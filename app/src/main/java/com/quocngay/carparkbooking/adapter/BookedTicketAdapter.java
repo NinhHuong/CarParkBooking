@@ -1,11 +1,13 @@
 package com.quocngay.carparkbooking.adapter;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Build;
 import android.os.CountDownTimer;
 import android.support.annotation.RequiresApi;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,11 +16,17 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.github.nkzawa.emitter.Emitter;
+import com.github.nkzawa.socketio.client.Socket;
 import com.quocngay.carparkbooking.R;
-import com.quocngay.carparkbooking.model.BookedTicketModel;
+import com.quocngay.carparkbooking.model.TicketModel;
 import com.quocngay.carparkbooking.model.GarageModel;
 import com.quocngay.carparkbooking.other.Constant;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -30,11 +38,12 @@ import java.util.List;
 
 public class BookedTicketAdapter extends BaseAdapter {
     private LayoutInflater inflater;
-    private List<BookedTicketModel> listTicket;
+    private List<TicketModel> listTicket;
     private Context context;
+    private Socket mSocket;
     private static String TAG = BookedTicketAdapter.class.getSimpleName();
 
-    public BookedTicketAdapter(List<BookedTicketModel> listTicket, Context context) {
+    public BookedTicketAdapter(List<TicketModel> listTicket, Context context, Socket mSocket) {
         if(listTicket != null) {
             this.listTicket = listTicket;
         } else {
@@ -42,14 +51,15 @@ public class BookedTicketAdapter extends BaseAdapter {
         }
         this.listTicket = listTicket;
         this.context = context;
+        this.mSocket = mSocket;
         this.inflater = LayoutInflater.from(context);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
-        final BookedTicketModel bookedTicketModel = listTicket.get(position);
-        ViewHolder holder = null;
+        final TicketModel ticketModel = listTicket.get(position);
+        ViewHolder holder;
 
         if(convertView == null) {
             LayoutInflater vi = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -72,19 +82,9 @@ public class BookedTicketAdapter extends BaseAdapter {
                 @Override
                 public void onClick(View v) {
                     //send request to server
-                    /*try {
-                        JSONObject param = new JSONObject();
-                        param.put(BookedTicketModel.KEY_SERVER_ID, bookedTicketModel.getId());
-                        ServerRequest sr = new ServerRequest();
-                        JSONObject jsonObj = sr.getResponse("http://54.255.178.120:5000/ticket/create", param);
-                        if(jsonObj == null || !jsonObj.getBoolean(Constant.SERVER_RESPONSE)) {
-                            Toast.makeText(context, context.getResources().getString(R.string.fail_internet_connection), Toast.LENGTH_LONG).show();;
-                        } else {
-                            validateToken(bookedTicketModel);
-                        }
-                    } catch (JSONException e) {
-                        Log.e(TAG, e.getMessage());
-                    }*/
+                    mSocket.emit(Constant.SERVER_REQUEST_CREATE_TOKEN, ticketModel.getGarageModel().getId());
+//                    mSocket.on(Constant.SERVER_RESPONSE_CREATE_TOKEN, onNewMessage_getOpenTickets);
+                    validateToken(ticketModel);
                 }
             });
             holder.btnCheckout.setOnClickListener(new View.OnClickListener() {
@@ -97,24 +97,24 @@ public class BookedTicketAdapter extends BaseAdapter {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        GarageModel garageModel = bookedTicketModel.getGarageModel();
+        GarageModel garageModel = ticketModel.getGarageModel();
         holder.txtGaraName.setText(garageModel.getName());
         holder.txtGaraAddress.setText(garageModel.getAddress());
         holder.txtGaraTotalSlot.setText(context.getResources().getString(R.string.gara_total) + " " + garageModel.getTotalSlot());
         holder.txtGaraBookedSlot.setText(context.getResources().getString(R.string.gara_booked) + " " + garageModel.getBookedSlot());
 
-        if(bookedTicketModel.getCheckoutTime() != null) {
-            long diff = bookedTicketModel.getCheckoutTime().getTime() - bookedTicketModel.getCheckinTime().getTime();
+        if(ticketModel.getCheckoutTime() != null) {
+            long diff = ticketModel.getCheckoutTime().getTime() - ticketModel.getCheckinTime().getTime();
             holder.txtCountTime.setText(Constant.KEY_DATE_TIME_DURATION_FORMAT.format(new Date(diff)));
             holder.btnCheckin.setVisibility(View.GONE);
             holder.btnCheckout.setVisibility(View.INVISIBLE);
-        } else if(bookedTicketModel.getCheckinTime() != null) {
-            long diff = (new Date()).getTime() - bookedTicketModel.getCheckinTime().getTime();
+        } else if(ticketModel.getCheckinTime() != null) {
+            long diff = (new Date()).getTime() - ticketModel.getCheckinTime().getTime();
             holder.txtCountTime.setText(Constant.KEY_DATE_TIME_DURATION_FORMAT.format(new Date(diff)));
             holder.btnCheckin.setVisibility(View.GONE);
             holder.btnCheckout.setVisibility(View.VISIBLE);
         } else {
-            long diff = (new Date()).getTime() - bookedTicketModel.getBookedTime().getTime();
+            long diff = (new Date()).getTime() - ticketModel.getBookedTime().getTime();
             holder.txtCountTime.setText(Constant.KEY_TIME_DURATION_FORMAT.format(new Date(diff)));
             holder.btnCheckin.setVisibility(View.VISIBLE);
             holder.btnCheckout.setVisibility(View.GONE);
@@ -123,7 +123,7 @@ public class BookedTicketAdapter extends BaseAdapter {
         return convertView;
     }
 
-    public void swap(List<BookedTicketModel> list1){
+    public void swap(List<TicketModel> list1){
         this.listTicket.clear();
         this.listTicket.addAll(list1);
         notifyDataSetChanged();
@@ -144,7 +144,7 @@ public class BookedTicketAdapter extends BaseAdapter {
         return position;
     }
 
-    private void validateToken(final BookedTicketModel bookedTicketModel) {
+    private void validateToken(final TicketModel ticketModel) {
         // get prompts.xml view
         LayoutInflater li = LayoutInflater.from(context);
         View tokenView = li.inflate(R.layout.dialog_validate_token, null);
@@ -166,28 +166,38 @@ public class BookedTicketAdapter extends BaseAdapter {
                 positiveBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        /*try{
-                            JSONObject param = new JSONObject();
-                            param.put(BookedTicketModel.KEY_SERVER_ID, bookedTicketModel.getId());
-                            param.put(BookedTicketModel.KEY_SERVER_USER_INPUT, userInput.getText().toString().trim());
-                            ServerRequest sr = new ServerRequest();
-                            JSONObject jsonObj = sr.getResponse("http://54.255.178.120:5000/ticket/validate", param);
-                            Log.e(TAG, "Response from url: " + jsonObj);
+                        mSocket.emit(Constant.SERVER_REQUEST_VALIDATE_TOKEN, ticketModel.getId(),
+                                userInput.getText().toString().trim());
 
-                            if(jsonObj == null || !jsonObj.getBoolean(Constant.SERVER_RESPONSE)) {
-                                Toast.makeText(context, context.getResources().getString(R.string.fail_internet_connection), Toast.LENGTH_LONG).show();
-                            } else {
-                                if(jsonObj.getJSONObject(Constant.SERVER_RESPONSE_DATA).getBoolean(BookedTicketModel.KEY_SERVER_IS_VALID_TOKEN)) {
-                                    Toast.makeText(context, "Correct toked. Map will show here", Toast.LENGTH_LONG).show();
-                                    dialog.dismiss();
-                                } else {
-                                    Toast.makeText(context, context.getResources().getString(R.string.invalid_token_message), Toast.LENGTH_LONG).show();
-                                    userInput.setText("");
-                                }
+                        mSocket.on(Constant.SERVER_RESPONSE_VALIDATE_TOKEN, new Emitter.Listener() {
+                            @Override
+                            public void call(final Object... args) {
+                                ((Activity) context).runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        try {
+                                            JSONObject jsonObj = ((JSONObject) args[0]);
+                                            if(jsonObj.getBoolean(Constant.SERVER_RESPONSE_RESULT)) {
+                                                if(jsonObj.getJSONObject(Constant.SERVER_RESPONSE_DATA).getBoolean(TicketModel.KEY_SERVER_IS_VALID_TOKEN)) {
+                                                    //checkin successfully
+
+                                                    Toast.makeText(context, "Correct token. Map will show here", Toast.LENGTH_LONG).show();
+                                                    dialog.dismiss();
+                                                } else {
+                                                    Toast.makeText(context, context.getResources().getString(R.string.invalid_token_message), Toast.LENGTH_LONG).show();
+                                                    userInput.setText("");
+                                                }
+                                            } else {
+                                                Toast.makeText(context, "Something went wrong. Please try again", Toast.LENGTH_LONG).show();
+                                            }
+                                        } catch (JSONException e) {
+                                            Log.e(TAG, e.getMessage());
+                                        }
+
+                                    }
+                                });
                             }
-                        } catch (JSONException e) {
-                            Log.e(TAG, e.getMessage());
-                        }*/
+                        });
                     }
                 });
 
