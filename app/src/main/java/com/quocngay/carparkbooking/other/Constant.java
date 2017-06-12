@@ -8,6 +8,8 @@ import java.text.SimpleDateFormat;
  */
 
 public class Constant {
+    public static int PREF_MODE = 1;
+
     public static String APP_PREF = "AppPref";
     public static String APP_PREF_TOKEN = "token";
 

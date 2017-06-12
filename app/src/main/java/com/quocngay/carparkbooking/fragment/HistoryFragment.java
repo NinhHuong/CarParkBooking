@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 
 import com.quocngay.carparkbooking.R;
 
-public class HistoryFragment extends Fragment {
+public class    HistoryFragment extends Fragment {
 
     public HistoryFragment() {
         // Required empty public constructor
