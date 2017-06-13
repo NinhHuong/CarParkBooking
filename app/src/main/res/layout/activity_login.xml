@@ -17,34 +17,36 @@
 
     <EditText
         android:id="@+id/edtEmail"
-        android:layout_width="368dp"
-        android:layout_height="40dp"
-        android:maxLines="1"
-        android:gravity="center_vertical"
-        android:text="Email"
+        android:layout_width="303dp"
+        android:layout_height="47dp"
+        android:hint="Email"
         app:layout_constraintTop_toBottomOf="@+id/imgView"
         android:layout_marginRight="8dp"
         app:layout_constraintRight_toRightOf="@+id/imgView"
         android:layout_marginLeft="8dp"
         app:layout_constraintLeft_toLeftOf="@+id/imgView"
         android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp" />
+        android:layout_marginEnd="8dp"
+        android:layout_marginTop="20dp"
+        tools:layout_editor_absoluteX="73dp" />
 
     <EditText
         android:id="@+id/edtPassword"
-        android:layout_width="368dp"
-        android:layout_height="40dp"
-        android:inputType="textVisiblePassword"
-        android:maxLines="1"
-        android:gravity="center_vertical"
-        android:text="Password"
-        app:layout_constraintTop_toBottomOf="@+id/edtEmail"
-        android:layout_marginRight="8dp"
-        app:layout_constraintRight_toRightOf="@+id/imgView"
+        android:layout_width="302dp"
+        android:layout_height="49dp"
+        android:layout_marginEnd="8dp"
         android:layout_marginLeft="8dp"
-        app:layout_constraintLeft_toLeftOf="@+id/imgView"
+        android:layout_marginRight="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp" />
+        android:layout_marginTop="15dp"
+        android:inputType="textPassword"
+        android:gravity="center_vertical"
+        android:maxLines="1"
+        android:hint="Password"
+        app:layout_constraintLeft_toLeftOf="@+id/imgView"
+        app:layout_constraintRight_toRightOf="@+id/imgView"
+        app:layout_constraintTop_toBottomOf="@+id/edtEmail"
+        app:layout_constraintHorizontal_bias="0.522" />
 
     <Button
         android:id="@+id/btnLogin"
@@ -79,7 +81,7 @@
         android:id="@+id/checkBox"
         android:layout_width="150dp"
         android:layout_height="39dp"
-        android:layout_marginLeft="0dp"
+        android:layout_marginLeft="-87dp"
         android:text="Remember me"
         app:layout_constraintLeft_toLeftOf="@+id/edtPassword"
         app:layout_constraintBaseline_toBaselineOf="@+id/btnForgotPass" />
@@ -88,8 +90,8 @@
         android:id="@+id/btnForgotPass"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginRight="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginRight="-12dp"
+        android:layout_marginTop="13dp"
         android:text="Forgot password"
         app:layout_constraintRight_toRightOf="@+id/edtPassword"
         app:layout_constraintTop_toBottomOf="@+id/edtPassword" />

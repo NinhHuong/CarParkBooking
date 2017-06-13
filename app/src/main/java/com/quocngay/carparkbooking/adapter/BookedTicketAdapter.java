@@ -118,6 +118,8 @@ public class BookedTicketAdapter extends BaseAdapter {
             holder.txtCountTime.setText(Constant.KEY_TIME_DURATION_FORMAT.format(new Date(diff)));
             holder.btnCheckin.setVisibility(View.VISIBLE);
             holder.btnCheckout.setVisibility(View.GONE);
+
+            new cdTimer(60*30*1000,1000,holder.txtCountTime);
         }
 
         return convertView;

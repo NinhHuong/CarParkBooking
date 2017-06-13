@@ -1,5 +1,6 @@
 package com.quocngay.carparkbooking.activity;
 
+import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.design.internal.BottomNavigationMenuView;
 import android.support.design.widget.BottomNavigationView;
@@ -10,6 +11,7 @@ import android.view.MenuItem;
 
 import com.quocngay.carparkbooking.R;
 import com.quocngay.carparkbooking.adapter.TabPagerAdapter;
+import com.quocngay.carparkbooking.other.Constant;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -111,6 +113,14 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         return inetAddress != null && !inetAddress.equals("");
+    }
+
+    void LogOut(){
+        SharedPreferences sharedPref = getApplication().
+                getSharedPreferences(Constant.APP_PREF,MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.clear();
+        editor.commit();
     }
 
 }
