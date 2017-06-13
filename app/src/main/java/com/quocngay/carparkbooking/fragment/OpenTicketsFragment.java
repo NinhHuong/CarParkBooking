@@ -17,7 +17,7 @@ import com.quocngay.carparkbooking.R;
 import com.quocngay.carparkbooking.activity.MainActivity;
 import com.quocngay.carparkbooking.adapter.BookedTicketAdapter;
 import com.quocngay.carparkbooking.dbcontext.DbContext;
-import com.quocngay.carparkbooking.model.BookedTicketModel;
+import com.quocngay.carparkbooking.model.TicketModel;
 import com.quocngay.carparkbooking.model.GarageModel;
 import com.quocngay.carparkbooking.other.Constant;
 
@@ -41,8 +41,7 @@ public class OpenTicketsFragment extends Fragment {
     private Socket mSocket;
     {
         try {
-//            mSocket = IO.socket("http://10.16.110.117:3000");
-            mSocket = IO.socket("http://192.168.1.8:3000");
+            mSocket = IO.socket(Constant.SERVER_HOST);
         } catch (URISyntaxException e) {
             Log.e(TAG, e.getMessage());
         }

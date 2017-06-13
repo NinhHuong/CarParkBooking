@@ -11,6 +11,8 @@ import java.util.Locale;
 public class Constant {
     public static int PREF_MODE = 1;
 
+    public static String SERVER_HOST = "http://54.255.178.120:5000";
+
     public static String APP_PREF = "AppPref";
     public static String APP_PREF_TOKEN = "token";
 

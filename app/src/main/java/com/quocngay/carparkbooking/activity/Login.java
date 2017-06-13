@@ -32,8 +32,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
     private Socket mSocket;
     {
         try {
-//            mSocket = IO.socket("http://10.16.110.117:3000");
-            mSocket = IO.socket("http://192.168.0.106:3000");
+            mSocket = IO.socket(Constant.SERVER_HOST);
         } catch (URISyntaxException e) {
             Log.e("Error", e.getMessage());
         }
