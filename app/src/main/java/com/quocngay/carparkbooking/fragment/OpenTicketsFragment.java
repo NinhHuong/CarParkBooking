@@ -41,8 +41,7 @@ public class OpenTicketsFragment extends Fragment {
     private Socket mSocket;
     {
         try {
-//            mSocket = IO.socket("http://10.16.110.117:3000");
-            mSocket = IO.socket("http://192.168.1.6:3000");
+            mSocket = IO.socket(Constant.SERVER_HOST);
         } catch (URISyntaxException e) {
             Log.e(TAG, e.getMessage());
         }
