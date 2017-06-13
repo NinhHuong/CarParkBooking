@@ -37,12 +37,12 @@ public class OpenTicketsFragment extends Fragment {
     ListView listTicket;
     private DbContext dbContext;
     private SharedPreferences pref;
-    List<BookedTicketModel> ticketList;
+    List<TicketModel> ticketList;
     private Socket mSocket;
     {
         try {
 //            mSocket = IO.socket("http://10.16.110.117:3000");
-            mSocket = IO.socket("http://192.168.0.105:3000");
+            mSocket = IO.socket("http://192.168.1.8:3000");
         } catch (URISyntaxException e) {
             Log.e(TAG, e.getMessage());
         }
@@ -61,6 +61,7 @@ public class OpenTicketsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         dbContext = DbContext.getInst();
+
         View view;
 
         if(!MainActivity.isInternetAvaiable(10000)) {
@@ -71,16 +72,11 @@ public class OpenTicketsFragment extends Fragment {
             listTicket = (ListView) view.findViewById(R.id.list_ticket);
 
             pref = getActivity().getSharedPreferences(Constant.APP_PREF, MODE_PRIVATE);
-            String token = pref.getString(Constant.APP_PREF_TOKEN, "");
-            token = "5e19efdfd462138bb264abec60024e3be01c22e99720c10a498057bba6ba48752aa586b3045f90b1f999053ccf5186cde5d6dd23f26e69415aeb5d1a85f64050";
+//            String token = pref.getString(Constant.APP_PREF_TOKEN, "");
+            String token = "5e19efdfd462138bb264abec60024e3be01c22e99720c10a498057bba6ba48752aa586b3045f90b1f999053ccf5186cde5d6dd23f26e69415aeb5d1a85f64050";
             mSocket.connect();
-            mSocket.emit(Constant.SERVER_EMIT_APP_REQUEST_OPEN_TICKETS, token);
-            mSocket.on(Constant.SERVER_EMIT_SERVER_RESPONSE_OPEN_TICKETS, onNewMessage_getOpenTickets);
-
-            ticketList = dbContext.getAllOpenBookedTicketModel();
-            ticketAdapter = new BookedTicketAdapter(ticketList, getContext());
-            listTicket.setAdapter(ticketAdapter);
-
+            mSocket.emit(Constant.SERVER_REQUEST_OPEN_TICKETS, token);
+            mSocket.on(Constant.SERVER_RESPONSE_OPEN_TICKETS, onNewMessage_getOpenTickets);
             return view;
         }
     }
@@ -95,8 +91,8 @@ public class OpenTicketsFragment extends Fragment {
                         JSONObject jsonObj = ((JSONObject) args[0]);
                         if(jsonObj.getBoolean(Constant.SERVER_RESPONSE_RESULT)) {
                             dbContext = DbContext.getInst();
-                            JSONArray garaList = jsonObj.getJSONObject(Constant.SERVER_RESPONSE_DATA).getJSONArray("garageList");
-                            JSONArray tickets = jsonObj.getJSONObject(Constant.SERVER_RESPONSE_DATA).getJSONArray("ticketList");
+                            JSONArray garaList = jsonObj.getJSONObject(Constant.SERVER_RESPONSE_DATA).getJSONArray(GarageModel.KEY_SERVER_LIST_GARAGE);
+                            JSONArray tickets = jsonObj.getJSONObject(Constant.SERVER_RESPONSE_DATA).getJSONArray(TicketModel.KEY_SERVER_LIST_TICKET);
                             for(int i=0; i< garaList.length(); i++) {
                                 GarageModel gara = GarageModel.createByJson(garaList.getJSONObject(i));
                                 if(gara != null) {
@@ -105,14 +101,14 @@ public class OpenTicketsFragment extends Fragment {
                             }
 
                             for(int i=0; i<tickets.length(); i++) {
-                                BookedTicketModel ticket = BookedTicketModel.createByJson(tickets.getJSONObject(i));
+                                TicketModel ticket = TicketModel.createByJson(tickets.getJSONObject(i));
                                 if(ticket != null) {
                                     dbContext.addBookedTicketModel(ticket);
                                 }
                             }
 
                             ticketList = dbContext.getAllOpenBookedTicketModel();
-                            ticketAdapter = new BookedTicketAdapter(ticketList, getContext());
+                            ticketAdapter = new BookedTicketAdapter(ticketList, getContext(), mSocket);
                             listTicket.setAdapter(ticketAdapter);
                         } else {
                             Toast.makeText(getContext(), "Data return from server is incorrect", Toast.LENGTH_LONG).show();
