@@ -1,7 +1,6 @@
 package com.quocngay.carparkbooking.model;
 
 import android.util.Log;
-
 import com.quocngay.carparkbooking.dbcontext.DbContext;
 import com.quocngay.carparkbooking.other.Constant;
 
@@ -19,7 +18,6 @@ import io.realm.annotations.PrimaryKey;
  */
 
 public class TicketModel extends RealmObject {
-
     private static String KEY_SERVER_ID = "id";
     private static String KEY_SERVER_ACCOUNT_ID = "account_id";
     private static String KEY_SERVER_GARA_ID = "garage_id";

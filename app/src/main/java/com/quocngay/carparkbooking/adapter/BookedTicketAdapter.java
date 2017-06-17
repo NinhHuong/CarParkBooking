@@ -75,7 +75,6 @@ public class BookedTicketAdapter extends BaseAdapter {
             holder.btnCheckout = (Button) convertView.findViewById(R.id.btn_checkout);
             convertView.setTag(holder);
 
-            new cdTimer(10000,1000,holder.txtCountTime);
 
             //on click event
             holder.btnCheckin.setOnClickListener(new View.OnClickListener() {
@@ -103,23 +102,24 @@ public class BookedTicketAdapter extends BaseAdapter {
         holder.txtGaraTotalSlot.setText(context.getResources().getString(R.string.gara_total) + " " + garageModel.getTotalSlot());
         holder.txtGaraBookedSlot.setText(context.getResources().getString(R.string.gara_booked) + " " + garageModel.getBookedSlot());
 
-        if(ticketModel.getCheckoutTime() != null) {
+        if(ticketModel.getCheckoutTime() != null ) {
             long diff = ticketModel.getCheckoutTime().getTime() - ticketModel.getCheckinTime().getTime();
             holder.txtCountTime.setText(Constant.KEY_DATE_TIME_DURATION_FORMAT.format(new Date(diff)));
             holder.btnCheckin.setVisibility(View.GONE);
-            holder.btnCheckout.setVisibility(View.INVISIBLE);
+            holder.btnCheckout.setVisibility(View.GONE);
         } else if(ticketModel.getCheckinTime() != null) {
             long diff = (new Date()).getTime() - ticketModel.getCheckinTime().getTime();
             holder.txtCountTime.setText(Constant.KEY_DATE_TIME_DURATION_FORMAT.format(new Date(diff)));
             holder.btnCheckin.setVisibility(View.GONE);
             holder.btnCheckout.setVisibility(View.VISIBLE);
+            holder.SetTimer(Long.MAX_VALUE,1000,holder.txtCountTime,false);
         } else {
             long diff = (new Date()).getTime() - ticketModel.getBookedTime().getTime();
             holder.txtCountTime.setText(Constant.KEY_TIME_DURATION_FORMAT.format(new Date(diff)));
             holder.btnCheckin.setVisibility(View.VISIBLE);
             holder.btnCheckout.setVisibility(View.GONE);
-
-            new cdTimer(60*30*1000,1000,holder.txtCountTime);
+            holder.SetTimer(60*30*1000,1000,holder.txtCountTime,true);
+//            new cdTimer(60*30*1000,1000,holder.txtCountTime,true).start();
         }
 
         return convertView;
@@ -225,32 +225,44 @@ public class BookedTicketAdapter extends BaseAdapter {
         TextView txtCountTime;
         Button btnCheckin;
         Button btnCheckout;
-    }
 
-    public class cdTimer extends CountDownTimer {
-        TextView txtShow;
-        long second = 1000, minute =second*60;
-        public cdTimer(long millisInFuture, long countDownInterval,TextView txtShow) {
-            super(millisInFuture, countDownInterval);
-            second = countDownInterval;
-            this.txtShow = txtShow;
+        public void SetTimer(long millisInFuture, long countDownInterval,TextView txtShow,boolean isCountDown){
+            new cdTimer(millisInFuture,countDownInterval,txtShow,isCountDown).start();
         }
 
-        @Override
-        public void onFinish() {
-            txtShow.setText("Time out.");
-        }
+        public class cdTimer extends CountDownTimer {
+            TextView txtShow;
+            boolean isCountDown;
+            long second = 1000, minute =second*60;
+            public cdTimer(long millisInFuture, long countDownInterval,TextView txtShow, boolean isCountDown) {
+                super(millisInFuture, countDownInterval);
+                this.isCountDown = isCountDown;
+                second = countDownInterval;
+                this.txtShow = txtShow;
+            }
 
-        @Override
-        public void onTick(long millisUntilFinished) {
-            txtShow.setText(changeMillisToMinute(millisUntilFinished));
-        }
+            @Override
+            public void onFinish() {
+                txtShow.setText("Time out.");
+            }
 
-        private String changeMillisToMinute(long millisUntilFinished){
-            String result = "";
-            result += millisUntilFinished /minute;
-            result +=(millisUntilFinished - millisUntilFinished /minute)/second;
-            return  result;
+            @Override
+            public void onTick(long millisUntilFinished) {
+                long current = millisUntilFinished;
+                if(!isCountDown)
+                    current = Long.MAX_VALUE - current;
+                txtShow.setText(changeMillisToMinute(current));
+            }
+
+            private String changeMillisToMinute(long millisUntilFinished){
+                String result = "";
+                long trueSecond = millisUntilFinished / second;
+                long trueMinute = trueSecond /60;
+                long s = trueSecond - trueMinute *60;
+                result += trueMinute+":";
+                result +=  s;
+                return  result;
+            }
         }
     }
 }
