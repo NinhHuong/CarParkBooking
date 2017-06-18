@@ -9,6 +9,13 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
+    <!--login-->
+    <string name="edt_email_hint">Email</string>
+    <string name="edt_password_hint">Password</string>
+    <string name="btn_login">Login</string>
+    <string name="btn_signup">Dont have account \n sign now</string>
+    <string name="btn_forgot_password">Forgot password</string>
+
     <!--booked ticket list-->
     <string name="gara_total">Total:</string>
     <string name="gara_booked">Booked:</string>

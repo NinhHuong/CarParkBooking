@@ -89,11 +89,11 @@ public class Register extends AppCompatActivity {
                         boolean res =data.getBoolean("res");
                         String message = data.getString("response");
 
-                        Toast.makeText(getBaseContext(),message ,Toast.LENGTH_SHORT);
+                        Toast.makeText(getBaseContext(),message ,Toast.LENGTH_SHORT).show();
 
                         if(res)
                             finish();
-//                            startActivity(new Intent(Register.this, Login.class));
+//                            startActivity(new Intent(Register.this, LoginActivity.class));
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }

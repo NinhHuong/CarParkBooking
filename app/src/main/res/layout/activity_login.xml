@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.quocngay.carparkbooking.activity.Login">
+    tools:context="com.quocngay.carparkbooking.activity.LoginActivity">
 
     <ImageView
         android:id="@+id/imgView"
@@ -19,7 +19,8 @@
         android:id="@+id/edtEmail"
         android:layout_width="303dp"
         android:layout_height="47dp"
-        android:hint="Email"
+        android:hint="@string/edt_email_hint"
+        android:inputType="textEmailAddress"
         app:layout_constraintTop_toBottomOf="@+id/imgView"
         android:layout_marginRight="8dp"
         app:layout_constraintRight_toRightOf="@+id/imgView"
@@ -42,7 +43,7 @@
         android:inputType="textPassword"
         android:gravity="center_vertical"
         android:maxLines="1"
-        android:hint="Password"
+        android:hint="@string/edt_password_hint"
         app:layout_constraintLeft_toLeftOf="@+id/imgView"
         app:layout_constraintRight_toRightOf="@+id/imgView"
         app:layout_constraintTop_toBottomOf="@+id/edtEmail"
@@ -52,7 +53,7 @@
         android:id="@+id/btnLogin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Login"
+        android:text="@string/btn_login"
         android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toTopOf="@+id/btnRegister"
         android:layout_marginTop="8dp"
@@ -69,7 +70,7 @@
         android:id="@+id/btnRegister"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Dont have account \n sign now"
+        android:text=""
         app:layout_constraintBottom_toBottomOf="parent"
         android:layout_marginBottom="8dp"
         android:layout_marginLeft="8dp"
@@ -77,22 +78,13 @@
         android:layout_marginRight="8dp"
         app:layout_constraintRight_toRightOf="parent" />
 
-    <CheckBox
-        android:id="@+id/checkBox"
-        android:layout_width="150dp"
-        android:layout_height="39dp"
-        android:layout_marginLeft="-87dp"
-        android:text="Remember me"
-        app:layout_constraintLeft_toLeftOf="@+id/edtPassword"
-        app:layout_constraintBaseline_toBaselineOf="@+id/btnForgotPass" />
-
     <Button
         android:id="@+id/btnForgotPass"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginRight="-12dp"
         android:layout_marginTop="13dp"
-        android:text="Forgot password"
+        android:text="@string/btn_forgot_password"
         app:layout_constraintRight_toRightOf="@+id/edtPassword"
         app:layout_constraintTop_toBottomOf="@+id/edtPassword" />
 </android.support.constraint.ConstraintLayout>

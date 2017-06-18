@@ -16,6 +16,10 @@ public class Constant {
     public static String APP_PREF = "AppPref";
     public static String APP_PREF_TOKEN = "token";
 
+    public static String SERVER_RESPONSE_LOGIN_PARA_EMAIL = "email";
+    public static String SERVER_RESPONSE_LOGIN_PARA_PASSWORD = "password";
+    public static String SERVER_RESPONSE_LOGIN_PARA_TOKEN = "token";
+
     public static String SERVER_REQUEST_OPEN_TICKETS = "request open tickets";
     public static String SERVER_RESPONSE_OPEN_TICKETS = "response open tickets";
     public static String SERVER_REQUEST_CREATE_TOKEN = "request create token";

@@ -1,5 +1,6 @@
 package com.quocngay.carparkbooking.activity;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.design.internal.BottomNavigationMenuView;
@@ -30,12 +31,21 @@ public class MainActivity extends AppCompatActivity {
     public static final int FRAG_PROFILE = 3;
     ViewPager viewPager;
     BottomNavigationView bottomNavigationView;
+    private SharedPreferences pref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        initHomeActivity();
+
+        pref = getSharedPreferences(Constant.APP_PREF, MODE_PRIVATE);
+        if(pref.getString(Constant.APP_PREF_TOKEN, null) == null) {
+            Intent i = new Intent(MainActivity.this, LoginActivity.class);
+            startActivity(i);
+            finish();
+        } else {
+            initHomeActivity();
+        }
     }
 
     private void initHomeActivity() {
