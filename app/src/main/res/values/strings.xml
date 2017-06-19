@@ -18,4 +18,5 @@
     <string name="dialog_token_title">Enter token in gara: </string>
     <string name="invalid_token_message">Invalid token! Please try again</string>
     <string name="error_network">Turn on internet to continue!</string>
+    <string name="title_activity_google_map">Map</string>
 </resources>

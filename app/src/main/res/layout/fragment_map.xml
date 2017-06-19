@@ -1,13 +1,42 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.quocngay.carparkbooking.fragment.MapFragment">
 
     <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <!--<fragment xmlns:android="http://schemas.android.com/apk/res/android"-->
+        <!--xmlns:map="http://schemas.android.com/apk/res-auto"-->
+        <!--xmlns:tools="http://schemas.android.com/tools"-->
+        <!--android:id="@+id/map"-->
+        <!--android:name="com.google.android.gms.maps.SupportMapFragment"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--tools:context="com.quocngay.carparkbooking.activity.GoogleMapActivity" />-->
+    <com.google.android.gms.maps.MapView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:id="@+id/mapView">
+    </com.google.android.gms.maps.MapView>
 
-</FrameLayout>
+    <EditText
+        android:id="@+id/edtSearchBar"
+        android:layout_width="282dp"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:hint="Position"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <Button
+        android:id="@+id/btnSearch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Button"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+</RelativeLayout>
