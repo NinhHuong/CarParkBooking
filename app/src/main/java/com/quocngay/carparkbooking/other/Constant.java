@@ -5,13 +5,14 @@ import java.text.SimpleDateFormat;
 import java.util.Locale;
 
 /**
- * Created by ninhh on 5/22/2017.
+ * Created by ninhhuong on 5/22/2017.
  */
 
 public class Constant {
     public static int PREF_MODE = 1;
 
     public static String SERVER_HOST = "http://54.255.178.120:5000";
+//    public static String SERVER_HOST = "http://172.17.183.15:5000";
 
     public static String APP_PREF = "AppPref";
     public static String APP_PREF_TOKEN = "token";
@@ -35,5 +36,6 @@ public class Constant {
     public static DateFormat KEY_DATE_TIME_FORMAT = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss", Locale.US);
     public static DateFormat KEY_TIME_DURATION_FORMAT = new SimpleDateFormat("hh:mm:ss", Locale.US);
     public static DateFormat KEY_DATE_TIME_DURATION_FORMAT = new SimpleDateFormat("dd:hh:mm", Locale.US);
+    public static int KEY_COUNT_TIME_INTERVAL = 1000;
 
 }

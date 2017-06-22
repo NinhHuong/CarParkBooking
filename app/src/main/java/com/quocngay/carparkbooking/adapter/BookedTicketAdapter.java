@@ -21,10 +21,12 @@ import android.widget.Toast;
 import com.github.nkzawa.emitter.Emitter;
 import com.github.nkzawa.socketio.client.Socket;
 import com.quocngay.carparkbooking.R;
+import com.quocngay.carparkbooking.dbcontext.DbContext;
 import com.quocngay.carparkbooking.model.TicketModel;
 import com.quocngay.carparkbooking.model.GarageModel;
 import com.quocngay.carparkbooking.other.Constant;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -41,6 +43,8 @@ public class BookedTicketAdapter extends BaseAdapter {
     private List<TicketModel> listTicket;
     private Context context;
     private Socket mSocket;
+    private DbContext dbContext;
+
     private static String TAG = BookedTicketAdapter.class.getSimpleName();
 
     public BookedTicketAdapter(List<TicketModel> listTicket, Context context, Socket mSocket) {
@@ -53,6 +57,7 @@ public class BookedTicketAdapter extends BaseAdapter {
         this.context = context;
         this.mSocket = mSocket;
         this.inflater = LayoutInflater.from(context);
+        dbContext = DbContext.getInst();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
@@ -102,32 +107,31 @@ public class BookedTicketAdapter extends BaseAdapter {
         holder.txtGaraTotalSlot.setText(context.getResources().getString(R.string.gara_total) + " " + garageModel.getTotalSlot());
         holder.txtGaraBookedSlot.setText(context.getResources().getString(R.string.gara_booked) + " " + garageModel.getBookedSlot());
 
-        if(ticketModel.getCheckoutTime() != null ) {
+        /*if(ticketModel.getCheckoutTime() != null ) {
             long diff = ticketModel.getCheckoutTime().getTime() - ticketModel.getCheckinTime().getTime();
             holder.txtCountTime.setText(Constant.KEY_DATE_TIME_DURATION_FORMAT.format(new Date(diff)));
             holder.btnCheckin.setVisibility(View.GONE);
             holder.btnCheckout.setVisibility(View.GONE);
-        } else if(ticketModel.getCheckinTime() != null) {
-            long diff = (new Date()).getTime() - ticketModel.getCheckinTime().getTime();
-            holder.txtCountTime.setText(Constant.KEY_DATE_TIME_DURATION_FORMAT.format(new Date(diff)));
+        } else */if(ticketModel.getCheckinTime() != null) {
+//            long diff = (new Date()).getTime() - ticketModel.getCheckinTime().getTime();
+//            holder.txtCountTime.setText(Constant.KEY_DATE_TIME_DURATION_FORMAT.format(new Date(diff)));
             holder.btnCheckin.setVisibility(View.GONE);
             holder.btnCheckout.setVisibility(View.VISIBLE);
-            holder.SetTimer(Long.MAX_VALUE,1000,holder.txtCountTime,false);
+            holder.SetTimer(Long.MAX_VALUE, Constant.KEY_COUNT_TIME_INTERVAL, holder.txtCountTime, false);
         } else {
-            long diff = (new Date()).getTime() - ticketModel.getBookedTime().getTime();
-            holder.txtCountTime.setText(Constant.KEY_TIME_DURATION_FORMAT.format(new Date(diff)));
+//            long diff = (new Date()).getTime() - ticketModel.getBookedTime().getTime();
+//            holder.txtCountTime.setText(Constant.KEY_TIME_DURATION_FORMAT.format(new Date(diff)));
             holder.btnCheckin.setVisibility(View.VISIBLE);
             holder.btnCheckout.setVisibility(View.GONE);
-            holder.SetTimer(60*30*1000,1000,holder.txtCountTime,true);
+            holder.SetTimer(60*30*1000, Constant.KEY_COUNT_TIME_INTERVAL, holder.txtCountTime, true);
 //            new cdTimer(60*30*1000,1000,holder.txtCountTime,true).start();
         }
 
         return convertView;
     }
 
-    public void swap(List<TicketModel> list1){
-        this.listTicket.clear();
-        this.listTicket.addAll(list1);
+    private void refreshData(){
+        this.listTicket = dbContext.getAllOpenBookedTicketModel();
         notifyDataSetChanged();
     }
 
@@ -160,7 +164,9 @@ public class BookedTicketAdapter extends BaseAdapter {
         alertDialogBuilder.setNegativeButton("Cancel", null);
         // create alert dialog
         final AlertDialog alertDialog = alertDialogBuilder.create();
-        alertDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+        if(alertDialog.getWindow() != null) {
+            alertDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+        }
         alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
             @Override
             public void onShow(final DialogInterface dialog) {
@@ -181,9 +187,18 @@ public class BookedTicketAdapter extends BaseAdapter {
                                             JSONObject jsonObj = ((JSONObject) args[0]);
                                             if(jsonObj.getBoolean(Constant.SERVER_RESPONSE_RESULT)) {
                                                 if(jsonObj.getJSONObject(Constant.SERVER_RESPONSE_DATA).getBoolean(TicketModel.KEY_SERVER_IS_VALID_TOKEN)) {
-                                                    //checkin successfully
+                                                    //checkin successfully. update time checkin
+                                                    JSONArray tickets = jsonObj.getJSONObject(Constant.SERVER_RESPONSE_DATA).getJSONArray(TicketModel.KEY_SERVER_LIST_TICKET);
+                                                    for(int i=0; i<tickets.length(); i++) {
+                                                        TicketModel ticket = TicketModel.createByJson(tickets.getJSONObject(i));
+                                                        if(ticket != null) {
+                                                            dbContext.addBookedTicketModel(ticket);
+                                                        }
+                                                    }
+                                                    refreshData();
 
                                                     Toast.makeText(context, "Correct token. Map will show here", Toast.LENGTH_LONG).show();
+                                                    alertDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
                                                     dialog.dismiss();
                                                 } else {
                                                     Toast.makeText(context, context.getResources().getString(R.string.invalid_token_message), Toast.LENGTH_LONG).show();
@@ -226,15 +241,16 @@ public class BookedTicketAdapter extends BaseAdapter {
         Button btnCheckin;
         Button btnCheckout;
 
-        public void SetTimer(long millisInFuture, long countDownInterval,TextView txtShow,boolean isCountDown){
-            new cdTimer(millisInFuture,countDownInterval,txtShow,isCountDown).start();
+        private void SetTimer(long millisInFuture, long countDownInterval, TextView txtShow, boolean isCountDown){
+            new cdTimer(millisInFuture, countDownInterval, txtShow, isCountDown).start();
         }
 
-        public class cdTimer extends CountDownTimer {
+        private class cdTimer extends CountDownTimer {
             TextView txtShow;
             boolean isCountDown;
-            long second = 1000, minute =second*60;
-            public cdTimer(long millisInFuture, long countDownInterval,TextView txtShow, boolean isCountDown) {
+            long second = 1000, minute = second * 60;
+
+            private cdTimer(long millisInFuture, long countDownInterval,TextView txtShow, boolean isCountDown) {
                 super(millisInFuture, countDownInterval);
                 this.isCountDown = isCountDown;
                 second = countDownInterval;
@@ -243,7 +259,7 @@ public class BookedTicketAdapter extends BaseAdapter {
 
             @Override
             public void onFinish() {
-                txtShow.setText("Time out.");
+//                txtShow.setText("Time out.");
             }
 
             @Override
@@ -257,9 +273,9 @@ public class BookedTicketAdapter extends BaseAdapter {
             private String changeMillisToMinute(long millisUntilFinished){
                 String result = "";
                 long trueSecond = millisUntilFinished / second;
-                long trueMinute = trueSecond /60;
-                long s = trueSecond - trueMinute *60;
-                result += trueMinute+":";
+                long trueMinute = trueSecond / 60;
+                long s = trueSecond - trueMinute * 60;
+                result += trueMinute + ":";
                 result +=  s;
                 return  result;
             }
