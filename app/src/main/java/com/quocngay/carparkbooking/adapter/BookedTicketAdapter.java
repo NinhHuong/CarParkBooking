@@ -1,5 +1,6 @@
 package com.quocngay.carparkbooking.adapter;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -33,6 +34,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by ninhh on 5/23/2017.
@@ -113,18 +115,14 @@ public class BookedTicketAdapter extends BaseAdapter {
             holder.btnCheckin.setVisibility(View.GONE);
             holder.btnCheckout.setVisibility(View.GONE);
         } else */if(ticketModel.getCheckinTime() != null) {
-//            long diff = (new Date()).getTime() - ticketModel.getCheckinTime().getTime();
-//            holder.txtCountTime.setText(Constant.KEY_DATE_TIME_DURATION_FORMAT.format(new Date(diff)));
+            long diff = (new Date()).getTime() - ticketModel.getCheckinTime().getTime();
             holder.btnCheckin.setVisibility(View.GONE);
             holder.btnCheckout.setVisibility(View.VISIBLE);
-            holder.SetTimer(Long.MAX_VALUE, Constant.KEY_COUNT_TIME_INTERVAL, holder.txtCountTime, false);
+            holder.SetTimer(Long.MAX_VALUE, diff, Constant.KEY_COUNT_TIME_INTERVAL, holder.txtCountTime, false);
         } else {
-//            long diff = (new Date()).getTime() - ticketModel.getBookedTime().getTime();
-//            holder.txtCountTime.setText(Constant.KEY_TIME_DURATION_FORMAT.format(new Date(diff)));
             holder.btnCheckin.setVisibility(View.VISIBLE);
             holder.btnCheckout.setVisibility(View.GONE);
-            holder.SetTimer(60*30*1000, Constant.KEY_COUNT_TIME_INTERVAL, holder.txtCountTime, true);
-//            new cdTimer(60*30*1000,1000,holder.txtCountTime,true).start();
+            holder.SetTimer(Constant.KEY_EXPIRED_TICKET, 0, Constant.KEY_COUNT_TIME_INTERVAL, holder.txtCountTime, true);
         }
 
         return convertView;
@@ -241,20 +239,24 @@ public class BookedTicketAdapter extends BaseAdapter {
         Button btnCheckin;
         Button btnCheckout;
 
-        private void SetTimer(long millisInFuture, long countDownInterval, TextView txtShow, boolean isCountDown){
-            new cdTimer(millisInFuture, countDownInterval, txtShow, isCountDown).start();
+        private void SetTimer(long duration, long startMillis,  long countDownInterval, TextView txtShow, boolean isCountDown){
+            new cdTimer(duration, startMillis, countDownInterval, txtShow, isCountDown).start();
         }
 
         private class cdTimer extends CountDownTimer {
             TextView txtShow;
             boolean isCountDown;
-            long second = 1000, minute = second * 60;
+            long duration;
+            long countDownInterval;
+            long startMillis;
 
-            private cdTimer(long millisInFuture, long countDownInterval,TextView txtShow, boolean isCountDown) {
-                super(millisInFuture, countDownInterval);
+            private cdTimer(long duration, long startMillis, long countDownInterval, TextView txtShow, boolean isCountDown) {
+                super(duration, countDownInterval);
                 this.isCountDown = isCountDown;
-                second = countDownInterval;
+                this.countDownInterval = countDownInterval;
                 this.txtShow = txtShow;
+                this.startMillis = startMillis;
+                this.duration = duration;
             }
 
             @Override
@@ -266,18 +268,16 @@ public class BookedTicketAdapter extends BaseAdapter {
             public void onTick(long millisUntilFinished) {
                 long current = millisUntilFinished;
                 if(!isCountDown)
-                    current = Long.MAX_VALUE - current;
-                txtShow.setText(changeMillisToMinute(current));
+                    current = duration - current;
+                txtShow.setText(convertMilisToString(current));
             }
 
-            private String changeMillisToMinute(long millisUntilFinished){
-                String result = "";
-                long trueSecond = millisUntilFinished / second;
-                long trueMinute = trueSecond / 60;
-                long s = trueSecond - trueMinute * 60;
-                result += trueMinute + ":";
-                result +=  s;
-                return  result;
+            private String convertMilisToString(long millis) {
+                long seconds = millis / 1000;
+                long hours = seconds / (60 * 60);
+                long minutes = (seconds - hours * 60 * 60) / 60;
+                seconds = seconds - hours * 60 * 60 - minutes * 60;
+                return String.format(Locale.getDefault(),"%02d:%02d:%02d", hours, minutes, seconds);
             }
         }
     }

@@ -31,11 +31,11 @@ public class Constant {
     public static String SERVER_RESPONSE_RESULT = "result";
     public static String SERVER_RESPONSE_DATA = "data";
 
-    public static int KEY_EXPIRED_TICKET = 30 * 60 * 1000000; //in milliseconds
-    public static DateFormat KEY_SERVER_DATE_TIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US); //2017-05-24T20:05:15.000Z
-    public static DateFormat KEY_DATE_TIME_FORMAT = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss", Locale.US);
-    public static DateFormat KEY_TIME_DURATION_FORMAT = new SimpleDateFormat("hh:mm:ss", Locale.US);
-    public static DateFormat KEY_DATE_TIME_DURATION_FORMAT = new SimpleDateFormat("dd:hh:mm", Locale.US);
+    public static int KEY_EXPIRED_TICKET = 30 * 60 * 1000; //in milliseconds
+    public static DateFormat KEY_SERVER_DATE_TIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault()); //2017-05-24T20:05:15.000Z
+    public static DateFormat KEY_DATE_TIME_FORMAT = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault());
+    public static DateFormat KEY_TIME_DURATION_FORMAT = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
+    public static DateFormat KEY_DATE_TIME_DURATION_FORMAT = new SimpleDateFormat("dd:HH:mm", Locale.getDefault());
     public static int KEY_COUNT_TIME_INTERVAL = 1000;
 
 }
