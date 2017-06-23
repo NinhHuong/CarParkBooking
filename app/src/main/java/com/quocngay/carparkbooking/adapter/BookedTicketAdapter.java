@@ -1,6 +1,5 @@
 package com.quocngay.carparkbooking.adapter;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -108,21 +107,23 @@ public class BookedTicketAdapter extends BaseAdapter {
         holder.txtGaraAddress.setText(garageModel.getAddress());
         holder.txtGaraTotalSlot.setText(context.getResources().getString(R.string.gara_total) + " " + garageModel.getTotalSlot());
         holder.txtGaraBookedSlot.setText(context.getResources().getString(R.string.gara_booked) + " " + garageModel.getBookedSlot());
+        if(holder.timer != null) {
+            holder.timer.cancel();
+            holder.timer = null;
+        }
 
-        /*if(ticketModel.getCheckoutTime() != null ) {
-            long diff = ticketModel.getCheckoutTime().getTime() - ticketModel.getCheckinTime().getTime();
-            holder.txtCountTime.setText(Constant.KEY_DATE_TIME_DURATION_FORMAT.format(new Date(diff)));
-            holder.btnCheckin.setVisibility(View.GONE);
-            holder.btnCheckout.setVisibility(View.GONE);
-        } else */if(ticketModel.getCheckinTime() != null) {
-            long diff = (new Date()).getTime() - ticketModel.getCheckinTime().getTime();
+        if(ticketModel.getCheckinTime() != null) {
+//            long diff = (new Date()).getTime() - ticketModel.getCheckinTime().getTime();
+            long diff = ticketModel.getCheckinTime().getHours() * 60 * 1000;
             holder.btnCheckin.setVisibility(View.GONE);
             holder.btnCheckout.setVisibility(View.VISIBLE);
-            holder.SetTimer(Long.MAX_VALUE, diff, Constant.KEY_COUNT_TIME_INTERVAL, holder.txtCountTime, false);
+            holder.timer = new CountTimer(Long.MAX_VALUE, diff, Constant.KEY_COUNT_UP_INTERVAL, holder.txtCountTime, false);
+            holder.timer.start();
         } else {
             holder.btnCheckin.setVisibility(View.VISIBLE);
             holder.btnCheckout.setVisibility(View.GONE);
-            holder.SetTimer(Constant.KEY_EXPIRED_TICKET, 0, Constant.KEY_COUNT_TIME_INTERVAL, holder.txtCountTime, true);
+            holder.timer = new CountTimer(Constant.KEY_EXPIRED_TICKET, 0, Constant.KEY_COUNT_DOWN_INTERVAL, holder.txtCountTime, true);
+            holder.timer.start();
         }
 
         return convertView;
@@ -238,47 +239,57 @@ public class BookedTicketAdapter extends BaseAdapter {
         TextView txtCountTime;
         Button btnCheckin;
         Button btnCheckout;
+        CountTimer timer;
+    }
 
-        private void SetTimer(long duration, long startMillis,  long countDownInterval, TextView txtShow, boolean isCountDown){
-            new cdTimer(duration, startMillis, countDownInterval, txtShow, isCountDown).start();
+    private class CountTimer extends CountDownTimer {
+        TextView txtShow;
+        boolean isCountDown;
+        long duration;
+        long countDownInterval;
+        long startMillis;
+
+        private CountTimer(long duration, long startMillis, long countDownInterval, TextView txtShow, boolean isCountDown) {
+            super(duration, countDownInterval);
+            this.isCountDown = isCountDown;
+            this.countDownInterval = countDownInterval;
+            this.txtShow = txtShow;
+            this.startMillis = startMillis;
+            this.duration = duration;
         }
 
-        private class cdTimer extends CountDownTimer {
-            TextView txtShow;
-            boolean isCountDown;
-            long duration;
-            long countDownInterval;
-            long startMillis;
+        @Override
+        public void onFinish() {
+            txtShow.setText(context.getResources().getString(R.string.time_exprited));
+            txtShow.setBackgroundColor(context.getResources().getColor(R.color.count_time_expired));
+        }
 
-            private cdTimer(long duration, long startMillis, long countDownInterval, TextView txtShow, boolean isCountDown) {
-                super(duration, countDownInterval);
-                this.isCountDown = isCountDown;
-                this.countDownInterval = countDownInterval;
-                this.txtShow = txtShow;
-                this.startMillis = startMillis;
-                this.duration = duration;
+        @Override
+        public void onTick(long millisUntilFinished) {
+            long current = millisUntilFinished;
+            if(isCountDown) {
+                txtShow.setText(convertDownMilisToString(current));
+            } else {
+                current = duration - current;
+                txtShow.setText(convertUpMilisToString(current + startMillis));
             }
+        }
 
-            @Override
-            public void onFinish() {
-//                txtShow.setText("Time out.");
-            }
+        private String convertDownMilisToString(long millis) {
+            long seconds = millis / 1000;
+            long hours = seconds / (60 * 60);
+            long minutes = (seconds - hours * 60 * 60) / 60;
+            seconds = seconds - hours * 60 * 60 - minutes * 60;
+            return String.format(Locale.getDefault(),"%02d:%02d:%02d", hours, minutes, seconds);
+        }
 
-            @Override
-            public void onTick(long millisUntilFinished) {
-                long current = millisUntilFinished;
-                if(!isCountDown)
-                    current = duration - current;
-                txtShow.setText(convertMilisToString(current));
-            }
-
-            private String convertMilisToString(long millis) {
-                long seconds = millis / 1000;
-                long hours = seconds / (60 * 60);
-                long minutes = (seconds - hours * 60 * 60) / 60;
-                seconds = seconds - hours * 60 * 60 - minutes * 60;
-                return String.format(Locale.getDefault(),"%02d:%02d:%02d", hours, minutes, seconds);
-            }
+        private String convertUpMilisToString(long millis) {
+            long minutes = millis / 1000 / 60;
+            long days = minutes / (24 * 60);
+            long hours = (minutes - days * 24 * 60) / 60;
+            minutes = minutes - days * 24 * 60 - hours * 60;
+            return String.format(Locale.getDefault(),"%02d %02d:%02d", days, hours, minutes);
         }
     }
+
 }

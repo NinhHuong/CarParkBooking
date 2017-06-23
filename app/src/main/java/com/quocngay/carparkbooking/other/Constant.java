@@ -36,6 +36,7 @@ public class Constant {
     public static DateFormat KEY_DATE_TIME_FORMAT = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault());
     public static DateFormat KEY_TIME_DURATION_FORMAT = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
     public static DateFormat KEY_DATE_TIME_DURATION_FORMAT = new SimpleDateFormat("dd:HH:mm", Locale.getDefault());
-    public static int KEY_COUNT_TIME_INTERVAL = 1000;
+    public static int KEY_COUNT_DOWN_INTERVAL = 1000;
+    public static int KEY_COUNT_UP_INTERVAL = 60 * 1000;
 
 }
