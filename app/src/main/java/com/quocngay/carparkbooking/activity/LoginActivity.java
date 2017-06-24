@@ -3,8 +3,6 @@ package com.quocngay.carparkbooking.activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
-import android.preference.Preference;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -25,10 +23,9 @@ import org.json.JSONObject;
 
 import java.net.URISyntaxException;
 
-public class Login extends AppCompatActivity implements View.OnClickListener {
+public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
     EditText edtEmail, edtPass;
     Button btnLogin, btnRegister, btnForgotPassword;
-    CheckBox chbRemember;
     private Socket mSocket;
     {
         try {
@@ -49,7 +46,6 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         btnLogin = (Button) findViewById(R.id.btnLogin);
         btnRegister = (Button) findViewById(R.id.btnRegister);
         btnForgotPassword = (Button) findViewById(R.id.btnForgotPass);
-        chbRemember = (CheckBox) findViewById(R.id.checkBox);
 
         btnLogin.setOnClickListener(this);
         btnRegister.setOnClickListener(this);
@@ -73,12 +69,10 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                 mSocket.emit("CheckEmailAndPassword",j.toString());
                 break;
             case R.id.btnRegister:
-                startActivity(new Intent(Login.this, Register.class));
+                startActivity(new Intent(LoginActivity.this, Register.class));
                 break;
             case R.id.btnForgotPass:
                 break;
-            default:
-                return;
         }
     }
 
@@ -91,25 +85,23 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                     JSONObject data = (JSONObject) args[0];
                     Log.i("Data",data.toString());
                     try {
-                        boolean isEmailCorrect =data.getBoolean("email");
-                        boolean isPasswordCorrect =data.getBoolean("password");
+                        boolean isEmailCorrect =data.getBoolean(Constant.SERVER_RESPONSE_LOGIN_PARA_EMAIL);
+                        boolean isPasswordCorrect =data.getBoolean(Constant.SERVER_RESPONSE_LOGIN_PARA_PASSWORD);
 
                         if(!isEmailCorrect)
                             Toast.makeText(getBaseContext(),"Wrong email, try again",Toast.LENGTH_SHORT).show();
                         else if(!isPasswordCorrect)
                             Toast.makeText(getBaseContext(),"Wrong password, try again",Toast.LENGTH_SHORT).show();
                         else {
-                            boolean remember = chbRemember.isChecked();
-                            if(remember){
-                                SharedPreferences sharedPref = getApplication().
-                                        getSharedPreferences(Constant.APP_PREF,MODE_PRIVATE);
-                                SharedPreferences.Editor editor = sharedPref.edit();
-                                editor.putString(Constant.APP_PREF_TOKEN, data.getString("Token"));
-                                editor.commit();
-                            }
 
-                            Toast.makeText(getBaseContext(),"Login success",Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent(Login.this, MainActivity.class);
+                            SharedPreferences sharedPref = getApplication().
+                                    getSharedPreferences(Constant.APP_PREF,MODE_PRIVATE);
+                            SharedPreferences.Editor editor = sharedPref.edit();
+                            editor.putString(Constant.APP_PREF_TOKEN, data.getString(Constant.SERVER_RESPONSE_LOGIN_PARA_TOKEN));
+                            editor.commit();
+
+                            Toast.makeText(getBaseContext(),"LoginActivity success",Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                             startActivity(intent);
 
                             finish();
