@@ -48,7 +48,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:textColor="@color/text_color"
-        android:background="@color/countTime_background"
+        android:background="@color/count_time_background"
         android:textAlignment="center"
         android:layout_weight="1"
         android:text="time count" />

@@ -71,11 +71,12 @@ public class OpenTicketsFragment extends Fragment {
             listTicket = (ListView) view.findViewById(R.id.list_ticket);
 
             pref = getActivity().getSharedPreferences(Constant.APP_PREF, MODE_PRIVATE);
-//            String token = pref.getString(Constant.APP_PREF_TOKEN, "");
-            String token = "5e19efdfd462138bb264abec60024e3be01c22e99720c10a498057bba6ba48752aa586b3045f90b1f999053ccf5186cde5d6dd23f26e69415aeb5d1a85f64050";
-            mSocket.connect();
-            mSocket.emit(Constant.SERVER_REQUEST_OPEN_TICKETS, token);
-            mSocket.on(Constant.SERVER_RESPONSE_OPEN_TICKETS, onNewMessage_getOpenTickets);
+            String token = pref.getString(Constant.APP_PREF_TOKEN, "");
+            if(!token.isEmpty()) {
+                mSocket.connect();
+                mSocket.emit(Constant.SERVER_REQUEST_OPEN_TICKETS, token);
+                mSocket.on(Constant.SERVER_RESPONSE_OPEN_TICKETS, onNewMessage_getOpenTickets);
+            }
             return view;
         }
     }
