@@ -1,14 +1,11 @@
 package com.quocngay.carparkbooking.activity;
 
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.nkzawa.emitter.Emitter;
@@ -89,11 +86,11 @@ public class Register extends AppCompatActivity {
                         boolean res =data.getBoolean("res");
                         String message = data.getString("response");
 
-                        Toast.makeText(getBaseContext(),message ,Toast.LENGTH_SHORT);
+                        Toast.makeText(getBaseContext(),message ,Toast.LENGTH_SHORT).show();
 
                         if(res)
                             finish();
-//                            startActivity(new Intent(Register.this, Login.class));
+//                            startActivity(new Intent(Register.this, LoginActivity.class));
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }

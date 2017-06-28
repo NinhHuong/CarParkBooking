@@ -10,7 +10,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -21,15 +20,12 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.quocngay.carparkbooking.R;
 
-import com.quocngay.carparkbooking.R;
-
-public class MapFragment extends Fragment implements View.OnClickListener {
+public class MapFragment extends Fragment {
     MapView mMapView;
-    private GoogleMap googleMap;
-
     TextView txtName;
     EditText edtSearchBar;
     Button btnSearch;
+    private GoogleMap googleMap;
 
 //    public MapFragment() {
 //        // Required empty public constructor
@@ -44,9 +40,9 @@ public class MapFragment extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_map, container, false);
 
-        edtSearchBar =(EditText) rootView.findViewById(R.id.edtSearchBar);
-        btnSearch =(Button) rootView.findViewById(R.id.btnSearch);
-        btnSearch.setOnClickListener(this);
+        edtSearchBar = (EditText) rootView.findViewById(R.id.edtSearchBar);
+        btnSearch = (Button) rootView.findViewById(R.id.btnSearch);
+//        btnSearch.setOnClickListener(this);
 
         mMapView = (MapView) rootView.findViewById(R.id.mapView);
         mMapView.onCreate(savedInstanceState);
@@ -79,11 +75,8 @@ public class MapFragment extends Fragment implements View.OnClickListener {
         });
 
 
-
-
         return rootView;
     }
-
 
 
     //region Override normal function
@@ -111,19 +104,9 @@ public class MapFragment extends Fragment implements View.OnClickListener {
         mMapView.onLowMemory();
     }
 
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()){
-            case R.id.btnSearch:
-                Search();
-                break;
-            default:
-                return;
-        }
-    }
     //endregion
 
-    private void Search(){
-        Toast.makeText(getContext(),"Start search " + edtSearchBar.getText().toString(),Toast.LENGTH_SHORT).show();
+    private void Search() {
+        Toast.makeText(getContext(), "Start search " + edtSearchBar.getText().toString(), Toast.LENGTH_SHORT).show();
     }
 }
