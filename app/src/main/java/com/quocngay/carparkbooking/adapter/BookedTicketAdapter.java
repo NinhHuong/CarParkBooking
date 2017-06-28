@@ -180,8 +180,8 @@ public class BookedTicketAdapter extends BaseAdapter {
                             @Override
                             public void call(final Object... args) {
                                 ((Activity) context).runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
+                                        @Override
+                                        public void run() {
                                         try {
                                             JSONObject jsonObj = ((JSONObject) args[0]);
                                             if(jsonObj.getBoolean(Constant.SERVER_RESPONSE_RESULT)) {

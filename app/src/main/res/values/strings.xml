@@ -26,4 +26,13 @@
     <string name="invalid_token_message">Invalid token! Please try again</string>
     <string name="error_network">Turn on internet to continue!</string>
     <string name="time_exprited">Expired!</string>
+    <string name="dialog_reset_int_btn_cancel">Cancel</string>
+    <string name="dialog_reset_int_btn_continue">Continue</string>
+    <string name="dialog_reset_title">Reset Password</string>
+    <string name="mess_invalid_email">Email is not valid</string>
+    <string name="mess_password_mismatch">Password is mismatch</string>
+    <string name="hint_retype_password">Re-type Password</string>
+    <string name="hint_password">Password</string>
+    <string name="hint_reset_code">Reset code</string>
+    <string name="hint_email">Email</string>
 </resources>
