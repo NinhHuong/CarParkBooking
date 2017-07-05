@@ -1,5 +1,7 @@
 package com.quocngay.carparkbooking;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -17,18 +19,29 @@ import android.view.View;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
+import com.quocngay.carparkbooking.activity.LoginActivity;
 import com.quocngay.carparkbooking.fragment.MapFragment;
+import com.quocngay.carparkbooking.other.Constant;
 
 public class MapActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     MapView mMapView;
     private GoogleMap googleMap;
+    private SharedPreferences pref;
+    private String TAG = MapActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
+
+        pref = getSharedPreferences(Constant.APP_PREF, MODE_PRIVATE);
+        if(pref.getString(Constant.APP_PREF_TOKEN, null) == null) {
+            startActivity(new Intent(MapActivity.this, LoginActivity.class));
+            finish();
+        }
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 

@@ -20,6 +20,7 @@
             android:layout_centerHorizontal="true"
             android:layout_marginLeft="40dp"
             android:layout_marginRight="40dp"
+            android:inputType="textEmailAddress"
             android:hint="@string/login_email" />
 
         <EditText
@@ -31,39 +32,29 @@
             android:layout_marginLeft="40dp"
             android:layout_marginRight="40dp"
             android:gravity="center_vertical"
-            android:hint="Password"
+            android:hint="@string/hint_password"
             android:inputType="textPassword"
             android:maxLines="1" />
 
-
-
-
-        <CheckBox
-            android:id="@+id/checkBox"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignLeft="@id/edtPassword"
-            android:layout_below="@id/edtPassword"
-            android:text="@string/login_remember" />
-
-        <Button
-            android:id="@+id/btnLogin"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/checkBox"
-            android:layout_centerHorizontal="true"
-            android:layout_marginLeft="40dp"
-            android:layout_marginRight="40dp"
-            android:text="@string/login_btn_login" />
 
         <TextView
             android:id="@+id/tvForgotPass"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBaseline="@id/checkBox"
             android:layout_alignRight="@id/edtPassword"
             android:layout_below="@id/edtPassword"
+            android:textColor="@color/text_color"
             android:text="@string/login_forgot" />
+
+        <Button
+            android:id="@+id/btnLogin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tvForgotPass"
+            android:layout_centerHorizontal="true"
+            android:layout_marginLeft="40dp"
+            android:layout_marginRight="40dp"
+            android:text="@string/login_btn_login" />
     </RelativeLayout>
 
     <TextView
@@ -73,6 +64,7 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="10dp"
+        android:textColor="@color/text_color"
         android:text="@string/login_signup" />
 
 </RelativeLayout>

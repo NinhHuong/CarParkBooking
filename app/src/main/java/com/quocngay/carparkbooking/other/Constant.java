@@ -20,6 +20,8 @@ public class Constant {
     public static String SERVER_RESPONSE_LOGIN_PARA_EMAIL = "email";
     public static String SERVER_RESPONSE_LOGIN_PARA_PASSWORD = "password";
     public static String SERVER_RESPONSE_LOGIN_PARA_TOKEN = "token";
+    public static String SERVER_REQUEST_CREATE_ACCOUNT = "request create account";
+    public static String SERVER_RESPONSE_CREATE_ACCOUNT = "response create account";
     public static String SERVER_REQUEST_RESET_PASSWORD = "request reset password";
     public static String SERVER_RESPONSE_RESET_PASSWORD = "response reset password";
     public static String SERVER_REQUEST_CHANGE_PASSWORD = "request change password";

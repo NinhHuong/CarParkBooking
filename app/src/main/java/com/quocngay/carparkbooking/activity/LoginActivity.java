@@ -27,8 +27,8 @@ import org.json.JSONObject;
 import java.net.URISyntaxException;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
-    EditText edtEmail, edtPass, edtDalEmail, edtDalNewPass, edtDalCode, edtDalRePass;
-    Button btnLogin, btnRegister, btnForgotPassword, btnDalContinue, btnDalCancel;
+    EditText edtDalEmail, edtDalNewPass, edtDalCode, edtDalRePass;
+    Button btnDalContinue, btnDalCancel;
     Dialog dalReset;
     private static String TAG = LoginActivity.class.getSimpleName();
     String email;
@@ -37,44 +37,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     Button btnLogin;
     TextView tvRegister, tvForgotPassword;
     private Socket mSocket;
-    private Emitter.Listener onNewMessage_ResultLogin = new Emitter.Listener() {
-        @Override
-        public void call(final Object... args) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    JSONObject data = (JSONObject) args[0];
-                    Log.i("Data", data.toString());
-                    try {
-                        boolean isEmailCorrect = data.getBoolean(Constant.SERVER_RESPONSE_LOGIN_PARA_EMAIL);
-                        boolean isPasswordCorrect = data.getBoolean(Constant.SERVER_RESPONSE_LOGIN_PARA_PASSWORD);
-
-                        if (!isEmailCorrect)
-                            Toast.makeText(getBaseContext(), "Wrong email, try again", Toast.LENGTH_SHORT).show();
-                        else if (!isPasswordCorrect)
-                            Toast.makeText(getBaseContext(), "Wrong password, try again", Toast.LENGTH_SHORT).show();
-                        else {
-
-                            SharedPreferences sharedPref = getApplication().
-                                    getSharedPreferences(Constant.APP_PREF, MODE_PRIVATE);
-                            SharedPreferences.Editor editor = sharedPref.edit();
-                            editor.putString(Constant.APP_PREF_TOKEN, data.getString(Constant.SERVER_RESPONSE_LOGIN_PARA_TOKEN));
-                            editor.commit();
-
-                            Toast.makeText(getBaseContext(), "LoginActivity success", Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent(LoginActivity.this, MapActivity.class);
-                            startActivity(intent);
-
-                            finish();
-                        }
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
-        }
-    };
 
     {
         try {
@@ -118,7 +80,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 mSocket.emit("CheckEmailAndPassword",j.toString());
                 break;
             case R.id.tvRegister:
-                startActivity(new Intent(LoginActivity.this, Register.class));
+                startActivity(new Intent(LoginActivity.this, RegisterActivity.class));
                 break;
             case R.id.tvForgotPass:
                 resetPassord();
@@ -148,10 +110,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                     getSharedPreferences(Constant.APP_PREF,MODE_PRIVATE);
                             SharedPreferences.Editor editor = sharedPref.edit();
                             editor.putString(Constant.APP_PREF_TOKEN, data.getString(Constant.SERVER_RESPONSE_LOGIN_PARA_TOKEN));
-                            editor.commit();
+                            editor.apply();
 
                             Toast.makeText(getBaseContext(),"LoginActivity success",Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                            Intent intent = new Intent(LoginActivity.this, MapActivity.class);
                             startActivity(intent);
 
                             finish();
@@ -268,9 +230,15 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         });
     }
 
-    private boolean isValidEmail(String email) {
+    public static boolean isValidEmail(String email) {
         return !(email.indexOf("@") < 1
                 || email.lastIndexOf(".") < email.indexOf("@") + 2
                 || email.lastIndexOf(".") + 2 >= email.length());
+    }
+
+    public static boolean isValidPassword(String password) {
+//        return password.matches("([a-z].*[A-Z])|([A-Z].*[a-z])") && password.length() > 4
+//                && password.matches("[0-9]") && password.matches(".[!,@,#,$,%,^,&,*,?,_,~]");
+        return password.length() > 4;
     }
 }
