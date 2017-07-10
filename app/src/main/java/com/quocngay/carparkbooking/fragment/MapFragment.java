@@ -45,6 +45,7 @@ public class MapFragment extends Fragment {
 //        btnSearch.setOnClickListener(this);
 
         mMapView = (MapView) rootView.findViewById(R.id.mapView);
+
         mMapView.onCreate(savedInstanceState);
 
         mMapView.onResume(); // needed to get the map to display immediately
@@ -63,7 +64,6 @@ public class MapFragment extends Fragment {
                 // For showing a move to my location button
                 googleMap.setMyLocationEnabled(true);
                 googleMap.getUiSettings().setMyLocationButtonEnabled(true);
-
                 // For dropping a marker at a point on the Map
                 LatLng sydney = new LatLng(21.027807, 105.778542);
                 googleMap.addMarker(new MarkerOptions().position(sydney).title("Marker Title").snippet("Marker Description"));

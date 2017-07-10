@@ -32,23 +32,10 @@
         </activity>
         <activity android:name=".activity.LoginActivity" />
         <activity android:name=".activity.Register" />
-        <activity android:name=".activity.SearchActivity"></activity>
 
-        <!--
-             The API key for Google Maps-based APIs is defined as a string resource.
-             (See the file "res/values/google_maps_api.xml").
-             Note that the API key is linked to the encryption key used to sign the APK.
-             You need a different API key for each encryption key, including the release key that is used to
-             sign the APK for publishing.
-             You can define the keys for the debug and release targets in src/debug/ and src/release/. 
-        -->
-        <!-- <meta-data -->
-        <!-- android:name="com.google.android.geo.API_KEY" -->
-        <!-- android:value="@string/google_maps_key" /> -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyAvaYRnO9CPq3hAy4q-w-IyBf8d4z3OkSo" />
-
+            android:value="AIzaSyAPM7L8NUuNVQPMx5xozWcYCxOzKS-T6T8" />
 
     </application>
 

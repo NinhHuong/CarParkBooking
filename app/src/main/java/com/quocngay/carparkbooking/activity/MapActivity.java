@@ -1,7 +1,5 @@
 package com.quocngay.carparkbooking.activity;
 
-import android.app.SearchManager;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -9,11 +7,11 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -40,15 +38,15 @@ public class MapActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
-//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-//        setSupportActionBar(toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 //        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 //        getSupportActionBar().setDisplayShowHomeEnabled(true);
-//        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-//        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-//                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-//        drawer.setDrawerListener(toggle);
-//        toggle.syncState();
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.setDrawerListener(toggle);
+        toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
@@ -58,7 +56,7 @@ public class MapActivity extends AppCompatActivity
         fragmentTransaction.replace(R.id.map_frame, new MapFragment());
         fragmentTransaction.commit();
 
-        openAutocompleteActivity();
+
     }
 
     private void openAutocompleteActivity() {
@@ -99,21 +97,21 @@ public class MapActivity extends AppCompatActivity
         // Inflate the menu; this adds items to the action bar if it is present.
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.map, menu);
-        mapSearchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
-        setupSearchView(mapSearchView);
+//        mapSearchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
+//        setupSearchView(mapSearchView);
 
         return true;
     }
 
-    private void setupSearchView(SearchView searchView) {
-        searchView.setIconifiedByDefault(true);
-        searchView.setSubmitButtonEnabled(true);
-        searchView.setLayoutParams(new ActionBar.LayoutParams(Gravity.START));
-        searchView.setQueryHint(getResources().getString(R.string.action_search));
-        searchView.setMaxWidth(Integer.MAX_VALUE);
-        final SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-    }
+//    private void setupSearchView(SearchView searchView) {
+//        searchView.setIconifiedByDefault(true);
+//        searchView.setSubmitButtonEnabled(true);
+//        searchView.setLayoutParams(new ActionBar.LayoutParams(Gravity.START));
+//        searchView.setQueryHint(getResources().getString(R.string.action_search));
+//        searchView.setMaxWidth(Integer.MAX_VALUE);
+//        final SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+//        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+//    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -124,6 +122,7 @@ public class MapActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_search) {
+            openAutocompleteActivity();
             return true;
         }
 
