@@ -45,4 +45,8 @@
 
     <string name="map_positionsearch_textview">Position</string>
     <string name="map_positionsearch_button">Search</string>
+    <string name="map_gps_dialog_title">GPS is not enabled</string>
+    <string name="map_gps_dialog_message">Application need GPS. Do you want to go to settings menu?</string>
+    <string name="map_mylocation_button">Turn on GPS or network to get your location</string>
+
 </resources>

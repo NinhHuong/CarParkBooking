@@ -1,7 +1,19 @@
 package com.quocngay.carparkbooking.fragment;
 
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +22,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -17,22 +30,71 @@ import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.quocngay.carparkbooking.R;
 
 public class MapFragment extends Fragment {
+
+    final static public int INIT_ZOOM = 16;
+
     MapView mMapView;
     TextView txtName;
     EditText edtSearchBar;
     Button btnSearch;
+    LocationManager locationManager;
+    Criteria mCriteria;
+    Location mLocation;
     private GoogleMap googleMap;
-
+    private FusedLocationProviderClient mFusedLocationClient;
+    private LatLng currentLocation;
 //    public MapFragment() {
 //        // Required empty public constructor
 //    }
 
+    //Check if system location is enabled or not
+    public static boolean isLocationEnabled(Context context) {
+        int locationMode = 0;
+        String locationProviders;
+
+        //TODO: Check code version
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            try {
+                locationMode = Settings.Secure.getInt(context.getContentResolver(), Settings.Secure.LOCATION_MODE);
+
+            } catch (Settings.SettingNotFoundException e) {
+                e.printStackTrace();
+                return false;
+            }
+            return locationMode != Settings.Secure.LOCATION_MODE_OFF;
+
+        } else {
+            locationProviders = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
+            return !TextUtils.isEmpty(locationProviders);
+        }
+
+
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        if (!isLocationEnabled(getContext())) {
+            //Alert user gps is not enabled
+            AlertDialog.Builder alertDialog = new AlertDialog.Builder(getContext());
+            alertDialog.setTitle(getResources().getString(R.string.map_gps_dialog_title));
+            alertDialog.setMessage(getResources().getString(R.string.map_gps_dialog_message));
+            alertDialog.setPositiveButton("Settings", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                    getContext().startActivity(intent);
+                }
+            });
+            alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+            alertDialog.show();
+        }
+
         super.onCreate(savedInstanceState);
     }
 
@@ -42,12 +104,8 @@ public class MapFragment extends Fragment {
 
         edtSearchBar = (EditText) rootView.findViewById(R.id.edtSearchBar);
         btnSearch = (Button) rootView.findViewById(R.id.btnSearch);
-//        btnSearch.setOnClickListener(this);
-
         mMapView = (MapView) rootView.findViewById(R.id.mapView);
-
         mMapView.onCreate(savedInstanceState);
-
         mMapView.onResume(); // needed to get the map to display immediately
 
         try {
@@ -60,30 +118,53 @@ public class MapFragment extends Fragment {
             @Override
             public void onMapReady(GoogleMap mMap) {
                 googleMap = mMap;
-
-                // For showing a move to my location button
                 googleMap.setMyLocationEnabled(true);
                 googleMap.getUiSettings().setMyLocationButtonEnabled(true);
-                // For dropping a marker at a point on the Map
-                LatLng sydney = new LatLng(21.027807, 105.778542);
-                googleMap.addMarker(new MarkerOptions().position(sydney).title("Marker Title").snippet("Marker Description"));
+                googleMap.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
+                    @Override
+                    public boolean onMyLocationButtonClick() {
+                        //Alert user to turn gps on to get current location
+                        if (!isLocationEnabled(getContext())) {
+                            Snackbar.make(getView(), getResources().getString(R.string.map_mylocation_button), Snackbar.LENGTH_LONG)
+                                    .setAction("Action", null).show();
+                        }
+                        return false;
+                    }
+                });
+                if (isLocationEnabled(getContext())) {
+                    // For showing a move to my location button
+                    locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+                    mCriteria = new Criteria();
+                    String bestProvider = String.valueOf(locationManager.getBestProvider(mCriteria, true));
 
-                // For zooming automatically to the location of the marker
-                CameraPosition cameraPosition = new CameraPosition.Builder().target(sydney).zoom(12).build();
-                googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                    mLocation = locationManager.getLastKnownLocation(bestProvider);
+                    if (mLocation != null) {
+                        Log.e("TAG", "GPS is on");
+                        moveCameraTo(mLocation);
+                    }
+                }
             }
+
         });
 
 
         return rootView;
     }
 
+    private void moveCameraTo(Location location) {
+        double latitude = location.getLatitude();
+        double longitude = location.getLongitude();
+        LatLng moveLocation = new LatLng(latitude, longitude);
+        CameraPosition cameraPosition = new CameraPosition.Builder().target(moveLocation).zoom(INIT_ZOOM).build();
+        googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+    }
 
     //region Override normal function
     @Override
     public void onResume() {
         super.onResume();
         mMapView.onResume();
+
     }
 
     @Override

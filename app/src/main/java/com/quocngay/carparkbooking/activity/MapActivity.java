@@ -56,7 +56,6 @@ public class MapActivity extends AppCompatActivity
         fragmentTransaction.replace(R.id.map_frame, new MapFragment());
         fragmentTransaction.commit();
 
-
     }
 
     private void openAutocompleteActivity() {
