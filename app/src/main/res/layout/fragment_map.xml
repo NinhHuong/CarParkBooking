@@ -19,24 +19,27 @@
         android:layout_height="match_parent"
         android:clickable="true" />
 
-    <EditText
-        android:id="@+id/edtSearchBar"
-        android:layout_width="282dp"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:ems="10"
-        android:hint="Position"
-        android:inputType="textPersonName" />
-
     <Button
         android:id="@+id/btnSearch"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:text="Button" />
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="20dp"
+        android:layout_marginStart="20dp"
+        android:text="@string/map_positionsearch_button" />
+
+
+    <EditText
+        android:id="@+id/edtSearchBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/btnSearch"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="20dp"
+        android:layout_marginStart="20dp"
+        android:ems="10"
+        android:hint="@string/map_positionsearch_textview"
+        android:inputType="textPersonName" />
 
 </RelativeLayout>

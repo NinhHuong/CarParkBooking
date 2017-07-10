@@ -15,7 +15,6 @@ import android.widget.Toast;
 import com.github.nkzawa.emitter.Emitter;
 import com.github.nkzawa.socketio.client.IO;
 import com.github.nkzawa.socketio.client.Socket;
-import com.quocngay.carparkbooking.MapActivity;
 import com.quocngay.carparkbooking.R;
 import com.quocngay.carparkbooking.other.Constant;
 
