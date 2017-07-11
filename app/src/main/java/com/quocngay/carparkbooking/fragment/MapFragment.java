@@ -23,6 +23,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlaceAutocomplete;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -34,7 +36,7 @@ import com.quocngay.carparkbooking.R;
 
 public class MapFragment extends Fragment {
 
-    final static public int INIT_ZOOM = 16;
+    private static final int INIT_ZOOM = 16;
 
     MapView mMapView;
     TextView txtName;
@@ -149,6 +151,18 @@ public class MapFragment extends Fragment {
 
 
         return rootView;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Place place = PlaceAutocomplete.getPlace(getContext(), data);
+        Log.i("TAG", "Place: " + place.getName());
+        Location location = new Location("");
+        location.setLatitude(place.getLatLng().latitude);
+        location.setLongitude(place.getLatLng().longitude);
+        moveCameraTo(location);
+
     }
 
     private void moveCameraTo(Location location) {
