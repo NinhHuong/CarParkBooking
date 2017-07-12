@@ -33,4 +33,14 @@
 
     <style name="AppTheme.NoActionBar.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
+    <style name="MyCardViewStyle" parent="Theme.AppCompat.Light">
+        <item name="cardCornerRadius">2dp</item>
+        <item name="contentPaddingBottom">5dp</item>
+        <item name="contentPaddingTop">5dp</item>
+        <item name="contentPaddingLeft">5dp</item>
+        <item name="contentPaddingRight">5dp</item>
+        <item name="cardBackgroundColor">@android:color/white</item>
+        <item name="android:foreground">@drawable/custom_bg</item>
+    </style>
+
 </resources>
