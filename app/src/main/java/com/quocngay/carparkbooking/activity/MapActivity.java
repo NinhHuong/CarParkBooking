@@ -2,6 +2,7 @@ package com.quocngay.carparkbooking.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Build;
@@ -94,6 +95,13 @@ public class MapActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
+
+        SharedPreferences pref = getSharedPreferences(Constant.APP_PREF, MODE_PRIVATE);
+        if(pref.getString(Constant.APP_PREF_TOKEN, null) == null) {
+            startActivity(new Intent(MapActivity.this, LoginActivity.class));
+            finish();
+        }
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
