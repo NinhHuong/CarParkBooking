@@ -96,11 +96,11 @@ public class MapActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
 
-        SharedPreferences pref = getSharedPreferences(Constant.APP_PREF, MODE_PRIVATE);
+        /*SharedPreferences pref = getSharedPreferences(Constant.APP_PREF, MODE_PRIVATE);
         if(pref.getString(Constant.APP_PREF_TOKEN, null) == null) {
             startActivity(new Intent(MapActivity.this, LoginActivity.class));
             finish();
-        }
+        }*/
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);

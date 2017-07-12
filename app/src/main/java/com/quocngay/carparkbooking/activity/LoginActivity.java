@@ -62,7 +62,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         tvForgotPassword.setOnClickListener(this);
 
         mSocket.connect();
-        mSocket.on("ResultLogin",onNewMessage_ResultLogin);
     }
 
     @Override
@@ -77,6 +76,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     e.printStackTrace();
                 }
                 mSocket.emit("CheckEmailAndPassword",j.toString());
+                mSocket.on("ResultLogin",onNewMessage_ResultLogin);
                 break;
             case R.id.tvRegister:
                 startActivity(new Intent(LoginActivity.this, RegisterActivity.class));
