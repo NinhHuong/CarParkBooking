@@ -48,5 +48,10 @@
     <string name="map_gps_dialog_title">GPS is not enabled</string>
     <string name="map_gps_dialog_message">Application need GPS. Do you want to go to settings menu?</string>
     <string name="map_mylocation_button">Turn on GPS or network to get your location</string>
+    <string name="pick_place">Please choose a place</string>
+    <string name="address_found">Address was found</string>
+    <string name="no_address_found">No address was found</string>
+    <string name="service_not_available">Service is not available</string>
+    <string name="invalid_lat_long_used">Invalid latlng used</string>
 
 </resources>
