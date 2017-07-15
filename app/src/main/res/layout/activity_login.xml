@@ -6,21 +6,32 @@
     android:layout_height="match_parent"
     tools:context="com.quocngay.carparkbooking.activity.LoginActivity">
 
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:src="@drawable/bg" />
+
+
     <RelativeLayout
+        android:id="@+id/form_login"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_centerVertical="true">
+        android:layout_centerInParent="true"
+        android:layout_margin="20dp"
+        android:background="@color/colorPrimaryDark"
+        android:padding="30dp">
 
         <EditText
             android:id="@+id/edtEmail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:layout_marginLeft="40dp"
-            android:layout_marginRight="40dp"
-            android:hint="@string/login_email" />
+            android:fontFamily="casual"
+            android:hint="@string/login_email"
+            android:inputType="textEmailAddress"
+            android:selectAllOnFocus="true"
+            android:textColor="@color/colorText" />
 
         <EditText
             android:id="@+id/edtPassword"
@@ -28,14 +39,13 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/edtEmail"
             android:layout_centerHorizontal="true"
-            android:layout_marginLeft="40dp"
-            android:layout_marginRight="40dp"
+            android:layout_marginTop="10dp"
+            android:fontFamily="casual"
             android:gravity="center_vertical"
-            android:hint="Password"
+            android:hint="@string/login_password"
             android:inputType="textPassword"
-            android:maxLines="1" />
-
-
+            android:maxLines="1"
+            android:textColor="@color/colorText" />
 
 
         <CheckBox
@@ -43,8 +53,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignLeft="@id/edtPassword"
+            android:layout_alignStart="@id/edtPassword"
             android:layout_below="@id/edtPassword"
-            android:text="@string/login_remember" />
+            android:layout_marginTop="10dp"
+            android:text="@string/login_remember"
+            android:textColor="@color/colorText" />
 
         <Button
             android:id="@+id/btnLogin"
@@ -52,8 +65,8 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/checkBox"
             android:layout_centerHorizontal="true"
-            android:layout_marginLeft="40dp"
-            android:layout_marginRight="40dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/custom_button_bg"
             android:text="@string/login_btn_login" />
 
         <TextView
@@ -61,18 +74,19 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignBaseline="@id/checkBox"
+            android:layout_alignEnd="@id/edtPassword"
             android:layout_alignRight="@id/edtPassword"
             android:layout_below="@id/edtPassword"
             android:text="@string/login_forgot" />
-    </RelativeLayout>
 
-    <TextView
-        android:id="@+id/tvRegister"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="10dp"
-        android:text="@string/login_signup" />
+        <TextView
+            android:id="@+id/tvRegister"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/btnLogin"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
+            android:text="@string/login_signup" />
+    </RelativeLayout>
 
 </RelativeLayout>

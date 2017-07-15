@@ -11,8 +11,8 @@
         android:ellipsize="end"
         android:lineSpacingExtra="2sp"
         android:maxLines="1"
-        android:textSize="16sp"
-        android:textStyle="bold" />
+        android:textColor="@color/text_dark_title"
+        android:textSize="16sp" />
 
 
     <TextView
@@ -22,7 +22,8 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_below="@id/tv_add_title"
-        android:text="100km" />
+        android:text="100km"
+        android:textColor="@color/text_dark_description" />
 
     <TextView
         android:id="@+id/tv_add_description"
@@ -31,6 +32,7 @@
         android:layout_below="@id/tv_add_title"
         android:layout_toLeftOf="@+id/tv_nearest"
         android:layout_toStartOf="@+id/tv_nearest"
-        android:text="Có ... bãi đỗ xe gần đây" />
+        android:text="Có ... bãi đỗ xe gần đây"
+        android:textColor="@color/text_dark_description" />
 
 </RelativeLayout>

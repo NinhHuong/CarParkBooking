@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -27,6 +28,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -48,22 +50,37 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.quocngay.carparkbooking.R;
-import com.quocngay.carparkbooking.fragment.NearestGaraFragment;
 import com.quocngay.carparkbooking.other.Constant;
+import com.quocngay.carparkbooking.other.DirectionsJSONParser;
 import com.quocngay.carparkbooking.other.FetchAddressIntentService;
+
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class MapActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener {
 
-    public static final int REQUEST_CODE_AUTOCOMPLETE = 1;
-    public static final int PLACE_PICKER_REQUEST = 1;
+    public static final int REQUEST_CODE_AUTOCOMPLETE = 10;
+    public static final int REQUEST_CODE_BOOKING = 1;
+    public static final String GARA_LATLNG = "gara_latlng";
+    public static final String GARA_ADDRESS = "gara_address";
     private static final int DEFAULT_ZOOM = 17;
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     private static final String KEY_CAMERA_POSITION = "camera_position";
     private static final String KEY_LOCATION = "location";
-
     private GoogleMap googleMap;
     private LatLng currentLocation;
     private boolean mLocationPermissionGranted;
@@ -73,13 +90,6 @@ public class MapActivity extends AppCompatActivity
     private LatLng mDefaultLocation;
     private Location mCurrentLocation;
     private int mMaxEntries = 50;
-    private String[] mLikelyPlaceNames;
-    private String[] mLikelyPlaceAddresses;
-    private String[] mLikelyPlaceAttributions;
-    private LatLng[] mLikelyPlaceLatLngs;
-    private String clickedLocation1;
-    private String clickedLocation2;
-    private String clickedLocation3;
     private FloatingActionButton btnMyLocation;
     private TextView addressTitle;
     private TextView addressDescription;
@@ -89,18 +99,30 @@ public class MapActivity extends AppCompatActivity
     private CardView mCardView;
     private Marker mMarker;
     private String placeName = "";
+    private Button btnBook;
+    private Polyline mPolyline;
+    private TextView tvDistance;
+    private ActionBarDrawerToggle toggle;
+    private Toolbar toolbar;
+    private DrawerLayout drawer;
+    private LatLng selectedGara;
+
+    private void defaultToolbar() {
+        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
+        toggle.setDrawerSlideAnimationEnabled(true);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
-        toggle.syncState();
+        defaultToolbar();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
@@ -126,9 +148,31 @@ public class MapActivity extends AppCompatActivity
         mCardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                NearestGaraFragment nearestGaraFragment = new NearestGaraFragment();
+
             }
         });
+
+        tvDistance = (TextView) findViewById(R.id.tv_nearest);
+
+        btnBook = (Button) findViewById(R.id.btnFindGara);
+        if (selectedGara != null) {
+            btnBook.setEnabled(true);
+        } else {
+            btnBook.setEnabled(false);
+        }
+
+        btnBook.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //TODO: Use SharedPreference for sending location json instead of put Extra function
+                Intent bookingIntent = new Intent(getApplicationContext(), BookingActivity.class);
+                bookingIntent.putExtra(GARA_LATLNG, selectedGara);
+                bookingIntent.putExtra(GARA_LATLNG, selectedGara);
+                startActivityForResult(bookingIntent, REQUEST_CODE_BOOKING);
+
+            }
+        });
+
 
     }
 
@@ -160,10 +204,11 @@ public class MapActivity extends AppCompatActivity
                 Location location = new Location("");
                 double locationLatitude = place.getLatLng().latitude;
                 double locationLongitude = place.getLatLng().longitude;
-                location.setLatitude(locationLatitude);
-                location.setLongitude(locationLongitude);
                 googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
                         new LatLng(locationLatitude, locationLongitude), DEFAULT_ZOOM));
+
+                location.setLatitude(locationLatitude);
+                location.setLongitude(locationLongitude);
                 addDefaultMarker(location);
             } else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {
                 Status status = PlaceAutocomplete.getStatus(this, data);
@@ -172,6 +217,26 @@ public class MapActivity extends AppCompatActivity
 
             } else if (resultCode == RESULT_CANCELED) {
                 // The user canceled the operation.
+            }
+        }
+        if (requestCode == 1) {
+            if (resultCode == RESULT_OK) {
+                Boolean bookingStatus = data.getBooleanExtra(BookingActivity.BOOKING_STATUS, false);
+                if (bookingStatus) {
+                    if (mPolyline != null) {
+                        mPolyline.remove();
+                    }
+                    LatLng dest = selectedGara;
+                    LatLng origin = new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude());
+
+                    // Getting URL to the Google Directions API
+                    String url = getDirectionsUrl(origin, dest, false);
+
+                    DownloadTask downloadTask = new DownloadTask();
+
+                    // Start downloading json data from Google Directions API
+                    downloadTask.execute(url);
+                }
             }
         }
     }
@@ -191,8 +256,7 @@ public class MapActivity extends AppCompatActivity
 
     private void initMap() {
         googleMap.getUiSettings().setMyLocationButtonEnabled(false);
-        googleMap.getUiSettings().setCompassEnabled(true);
-        googleMap.getUiSettings().setMapToolbarEnabled(false);
+        googleMap.getUiSettings().setMapToolbarEnabled(true);
         btnMyLocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -200,25 +264,16 @@ public class MapActivity extends AppCompatActivity
             }
         });
 
-        btnMyLocation.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                getDeviceLocation();
-                if (mLastKnownLocation != null) {
-                    addDefaultMarker(mLastKnownLocation);
-                }
-                return false;
-            }
-        });
-
         googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
 
             @Override
             public void onMapClick(LatLng latLng) {
+                selectedGara = latLng;
                 clickedLocation = new Location("");
                 clickedLocation.setLatitude(latLng.latitude);
                 clickedLocation.setLongitude(latLng.longitude);
                 addDefaultMarker(clickedLocation);
+                btnBook.setEnabled(true);
             }
         });
     }
@@ -357,6 +412,69 @@ public class MapActivity extends AppCompatActivity
         updateLocationUI();
     }
 
+    private String getDirectionsUrl(LatLng origin, LatLng dest, Boolean redirect) {
+
+        // Origin of route
+        String str_origin = "origin=" + origin.latitude + "," + origin.longitude;
+
+        // Destination of route
+        String str_dest = "destination=" + dest.latitude + "," + dest.longitude;
+
+        // Sensor enabled
+        String sensor = "sensor=false";
+        String mode = "mode=driving";
+        // Building the parameters to the web service
+        String parameters = str_origin + "&" + str_dest + "&" + sensor + "&" + mode;
+
+        // Output format
+        String output = "json";
+        String url;
+        // Building the url to the web service
+        if (redirect) {
+            url = getResources().getString(R.string.google_direction_api_redirect, parameters);
+        } else {
+            url = getResources().getString(R.string.google_direction_api, output, parameters);
+        }
+        Log.d("APIUrl", url);
+
+        return url;
+    }
+
+    private String downloadUrl(String strUrl) throws IOException {
+        String data = "";
+        InputStream iStream = null;
+        HttpURLConnection urlConnection = null;
+        try {
+            URL url = new URL(strUrl);
+
+            urlConnection = (HttpURLConnection) url.openConnection();
+
+            urlConnection.connect();
+
+            iStream = urlConnection.getInputStream();
+
+            BufferedReader br = new BufferedReader(new InputStreamReader(iStream));
+
+            StringBuffer sb = new StringBuffer();
+
+            String line = "";
+            while ((line = br.readLine()) != null) {
+                sb.append(line);
+            }
+
+            data = sb.toString();
+
+            br.close();
+
+        } catch (Exception e) {
+            Log.d("Exception", e.toString());
+        } finally {
+            iStream.close();
+            urlConnection.disconnect();
+        }
+        return data;
+    }
+
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         if (googleMap != null) {
@@ -432,6 +550,95 @@ public class MapActivity extends AppCompatActivity
             String mAddressOutput = resultData.getString(Constant.RESULT_DATA_KEY);
             addressTitle.setText(mAddressOutput);
 
+        }
+    }
+
+    private class DownloadTask extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... url) {
+
+            String data = "";
+
+            try {
+                data = downloadUrl(url[0]);
+            } catch (Exception e) {
+                Log.d("Background Task", e.toString());
+            }
+            return data;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+
+            ParserTask parserTask = new ParserTask();
+
+            parserTask.execute(result);
+
+        }
+    }
+
+    private class ParserTask extends AsyncTask<String, Integer, List<List<HashMap<String, String>>>> {
+
+        // Parsing the data in non-ui thread
+        @Override
+        protected List<List<HashMap<String, String>>> doInBackground(String... jsonData) {
+
+            JSONObject jObject;
+            List<List<HashMap<String, String>>> routes = null;
+
+            try {
+                jObject = new JSONObject(jsonData[0]);
+                DirectionsJSONParser parser = new DirectionsJSONParser();
+
+                routes = parser.parse(jObject);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return routes;
+        }
+
+        @Override
+        protected void onPostExecute(List<List<HashMap<String, String>>> result) {
+            ArrayList points = null;
+            PolylineOptions lineOptions = null;
+            MarkerOptions markerOptions = new MarkerOptions();
+            String distance = "";
+            String duration;
+            for (int i = 0; i < result.size(); i++) {
+                points = new ArrayList();
+                lineOptions = new PolylineOptions();
+
+                List<HashMap<String, String>> path = result.get(i);
+
+                for (int j = 0; j < path.size(); j++) {
+                    HashMap<String, String> point = path.get(j);
+
+                    if (j == 0) {    // Get distance from the list
+                        distance = point.get("distance");
+                        continue;
+                    } else if (j == 1) { // Get duration from the list
+                        duration = point.get("duration");
+                        continue;
+                    }
+
+                    double lat = Double.parseDouble(point.get("lat"));
+                    double lng = Double.parseDouble(point.get("lng"));
+                    LatLng position = new LatLng(lat, lng);
+
+                    points.add(position);
+                }
+
+                lineOptions.addAll(points);
+                lineOptions.width(10);
+                lineOptions.color(getResources().getColor(R.color.map_direction));
+                lineOptions.geodesic(true);
+
+            }
+            tvDistance.setText(distance);
+            // Drawing polyline in the Google Map for the i-th route
+            mPolyline = googleMap.addPolyline(lineOptions);
         }
     }
 

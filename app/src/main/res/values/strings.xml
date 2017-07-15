@@ -28,12 +28,12 @@
     <string name="time_exprited">Expired!</string>
     <string name="title_activity_google_map">Map</string>
 
-    <string name="login_signup">Don\'t have any account? Signup now!</string>
+    <string name="login_signup">Tạo tài khoản!</string>
     <string name="login_remember">Remember me</string>
-    <string name="login_email">Email</string>
-    <string name="login_password">Password</string>
-    <string name="login_forgot">Forgot password</string>
-    <string name="login_btn_login">Login</string>
+    <string name="login_email">Nhập email</string>
+    <string name="login_password">Nhập mật khẩu</string>
+    <string name="login_forgot">Quên mật khẩu</string>
+    <string name="login_btn_login">Đăng nhập</string>
     <string name="title_activity_map">MapActivity</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
@@ -53,5 +53,14 @@
     <string name="no_address_found">No address was found</string>
     <string name="service_not_available">Service is not available</string>
     <string name="invalid_lat_long_used">Invalid latlng used</string>
+    <string name="title_activity_main89089">MainActivity89089</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+
+    <string name="map_findgara">Chọn bãi đỗ xe</string>
+    <string name="google_direction_api">https://maps.googleapis.com/maps/api/directions/%1$s?%2$s</string>
+    <string name="google_direction_api_redirect">https://www.google.com/maps/dir/?api=1%1$s</string>
+    <string name="map_booking">Đặt chỗ</string>
 
 </resources>

@@ -13,6 +13,8 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:textColor">@color/colorText</item>
+        <item name="android:textColorSecondary">@color/colorTextSecondary</item>
     </style>
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
@@ -34,7 +36,7 @@
     <style name="AppTheme.NoActionBar.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
     <style name="MyCardViewStyle" parent="Theme.AppCompat.Light">
-        <item name="cardCornerRadius">2dp</item>
+        <item name="cardCornerRadius">5dp</item>
         <item name="contentPaddingBottom">5dp</item>
         <item name="contentPaddingTop">5dp</item>
         <item name="contentPaddingLeft">5dp</item>
