@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    style="@style/login"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.quocngay.carparkbooking.activity.LoginActivity">
@@ -27,7 +26,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:fontFamily="casual"
             android:hint="@string/login_email"
             android:inputType="textEmailAddress"
             android:selectAllOnFocus="true"
@@ -40,7 +38,6 @@
             android:layout_below="@id/edtEmail"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="10dp"
-            android:fontFamily="casual"
             android:gravity="center_vertical"
             android:hint="@string/login_password"
             android:inputType="textPassword"
@@ -49,7 +46,7 @@
 
 
         <CheckBox
-            android:id="@+id/checkBox"
+            android:id="@+id/cbRemember"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignLeft="@id/edtPassword"
@@ -63,7 +60,7 @@
             android:id="@+id/btnLogin"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/checkBox"
+            android:layout_below="@id/cbRemember"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="10dp"
             android:background="@drawable/custom_button_bg"
@@ -73,10 +70,10 @@
             android:id="@+id/tvForgotPass"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBaseline="@id/checkBox"
-            android:layout_alignEnd="@id/edtPassword"
-            android:layout_alignRight="@id/edtPassword"
-            android:layout_below="@id/edtPassword"
+            android:layout_alignBaseline="@+id/cbRemember"
+            android:layout_alignBottom="@+id/cbRemember"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
             android:text="@string/login_forgot" />
 
         <TextView

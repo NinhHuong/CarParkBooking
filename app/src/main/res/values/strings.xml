@@ -28,11 +28,11 @@
     <string name="time_exprited">Expired!</string>
     <string name="title_activity_google_map">Map</string>
 
-    <string name="login_signup">Tạo tài khoản!</string>
+    <string name="login_signup"><u>Chưa có tài khoản? Tạo tài khoản!</u></string>
     <string name="login_remember">Remember me</string>
     <string name="login_email">Nhập email</string>
     <string name="login_password">Nhập mật khẩu</string>
-    <string name="login_forgot">Quên mật khẩu</string>
+    <string name="login_forgot"><u>Quên mật khẩu</u></string>
     <string name="login_btn_login">Đăng nhập</string>
     <string name="title_activity_map">MapActivity</string>
 
@@ -53,7 +53,6 @@
     <string name="no_address_found">No address was found</string>
     <string name="service_not_available">Service is not available</string>
     <string name="invalid_lat_long_used">Invalid latlng used</string>
-    <string name="title_activity_main89089">MainActivity89089</string>
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
@@ -62,5 +61,13 @@
     <string name="google_direction_api">https://maps.googleapis.com/maps/api/directions/%1$s?%2$s</string>
     <string name="google_direction_api_redirect">https://www.google.com/maps/dir/?api=1%1$s</string>
     <string name="map_booking">Đặt chỗ</string>
+    <string name="register_button">Đăng ký</string>
+    <string name="register_email">Nhập email</string>
+    <string name="register_pass">Nhập mật khẩu</string>
+    <string name="register_repass">Nhập lại mật khẩu</string>
+    <string name="server_error_email">Email sai hoặc không tồn tại</string>
+    <string name="server_error_password">Sai mật khẩu</string>
+    <string name="login_error_email">Email lỗi! Vui lòng kiểm tra lại.</string>
+    <string name="login_error_password">Mật khẩu phải nhiều hơn %1$d ký tự</string>
 
 </resources>
