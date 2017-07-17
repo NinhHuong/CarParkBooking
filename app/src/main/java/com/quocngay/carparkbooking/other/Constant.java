@@ -48,6 +48,19 @@ public class Constant {
     public static String SERVER_RESPONSE_LOGIN_PARA_EMAIL = "email";
     public static String SERVER_RESPONSE_LOGIN_PARA_PASSWORD = "password";
     public static String SERVER_RESPONSE_LOGIN_PARA_TOKEN = "token";
+    public static String SERVER_REQUEST_CREATE_ACCOUNT = "request create account";
+    public static String SERVER_RESPONSE_CREATE_ACCOUNT = "response create account";
+    public static String SERVER_REQUEST_RESET_PASSWORD = "request reset password";
+    public static String SERVER_RESPONSE_RESET_PASSWORD = "response reset password";
+    public static String SERVER_REQUEST_CHANGE_PASSWORD = "request change password";
+    public static String SERVER_RESPONSE_CHANGE_PASSWORD = "response change password";
+
+    public static String SERVER_REQUEST_OPEN_TICKETS = "request open tickets";
+    public static String SERVER_RESPONSE_OPEN_TICKETS = "response open tickets";
+    public static String SERVER_REQUEST_CREATE_TOKEN = "request create token";
+    public static String SERVER_RESPONSE_CREATE_TOKEN = "response create ticket";
+    public static String SERVER_REQUEST_VALIDATE_TOKEN = "request validate token";
+    public static String SERVER_RESPONSE_VALIDATE_TOKEN = "response validate ticket";
     public static String SERVER_RESPONSE_RESULT = "result";
     public static String SERVER_RESPONSE_DATA = "data";
     public static int KEY_EXPIRED_TICKET = 30 * 60 * 1000; //in milliseconds
@@ -57,4 +70,5 @@ public class Constant {
     public static DateFormat KEY_DATE_TIME_DURATION_FORMAT = new SimpleDateFormat("dd:HH:mm", Locale.getDefault());
     public static int KEY_COUNT_DOWN_INTERVAL = 1000;
     public static int KEY_COUNT_UP_INTERVAL = 60 * 1000;
+
 }

@@ -26,7 +26,21 @@
     <string name="invalid_token_message">Invalid token! Please try again</string>
     <string name="error_network">Turn on internet to continue!</string>
     <string name="time_exprited">Expired!</string>
+    <string name="dialog_reset_int_btn_cancel">Cancel</string>
+    <string name="dialog_reset_int_btn_continue">Continue</string>
+    <string name="dialog_reset_title">Reset Password</string>
+    <string name="mess_invalid_email">Email is not valid</string>
+    <string name="mess_password_mismatch">Password is mismatch</string>
+    <string name="hint_retype_password">Re-type Password</string>
+    <string name="hint_password">Password</string>
+    <string name="hint_reset_code">Reset code</string>
+    <string name="hint_email">Email</string>
     <string name="title_activity_google_map">Map</string>
+    <string name="permission_rationale">"Contacts permissions are needed for providing email
+        completions."
+    </string>
+    <string name="error_invalid_password">This password is too short</string>
+    <string name="error_field_required">This field is required</string>
 
     <string name="login_signup"><u>Chưa có tài khoản? Tạo tài khoản!</u></string>
     <string name="login_remember">Remember me</string>
@@ -72,4 +86,16 @@
     <string name="login_successfull">Đăng nhập thành công!</string>
     <string name="error_repassword">Password and re-type password not the same!!! Try again</string>
 
+    <string name="btn_register">Register</string>
+    <string name="title_activity_register">Register</string>
+    <string name="title_activity_login">Log in</string>
+
+    <!-- Strings related to register -->
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_sign_in">Register</string>
+    <string name="action_sign_in_short">Register</string>
+    <string name="error_invalid_email">This email address is invalid</string>
+    <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_mismatch_password">Your confirmation password is mismatch</string>
 </resources>

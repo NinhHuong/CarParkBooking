@@ -50,11 +50,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignLeft="@id/edtPassword"
-            android:layout_alignStart="@id/edtPassword"
             android:layout_below="@id/edtPassword"
-            android:layout_marginTop="10dp"
-            android:text="@string/login_remember"
-            android:textColor="@color/colorText" />
+            android:text="@string/login_remember" />
 
         <Button
             android:id="@+id/btnLogin"
