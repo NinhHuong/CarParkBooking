@@ -38,8 +38,8 @@ public class RegisterActivity extends AppCompatActivity {
                     JSONObject data = (JSONObject) args[0];
                     Log.i("Data", data.toString());
                     try {
-                        boolean res = data.getBoolean("result");
-                        String message = data.getJSONObject("data").getString("mess");
+                        boolean res = data.getBoolean(Constant.RESULT);
+                        String message = data.getJSONObject(Constant.DATA).getString(Constant.MESSAGE);
                         Toast.makeText(getBaseContext(), message, Toast.LENGTH_SHORT).show();
                         if (res) {
                             Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();

@@ -40,6 +40,9 @@ public class Constant {
     public static final String RESPONSE_GET_SALT = "response_get_salt";
     public static final String REQUEST_CHECK_EMAIL_PASSWORD = "check_email_and_password";
     public static final String RESPONSE_RESULT_LOGIN = "result_login";
+    public static final String RESULT = "result";
+    public static final String DATA = "data";
+    public static final String MESSAGE = "mess";
     public static int PREF_MODE = 1;
     //    public static String SERVER_HOST = "http://54.255.178.120:5000";
     public static String SERVER_HOST = "http://192.168.1.5:5000";
@@ -48,12 +51,12 @@ public class Constant {
     public static String SERVER_RESPONSE_LOGIN_PARA_EMAIL = "email";
     public static String SERVER_RESPONSE_LOGIN_PARA_PASSWORD = "password";
     public static String SERVER_RESPONSE_LOGIN_PARA_TOKEN = "token";
-    public static String SERVER_REQUEST_CREATE_ACCOUNT = "request create account";
-    public static String SERVER_RESPONSE_CREATE_ACCOUNT = "response create account";
-    public static String SERVER_REQUEST_RESET_PASSWORD = "request reset password";
-    public static String SERVER_RESPONSE_RESET_PASSWORD = "response reset password";
-    public static String SERVER_REQUEST_CHANGE_PASSWORD = "request change password";
-    public static String SERVER_RESPONSE_CHANGE_PASSWORD = "response change password";
+    public static String SERVER_REQUEST_CREATE_ACCOUNT = "request_create_account";
+    public static String SERVER_RESPONSE_CREATE_ACCOUNT = "response_create_account";
+    public static String SERVER_REQUEST_RESET_PASSWORD = "request_reset_password";
+    public static String SERVER_RESPONSE_RESET_PASSWORD = "response_reset_password";
+    public static String SERVER_REQUEST_CHANGE_PASSWORD = "request_change_password";
+    public static String SERVER_RESPONSE_CHANGE_PASSWORD = "response_change_password";
 
     public static String SERVER_REQUEST_OPEN_TICKETS = "request open tickets";
     public static String SERVER_RESPONSE_OPEN_TICKETS = "response open tickets";

@@ -29,8 +29,6 @@
     <string name="dialog_reset_int_btn_cancel">Cancel</string>
     <string name="dialog_reset_int_btn_continue">Continue</string>
     <string name="dialog_reset_title">Reset Password</string>
-    <string name="mess_invalid_email">Email is not valid</string>
-    <string name="mess_password_mismatch">Password is mismatch</string>
     <string name="hint_retype_password">Re-type Password</string>
     <string name="hint_password">Password</string>
     <string name="hint_reset_code">Reset code</string>
@@ -48,6 +46,7 @@
     <string name="login_password">Nhập mật khẩu</string>
     <string name="login_forgot"><u>Quên mật khẩu</u></string>
     <string name="login_btn_login">Đăng nhập</string>
+    <string name="login_btn_reset">Lấy lại mật khẩu</string>
     <string name="title_activity_map">MapActivity</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>

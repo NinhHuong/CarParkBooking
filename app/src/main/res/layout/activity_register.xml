@@ -37,7 +37,6 @@
             android:paddingLeft="30dp"
             android:paddingRight="30dp">
 
-
             <EditText
                 android:id="@+id/edtEmailRegist"
                 android:layout_width="match_parent"
@@ -45,7 +44,6 @@
                 android:layout_marginTop="10dp"
                 android:hint="@string/register_email"
                 android:inputType="textEmailAddress" />
-
 
             <EditText
                 android:id="@+id/edtPassRegist"
