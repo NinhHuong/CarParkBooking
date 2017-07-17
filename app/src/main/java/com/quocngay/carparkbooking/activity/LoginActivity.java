@@ -101,6 +101,18 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
     };
 
+    public static boolean isValidEmail(String email) {
+        return !(email.indexOf("@") < 1
+                || email.lastIndexOf(".") < email.indexOf("@") + 2
+                || email.lastIndexOf(".") + 2 >= email.length());
+    }
+
+    public static boolean isValidPassword(String password) {
+//        return password.matches("([a-z].*[A-Z])|([A-Z].*[a-z])") && password.length() > 4
+//                && password.matches("[0-9]") && password.matches(".[!,@,#,$,%,^,&,*,?,_,~]");
+        return password.length() > 4;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -138,6 +150,109 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         return generatedPassword;
     }
 
+//    private void resetPassord() {
+//        dalReset = new Dialog(LoginActivity.this);
+//        getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.MATCH_PARENT);
+//        dalReset.setTitle(R.string.dialog_reset_title);
+//        dalReset.setContentView(R.layout.dialog_reset_password);
+//        btnDalCancel = (Button) dalReset.findViewById(R.id.btn_cancel);
+//        btnDalCancel.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                dalReset.dismiss();
+//            }
+//        });
+//
+//        btnDalContinue = (Button)dalReset.findViewById(R.id.btn_continue);
+//        edtDalEmail = (EditText) dalReset.findViewById(R.id.edt_email);
+//        btnDalContinue.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                email = edtDalEmail.getText().toString().trim();
+//                if(isValidEmail(email)) {
+//                    mSocket.emit(Constant.SERVER_REQUEST_RESET_PASSWORD, email);
+//                    mSocket.on(Constant.SERVER_RESPONSE_RESET_PASSWORD, new Emitter.Listener() {
+//                        @Override
+//                        public void call(final Object... args) {
+//                            runOnUiThread(new Runnable() {
+//                                @Override
+//                                public void run() {
+//                                    try{
+//                                        final JSONObject jsonObj = ((JSONObject) args[0]);
+//                                        String mess = jsonObj.getJSONObject(Constant.SERVER_RESPONSE_DATA).getString(Constant.SERVER_RESPONSE_MESS);
+//                                        Toast.makeText(LoginActivity.this, mess, Toast.LENGTH_LONG).show();
+//                                        if(jsonObj.getBoolean(Constant.SERVER_RESPONSE_RESULT)) {
+//                                            changePassword();
+//                                         }
+//                                    } catch (JSONException e) {
+//                                        Log.e(TAG, e.getMessage());
+//                                    }
+//                                }
+//                            });
+//                        }
+//                    });
+//                } else {
+//                    Toast.makeText(LoginActivity.this, R.string.mess_invalid_email, Toast.LENGTH_LONG).show();
+//                }
+//            }
+//        });
+//
+//        dalReset.show();
+//        if(dalReset.getWindow() != null) {
+//            dalReset.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+//        }
+//    }
+//
+//    private void changePassword() {
+//        dalReset.setContentView(R.layout.dialog_change_password);
+//        btnDalContinue = (Button) dalReset.findViewById(R.id.btn_continue);
+//        btnDalCancel = (Button) dalReset.findViewById(R.id.btn_cancel);
+//        edtDalCode = (EditText) dalReset.findViewById(R.id.edt_code);
+//        edtDalNewPass = (EditText) dalReset.findViewById(R.id.edt_new_pass);
+//        edtDalRePass = (EditText) dalReset.findViewById(R.id.edt_repass);
+//
+//        btnDalCancel.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                dalReset.dismiss();
+//            }
+//        });
+//
+//        btnDalContinue.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                String code = edtDalCode.getText().toString().trim();
+//                String pass = edtDalNewPass.getText().toString().trim();
+//                if(pass.equals(edtDalRePass.getText().toString().trim())) {
+//                    mSocket.emit(Constant.SERVER_REQUEST_CHANGE_PASSWORD, email, code, pass);
+//                    //
+//                    mSocket.on(Constant.SERVER_RESPONSE_CHANGE_PASSWORD, new Emitter.Listener() {
+//                        @Override
+//                        public void call(final Object... args) {
+//                            runOnUiThread(new Runnable() {
+//                                @Override
+//                                public void run() {
+//                                    try{
+//                                        JSONObject resObj = ((JSONObject) args[0]);
+//                                        String mess = resObj.getJSONObject(Constant.SERVER_RESPONSE_DATA).getString(Constant.SERVER_RESPONSE_MESS);
+//                                        Toast.makeText(LoginActivity.this, mess, Toast.LENGTH_LONG).show();
+//                                        if(resObj.getBoolean(Constant.SERVER_RESPONSE_RESULT)) {
+//                                            dalReset.dismiss();
+//                                        }
+//                                    } catch (JSONException e) {
+//                                        Log.e(TAG, e.getMessage());
+//                                    }
+//                                }
+//                            });
+//                        }
+//                    });
+//                } else {
+//                    Toast.makeText(LoginActivity.this, R.string.mess_password_mismatch, Toast.LENGTH_LONG).show();
+//                }
+//            }
+//        });
+//    }
+
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -168,7 +283,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 startActivity(new Intent(LoginActivity.this, RegisterActivity.class));
                 break;
             case R.id.tvForgotPass:
-                resetPassord();
+//                resetPassord();
                 break;
         }
     }
@@ -177,120 +292,5 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     protected void onDestroy() {
         super.onDestroy();
         SocketIOClient.client.mSocket.disconnect();
-    }
-
-    private void resetPassord() {
-        dalReset = new Dialog(LoginActivity.this);
-        getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.MATCH_PARENT);
-        dalReset.setTitle(R.string.dialog_reset_title);
-        dalReset.setContentView(R.layout.dialog_reset_password);
-        btnDalCancel = (Button) dalReset.findViewById(R.id.btn_cancel);
-        btnDalCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dalReset.dismiss();
-            }
-        });
-
-        btnDalContinue = (Button)dalReset.findViewById(R.id.btn_continue);
-        edtDalEmail = (EditText) dalReset.findViewById(R.id.edt_email);
-        btnDalContinue.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                email = edtDalEmail.getText().toString().trim();
-                if(isValidEmail(email)) {
-                    mSocket.emit(Constant.SERVER_REQUEST_RESET_PASSWORD, email);
-                    mSocket.on(Constant.SERVER_RESPONSE_RESET_PASSWORD, new Emitter.Listener() {
-                        @Override
-                        public void call(final Object... args) {
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    try{
-                                        final JSONObject jsonObj = ((JSONObject) args[0]);
-                                        String mess = jsonObj.getJSONObject(Constant.SERVER_RESPONSE_DATA).getString(Constant.SERVER_RESPONSE_MESS);
-                                        Toast.makeText(LoginActivity.this, mess, Toast.LENGTH_LONG).show();
-                                        if(jsonObj.getBoolean(Constant.SERVER_RESPONSE_RESULT)) {
-                                            changePassword();
-                                         }
-                                    } catch (JSONException e) {
-                                        Log.e(TAG, e.getMessage());
-                                    }
-                                }
-                            });
-                        }
-                    });
-                } else {
-                    Toast.makeText(LoginActivity.this, R.string.mess_invalid_email, Toast.LENGTH_LONG).show();
-                }
-            }
-        });
-
-        dalReset.show();
-        if(dalReset.getWindow() != null) {
-            dalReset.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        }
-    }
-
-    private void changePassword() {
-        dalReset.setContentView(R.layout.dialog_change_password);
-        btnDalContinue = (Button) dalReset.findViewById(R.id.btn_continue);
-        btnDalCancel = (Button) dalReset.findViewById(R.id.btn_cancel);
-        edtDalCode = (EditText) dalReset.findViewById(R.id.edt_code);
-        edtDalNewPass = (EditText) dalReset.findViewById(R.id.edt_new_pass);
-        edtDalRePass = (EditText) dalReset.findViewById(R.id.edt_repass);
-
-        btnDalCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dalReset.dismiss();
-            }
-        });
-
-        btnDalContinue.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String code = edtDalCode.getText().toString().trim();
-                String pass = edtDalNewPass.getText().toString().trim();
-                if(pass.equals(edtDalRePass.getText().toString().trim())) {
-                    mSocket.emit(Constant.SERVER_REQUEST_CHANGE_PASSWORD, email, code, pass);
-                    //
-                    mSocket.on(Constant.SERVER_RESPONSE_CHANGE_PASSWORD, new Emitter.Listener() {
-                        @Override
-                        public void call(final Object... args) {
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    try{
-                                        JSONObject resObj = ((JSONObject) args[0]);
-                                        String mess = resObj.getJSONObject(Constant.SERVER_RESPONSE_DATA).getString(Constant.SERVER_RESPONSE_MESS);
-                                        Toast.makeText(LoginActivity.this, mess, Toast.LENGTH_LONG).show();
-                                        if(resObj.getBoolean(Constant.SERVER_RESPONSE_RESULT)) {
-                                            dalReset.dismiss();
-                                        }
-                                    } catch (JSONException e) {
-                                        Log.e(TAG, e.getMessage());
-                                    }
-                                }
-                            });
-                        }
-                    });
-                } else {
-                    Toast.makeText(LoginActivity.this, R.string.mess_password_mismatch, Toast.LENGTH_LONG).show();
-                }
-            }
-        });
-    }
-
-    public static boolean isValidEmail(String email) {
-        return !(email.indexOf("@") < 1
-                || email.lastIndexOf(".") < email.indexOf("@") + 2
-                || email.lastIndexOf(".") + 2 >= email.length());
-    }
-
-    public static boolean isValidPassword(String password) {
-//        return password.matches("([a-z].*[A-Z])|([A-Z].*[a-z])") && password.length() > 4
-//                && password.matches("[0-9]") && password.matches(".[!,@,#,$,%,^,&,*,?,_,~]");
-        return password.length() > 4;
     }
 }
