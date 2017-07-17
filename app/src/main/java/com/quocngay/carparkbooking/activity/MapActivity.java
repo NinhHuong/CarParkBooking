@@ -73,14 +73,6 @@ public class MapActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener {
 
-    public static final int REQUEST_CODE_AUTOCOMPLETE = 10;
-    public static final int REQUEST_CODE_BOOKING = 1;
-    public static final String GARA_LATLNG = "gara_latlng";
-    public static final String GARA_ADDRESS = "gara_address";
-    private static final int DEFAULT_ZOOM = 17;
-    private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
-    private static final String KEY_CAMERA_POSITION = "camera_position";
-    private static final String KEY_LOCATION = "location";
     private GoogleMap googleMap;
     private LatLng currentLocation;
     private boolean mLocationPermissionGranted;
@@ -136,8 +128,8 @@ public class MapActivity extends AppCompatActivity
                 .build();
         mGoogleApiClient.connect();
         if (savedInstanceState != null) {
-            mCurrentLocation = savedInstanceState.getParcelable(KEY_LOCATION);
-            mCameraPosition = savedInstanceState.getParcelable(KEY_CAMERA_POSITION);
+            mCurrentLocation = savedInstanceState.getParcelable(Constant.KEY_LOCATION);
+            mCameraPosition = savedInstanceState.getParcelable(Constant.KEY_CAMERA_POSITION);
         }
 
         btnMyLocation = (FloatingActionButton) findViewById(R.id.btnMyLocation);
@@ -166,9 +158,9 @@ public class MapActivity extends AppCompatActivity
             public void onClick(View v) {
                 //TODO: Use SharedPreference for sending location json instead of put Extra function
                 Intent bookingIntent = new Intent(getApplicationContext(), BookingActivity.class);
-                bookingIntent.putExtra(GARA_LATLNG, selectedGara);
-                bookingIntent.putExtra(GARA_LATLNG, selectedGara);
-                startActivityForResult(bookingIntent, REQUEST_CODE_BOOKING);
+                bookingIntent.putExtra(Constant.GARA_LATLNG, selectedGara);
+                bookingIntent.putExtra(Constant.GARA_LATLNG, selectedGara);
+                startActivityForResult(bookingIntent, Constant.REQUEST_CODE_BOOKING);
 
             }
         });
@@ -180,7 +172,7 @@ public class MapActivity extends AppCompatActivity
     private void openAutocompleteActivity() {
         try {
             Intent intent = new PlaceAutocomplete.IntentBuilder(PlaceAutocomplete.MODE_FULLSCREEN).build(this);
-            startActivityForResult(intent, REQUEST_CODE_AUTOCOMPLETE);
+            startActivityForResult(intent, Constant.REQUEST_CODE_AUTOCOMPLETE);
         } catch (GooglePlayServicesRepairableException e) {
             GoogleApiAvailability.getInstance().getErrorDialog(this, e.getConnectionStatusCode(), 0 /* requestCode */).show();
         } catch (GooglePlayServicesNotAvailableException e) {
@@ -196,7 +188,7 @@ public class MapActivity extends AppCompatActivity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-        if (requestCode == REQUEST_CODE_AUTOCOMPLETE) {
+        if (requestCode == Constant.REQUEST_CODE_AUTOCOMPLETE) {
             if (resultCode == RESULT_OK) {
                 Place place = PlaceAutocomplete.getPlace(this, data);
                 Log.i("TAG", "Place: " + place.getName());
@@ -205,7 +197,7 @@ public class MapActivity extends AppCompatActivity
                 double locationLatitude = place.getLatLng().latitude;
                 double locationLongitude = place.getLatLng().longitude;
                 googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
-                        new LatLng(locationLatitude, locationLongitude), DEFAULT_ZOOM));
+                        new LatLng(locationLatitude, locationLongitude), Constant.DEFAULT_ZOOM));
 
                 location.setLatitude(locationLatitude);
                 location.setLongitude(locationLongitude);
@@ -221,7 +213,7 @@ public class MapActivity extends AppCompatActivity
         }
         if (requestCode == 1) {
             if (resultCode == RESULT_OK) {
-                Boolean bookingStatus = data.getBooleanExtra(BookingActivity.BOOKING_STATUS, false);
+                Boolean bookingStatus = data.getBooleanExtra(Constant.BOOKING_STATUS, false);
                 if (bookingStatus) {
                     if (mPolyline != null) {
                         mPolyline.remove();
@@ -341,7 +333,7 @@ public class MapActivity extends AppCompatActivity
         } else {
             ActivityCompat.requestPermissions(this,
                     new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
-                    PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
+                    Constant.PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
         }
 
         if (mLocationPermissionGranted) {
@@ -362,7 +354,7 @@ public class MapActivity extends AppCompatActivity
         } else {
             ActivityCompat.requestPermissions(this,
                     new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
-                    PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
+                    Constant.PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
         }
 
         if (mLocationPermissionGranted) {
@@ -376,11 +368,11 @@ public class MapActivity extends AppCompatActivity
         } else if (mLastKnownLocation != null) {
             googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
                     new LatLng(mLastKnownLocation.getLatitude(),
-                            mLastKnownLocation.getLongitude()), DEFAULT_ZOOM));
+                            mLastKnownLocation.getLongitude()), Constant.DEFAULT_ZOOM));
         } else {
             Log.d("TAG", "Current location is null. Using defaults.");
             mDefaultLocation = new LatLng(-33.852, 151.211);
-            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mDefaultLocation, DEFAULT_ZOOM));
+            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mDefaultLocation, Constant.DEFAULT_ZOOM));
             googleMap.getUiSettings().setMyLocationButtonEnabled(false);
         }
 
@@ -401,7 +393,7 @@ public class MapActivity extends AppCompatActivity
     public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
         mLocationPermissionGranted = false;
         switch (requestCode) {
-            case PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION: {
+            case Constant.PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION: {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -478,8 +470,8 @@ public class MapActivity extends AppCompatActivity
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         if (googleMap != null) {
-            outState.putParcelable(KEY_CAMERA_POSITION, googleMap.getCameraPosition());
-            outState.putParcelable(KEY_LOCATION, mLastKnownLocation);
+            outState.putParcelable(Constant.KEY_CAMERA_POSITION, googleMap.getCameraPosition());
+            outState.putParcelable(Constant.KEY_LOCATION, mLastKnownLocation);
             super.onSaveInstanceState(outState);
         }
     }

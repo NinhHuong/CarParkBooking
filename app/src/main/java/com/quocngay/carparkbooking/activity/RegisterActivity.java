@@ -5,25 +5,21 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.util.Patterns;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.github.nkzawa.emitter.Emitter;
-import com.github.nkzawa.socketio.client.IO;
-import com.github.nkzawa.socketio.client.Socket;
 import com.quocngay.carparkbooking.R;
 import com.quocngay.carparkbooking.other.Constant;
+import com.quocngay.carparkbooking.other.SocketIOClient;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
-import java.net.URISyntaxException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -31,15 +27,9 @@ import java.util.Random;
 
 public class RegisterActivity extends AppCompatActivity {
 
-    public static final int ROLE_USER_VALUE = 4;
-    public static final String ROLE_ID = "roleID";
-
     private EditText edtEmail, edtPass, edtRetypePass;
-    private Button btnRegist;
-    private Toolbar toolbar;
 
-    private Socket mSocket;
-    private Emitter.Listener onNewMessage_ResultRegistNewAccount = new Emitter.Listener() {
+    private Emitter.Listener onNewMessageResultRegistNewAccount = new Emitter.Listener() {
         @Override
         public void call(final Object... args) {
             runOnUiThread(new Runnable() {
@@ -48,14 +38,14 @@ public class RegisterActivity extends AppCompatActivity {
                     JSONObject data = (JSONObject) args[0];
                     Log.i("Data", data.toString());
                     try {
-                        boolean res = data.getBoolean("res");
-                        String message = data.getString("response");
-
+                        boolean res = data.getBoolean("result");
+                        String message = data.getJSONObject("data").getString("mess");
                         Toast.makeText(getBaseContext(), message, Toast.LENGTH_SHORT).show();
-
-                        if (res)
+                        if (res) {
+                            Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+                            SocketIOClient.client.mSocket.off();
                             finish();
-//                            startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
+                        }
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -64,20 +54,12 @@ public class RegisterActivity extends AppCompatActivity {
         }
     };
 
-    {
-        try {
-            mSocket = IO.socket(Constant.SERVER_HOST);
-        } catch (URISyntaxException e) {
-            Log.e("Error", e.getMessage());
-        }
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-        toolbar = (Toolbar) findViewById(R.id.toolbar_regist);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_regist);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
@@ -87,52 +69,46 @@ public class RegisterActivity extends AppCompatActivity {
         edtEmail = (EditText) findViewById(R.id.edtEmailRegist);
         edtPass = (EditText) findViewById(R.id.edtPassRegist);
         edtRetypePass = (EditText) findViewById(R.id.edtRePassRegist);
-        btnRegist = (Button) findViewById(R.id.btnRegist);
+        Button btnRegist = (Button) findViewById(R.id.btnRegist);
 
         btnRegist.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 registNewAccount();
             }
         });
-        mSocket.connect();
-        // runFadeInAnimation();
-
-    }
-
-    private void runFadeInAnimation() {
-        Animation a = AnimationUtils.loadAnimation(this, R.anim.fade_in);
-        a.reset();
-        RelativeLayout ll = (RelativeLayout) findViewById(R.id.form_register);
-        ll.clearAnimation();
-        ll.startAnimation(a);
     }
 
     private void registNewAccount() {
         String email = edtEmail.getText().toString();
         String password = edtPass.getText().toString();
-        if (password.compareTo(edtRetypePass.getText().toString()) != 0) {
-            Toast.makeText(getBaseContext(), "Password and re-type password not the same!!!" +
-                    " Try again", Toast.LENGTH_SHORT).show();
+        if (email.isEmpty() || !Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            Toast.makeText(getApplicationContext(), getResources().getString(R.string.error_email), Toast.LENGTH_SHORT).show();
             return;
         }
-
-        if (!mSocket.connected())
-            mSocket.connect();
+        if (password.isEmpty() || password.length() < Constant.PASSWORD_LENGTH) {
+            Toast.makeText(getApplicationContext(), getResources().getString(R.string.error_password, Constant.PASSWORD_LENGTH), Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (password.compareTo(edtRetypePass.getText().toString()) != 0) {
+            Toast.makeText(getBaseContext(), getResources().getString(R.string.error_repassword), Toast.LENGTH_SHORT).show();
+            return;
+        }
         String salt = createSalt();
         String hashPassword = sha512Password(password, salt);
         JSONObject j = new JSONObject();
         try {
-            j.put("email", email);
-            j.put("password", hashPassword);
-            j.put("salt", salt);
-            j.put(ROLE_ID, ROLE_USER_VALUE);
+            j.put(Constant.EMAIL, email);
+            j.put(Constant.PASSWORD, hashPassword);
+            j.put(Constant.SALT, salt);
+            j.put(Constant.ROLE_ID, Constant.ROLE_USER_VALUE);
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        mSocket.emit("request_create_account", j.toString());
-        mSocket.on("response_create_account", onNewMessage_ResultRegistNewAccount);
+        SocketIOClient.client.mSocket.emit(Constant.REQUEST_CREATE_ACCOUNT, j.toString());
+        SocketIOClient.client.mSocket.on(Constant.RESPONSE_CREATE_ACCOUNT, onNewMessageResultRegistNewAccount);
     }
 
+    //Salt random code for hash pass
     private String createSalt() {
         final Random r = new SecureRandom();
         byte[] salt = new byte[20];
@@ -144,6 +120,7 @@ public class RegisterActivity extends AppCompatActivity {
         return sb.toString();
     }
 
+    //create hash pass from salt code and original pass
     public String sha512Password(String passwordToHash, String salt) {
         String generatedPassword = null;
         try {
@@ -159,12 +136,5 @@ public class RegisterActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         return generatedPassword;
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        mSocket.disconnect();
-        mSocket.off();
     }
 }

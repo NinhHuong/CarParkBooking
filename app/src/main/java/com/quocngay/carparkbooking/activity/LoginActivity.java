@@ -15,33 +15,26 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.nkzawa.emitter.Emitter;
-import com.github.nkzawa.socketio.client.IO;
-import com.github.nkzawa.socketio.client.Socket;
 import com.quocngay.carparkbooking.R;
 import com.quocngay.carparkbooking.other.Constant;
+import com.quocngay.carparkbooking.other.SocketIOClient;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
-import java.net.URISyntaxException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
-    public static final int PASSWORD_LENGTH = 6;
-
-    EditText edtEmail, edtPass;
-    Button btnLogin;
-    TextView tvRegister, tvForgotPassword;
-    private Socket mSocket;
+    private EditText edtEmail, edtPass;
     private CheckBox cbRemember;
     private String mSalt = "";
     private String email;
     private String password;
 
-    private Emitter.Listener onNewMessage_ResultLogin = new Emitter.Listener() {
+    private Emitter.Listener onNewMessageResultLogin = new Emitter.Listener() {
         @Override
         public void call(final Object... args) {
             runOnUiThread(new Runnable() {
@@ -65,11 +58,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             editor.putString(Constant.APP_PREF_TOKEN, data.getString(Constant.SERVER_RESPONSE_LOGIN_PARA_TOKEN));
                             editor.apply();
 
-                            Toast.makeText(getBaseContext(), "LoginActivity success", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), getResources().getString(R.string.login_successfull), Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(LoginActivity.this, MapActivity.class);
                             startActivity(intent);
-
                             finish();
+                            SocketIOClient.client.mSocket.off();
                         }
 
                     } catch (JSONException e) {
@@ -80,7 +73,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
     };
 
-    private Emitter.Listener onNewMessage_GetSalt = new Emitter.Listener() {
+    private Emitter.Listener onNewMessageGetSalt = new Emitter.Listener() {
         @Override
         public void call(final Object... args) {
             runOnUiThread(new Runnable() {
@@ -94,26 +87,19 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     } else {
                         String hashPassword = sha512Password(password, mSalt);
                         try {
-                            j.put("email", email);
-                            j.put("password", hashPassword);
+                            j.put(Constant.EMAIL, email);
+                            j.put(Constant.PASSWORD, hashPassword);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-                        mSocket.emit("check_email_and_password", j.toString());
-                        mSocket.on("result_login", onNewMessage_ResultLogin);
+                        SocketIOClient.client.mSocket.off();
+                        SocketIOClient.client.mSocket.emit(Constant.REQUEST_CHECK_EMAIL_PASSWORD, j.toString());
+                        SocketIOClient.client.mSocket.on(Constant.RESPONSE_RESULT_LOGIN, onNewMessageResultLogin);
                     }
                 }
             });
         }
     };
-
-    {
-        try {
-            mSocket = IO.socket(Constant.SERVER_HOST);
-        } catch (URISyntaxException e) {
-            Log.e("Error", e.getMessage());
-        }
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -123,16 +109,16 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         edtEmail = (EditText) findViewById(R.id.edtEmail);
         edtPass = (EditText) findViewById(R.id.edtPassword);
-        btnLogin = (Button) findViewById(R.id.btnLogin);
-        tvRegister = (TextView) findViewById(R.id.tvRegister);
-        tvForgotPassword = (TextView) findViewById(R.id.tvForgotPass);
+        Button btnLogin = (Button) findViewById(R.id.btnLogin);
+        TextView tvRegister = (TextView) findViewById(R.id.tvRegister);
+        TextView tvForgotPassword = (TextView) findViewById(R.id.tvForgotPass);
         cbRemember = (CheckBox) findViewById(R.id.cbRemember);
 
         btnLogin.setOnClickListener(this);
         tvRegister.setOnClickListener(this);
         tvForgotPassword.setOnClickListener(this);
 
-        mSocket.connect();
+        new SocketIOClient();
     }
 
     public String sha512Password(String passwordToHash, String salt) {
@@ -152,10 +138,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         return generatedPassword;
     }
 
-    private void checkValid() {
-
-    }
-
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -163,21 +145,26 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 email = edtEmail.getText().toString();
                 password = edtPass.getText().toString();
                 if (email.isEmpty() || !Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-                    Toast.makeText(getApplicationContext(), getResources().getString(R.string.login_error_email), Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), getResources().getString(R.string.error_email), Toast.LENGTH_SHORT).show();
                     break;
                 }
-                if (password.isEmpty() || password.length() < PASSWORD_LENGTH) {
-                    Toast.makeText(getApplicationContext(), getResources().getString(R.string.login_error_password, PASSWORD_LENGTH), Toast.LENGTH_LONG).show();
+                if (password.isEmpty() || password.length() < Constant.PASSWORD_LENGTH) {
+                    Toast.makeText(getApplicationContext(), getResources().getString(R.string.error_password, Constant.PASSWORD_LENGTH), Toast.LENGTH_SHORT).show();
                     break;
                 }
-                mSocket.emit("request_get_salt", email);
-                mSocket.on("response_get_salt", onNewMessage_GetSalt);
+                JSONObject requestJson = new JSONObject();
+                try {
+                    requestJson.put(Constant.EMAIL, email);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                SocketIOClient.client.mSocket.emit(Constant.REQUEST_GET_SALT, email);
+                SocketIOClient.client.mSocket.on(Constant.RESPONSE_GET_SALT, onNewMessageGetSalt);
                 if (cbRemember.isChecked()) {
-
+                    //TODO: Remember me function
                 }
                 break;
             case R.id.tvRegister:
-
                 startActivity(new Intent(LoginActivity.this, RegisterActivity.class));
                 break;
             case R.id.tvForgotPass:
@@ -185,23 +172,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
     }
 
-    //TODO: Fix socket connect bug
-    @Override
-    protected void onPause() {
-        super.onPause();
-        mSocket.disconnect();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        mSocket.connect();
-    }
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mSocket.disconnect();
-        mSocket.off();
+        SocketIOClient.client.mSocket.disconnect();
     }
 }

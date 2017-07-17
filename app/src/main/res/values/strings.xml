@@ -67,7 +67,9 @@
     <string name="register_repass">Nhập lại mật khẩu</string>
     <string name="server_error_email">Email sai hoặc không tồn tại</string>
     <string name="server_error_password">Sai mật khẩu</string>
-    <string name="login_error_email">Email lỗi! Vui lòng kiểm tra lại.</string>
-    <string name="login_error_password">Mật khẩu phải nhiều hơn %1$d ký tự</string>
+    <string name="error_email">Email lỗi! Vui lòng kiểm tra lại.</string>
+    <string name="error_password">Mật khẩu phải nhiều hơn %1$d ký tự</string>
+    <string name="login_successfull">Đăng nhập thành công!</string>
+    <string name="error_repassword">Password and re-type password not the same!!! Try again</string>
 
 </resources>
