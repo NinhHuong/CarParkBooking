@@ -71,16 +71,31 @@
             android:id="@+id/btnMyLocation"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_above="@+id/main_infor"
+            android:layout_above="@id/main_infor"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
             android:layout_marginEnd="10dp"
             android:layout_marginRight="10dp"
+            android:layout_marginTop="10dp"
             android:clickable="true"
             app:backgroundTint="@android:color/white"
             app:fabSize="normal"
             app:srcCompat="@drawable/ic_my_location_white_24dp" />
 
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/btnDirection"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/btnMyLocation"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginEnd="10dp"
+            android:layout_marginRight="10dp"
+            android:clickable="true"
+            android:visibility="visible"
+            app:backgroundTint="@android:color/white"
+            app:fabSize="normal"
+            app:srcCompat="@drawable/ic_directions_black_24dp" />
     </RelativeLayout>
 
 

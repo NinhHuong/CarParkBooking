@@ -26,22 +26,22 @@
     <string name="invalid_token_message">Invalid token! Please try again</string>
     <string name="error_network">Turn on internet to continue!</string>
     <string name="time_exprited">Expired!</string>
-    <string name="dialog_reset_int_btn_cancel">Cancel</string>
-    <string name="dialog_reset_int_btn_continue">Continue</string>
+    <string name="dialog_btn_cancel"><u>Hủy</u></string>
+    <string name="dialog_btn_continue">Tiếp tục</string>
     <string name="dialog_reset_title">Reset Password</string>
     <string name="hint_retype_password">Re-type Password</string>
     <string name="hint_password">Password</string>
     <string name="hint_reset_code">Reset code</string>
     <string name="hint_email">Email</string>
     <string name="title_activity_google_map">Map</string>
-    <string name="permission_rationale">"Contacts permissions are needed for providing email
-        completions."
+    <string name="permission_rationale">Contacts permissions are needed for providing email
+        completions.
     </string>
     <string name="error_invalid_password">This password is too short</string>
     <string name="error_field_required">This field is required</string>
 
     <string name="login_signup"><u>Chưa có tài khoản? Tạo tài khoản!</u></string>
-    <string name="login_remember">Remember me</string>
+    <string name="login_remember">Giữ tôi đăng nhập</string>
     <string name="login_email">Nhập email</string>
     <string name="login_password">Nhập mật khẩu</string>
     <string name="login_forgot"><u>Quên mật khẩu</u></string>
@@ -72,7 +72,7 @@
 
     <string name="map_findgara">Chọn bãi đỗ xe</string>
     <string name="google_direction_api">https://maps.googleapis.com/maps/api/directions/%1$s?%2$s</string>
-    <string name="google_direction_api_redirect">https://www.google.com/maps/dir/?api=1%1$s</string>
+    <string name="google_direction_api_redirect">https://www.google.com/maps/dir/?api=1&amp;%1$s</string>
     <string name="map_booking">Đặt chỗ</string>
     <string name="register_button">Đăng ký</string>
     <string name="register_email">Nhập email</string>
@@ -83,7 +83,7 @@
     <string name="error_email">Email lỗi! Vui lòng kiểm tra lại.</string>
     <string name="error_password">Mật khẩu phải nhiều hơn %1$d ký tự</string>
     <string name="login_successfull">Đăng nhập thành công!</string>
-    <string name="error_repassword">Password and re-type password not the same!!! Try again</string>
+    <string name="error_repassword">Mật khẩu nhập lại và mật khẩu không giống nhau</string>
 
     <string name="btn_register">Register</string>
     <string name="title_activity_register">Register</string>
@@ -97,4 +97,10 @@
     <string name="error_invalid_email">This email address is invalid</string>
     <string name="error_incorrect_password">This password is incorrect</string>
     <string name="error_mismatch_password">Your confirmation password is mismatch</string>
+    <string name="forget_reset_success">Lấy lại mật khẩu thành công!</string>
+    <string name="error_code">Mã lỗi! Hãy kiểm tra lại</string>
+    <string name="newpass_button">Xác nhận</string>
+    <string name="register_successfull">Đăng ký thành công. Vào email để lấy mã xác nhận</string>
+    <string name="dialog_verify">Nhập mã xác nhận</string>
+    <string name="verify_description">Tài khoản của bạn cần được xác nhận. Vui lòng kiểm tra email để lấy mã.</string>
 </resources>

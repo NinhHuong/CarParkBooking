@@ -1,5 +1,6 @@
 package com.quocngay.carparkbooking.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -22,13 +23,11 @@ import org.json.JSONObject;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
-import java.util.Random;
 
 public class RegisterActivity extends AppCompatActivity {
 
+    String email, password, hashPassword;
     private EditText edtEmail, edtPass, edtRetypePass;
-
     private Emitter.Listener onNewMessageResultRegistNewAccount = new Emitter.Listener() {
         @Override
         public void call(final Object... args) {
@@ -39,10 +38,12 @@ public class RegisterActivity extends AppCompatActivity {
                     Log.i("Data", data.toString());
                     try {
                         boolean res = data.getBoolean(Constant.RESULT);
-                        String message = data.getJSONObject(Constant.DATA).getString(Constant.MESSAGE);
-                        Toast.makeText(getBaseContext(), message, Toast.LENGTH_SHORT).show();
                         if (res) {
-                            Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), getResources().getString(R.string.register_successfull), Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
+                            intent.putExtra(Constant.EMAIL, email);
+                            intent.putExtra(Constant.PASSWORD, password);
+                            setResult(RESULT_OK, intent);
                             SocketIOClient.client.mSocket.off();
                             finish();
                         }
@@ -79,8 +80,8 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void registNewAccount() {
-        String email = edtEmail.getText().toString();
-        String password = edtPass.getText().toString();
+        email = edtEmail.getText().toString();
+        password = edtPass.getText().toString();
         if (email.isEmpty() || !Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             Toast.makeText(getApplicationContext(), getResources().getString(R.string.error_email), Toast.LENGTH_SHORT).show();
             return;
@@ -93,39 +94,17 @@ public class RegisterActivity extends AppCompatActivity {
             Toast.makeText(getBaseContext(), getResources().getString(R.string.error_repassword), Toast.LENGTH_SHORT).show();
             return;
         }
-        String salt = createSalt();
-        String hashPassword = sha512Password(password, salt);
-        JSONObject j = new JSONObject();
-        try {
-            j.put(Constant.EMAIL, email);
-            j.put(Constant.PASSWORD, hashPassword);
-            j.put(Constant.SALT, salt);
-            j.put(Constant.ROLE_ID, Constant.ROLE_USER_VALUE);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        SocketIOClient.client.mSocket.emit(Constant.REQUEST_CREATE_ACCOUNT, j.toString());
+        hashPassword = sha512Password(password);
+
+        SocketIOClient.client.mSocket.emit(Constant.REQUEST_CREATE_ACCOUNT, email, hashPassword, Constant.ROLE_USER_VALUE);
         SocketIOClient.client.mSocket.on(Constant.RESPONSE_CREATE_ACCOUNT, onNewMessageResultRegistNewAccount);
     }
 
-    //Salt random code for hash pass
-    private String createSalt() {
-        final Random r = new SecureRandom();
-        byte[] salt = new byte[20];
-        r.nextBytes(salt);
-        StringBuilder sb = new StringBuilder();
-        for (byte aByte : salt) {
-            sb.append(Integer.toString((aByte & 0xff) + 0x100, 16).substring(1));
-        }
-        return sb.toString();
-    }
-
     //create hash pass from salt code and original pass
-    public String sha512Password(String passwordToHash, String salt) {
+    public String sha512Password(String passwordToHash) {
         String generatedPassword = null;
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-512");
-            md.update(salt.getBytes("UTF-8"));
             byte[] bytes = md.digest(passwordToHash.getBytes("UTF-8"));
             StringBuilder sb = new StringBuilder();
             for (byte aByte : bytes) {

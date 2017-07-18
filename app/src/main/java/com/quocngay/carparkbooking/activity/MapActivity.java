@@ -2,9 +2,14 @@ package com.quocngay.carparkbooking.activity;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.location.Location;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -33,6 +38,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.nkzawa.emitter.Emitter;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
@@ -47,17 +53,24 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.gson.Gson;
 import com.quocngay.carparkbooking.R;
+import com.quocngay.carparkbooking.model.GarageModel;
 import com.quocngay.carparkbooking.other.Constant;
 import com.quocngay.carparkbooking.other.DirectionsJSONParser;
 import com.quocngay.carparkbooking.other.FetchAddressIntentService;
+import com.quocngay.carparkbooking.other.SocketIOClient;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -75,7 +88,6 @@ public class MapActivity extends AppCompatActivity
         GoogleApiClient.OnConnectionFailedListener {
 
     private GoogleMap googleMap;
-    private LatLng currentLocation;
     private boolean mLocationPermissionGranted;
     private Location mLastKnownLocation;
     private GoogleApiClient mGoogleApiClient;
@@ -99,6 +111,32 @@ public class MapActivity extends AppCompatActivity
     private Toolbar toolbar;
     private DrawerLayout drawer;
     private LatLng selectedGara;
+    private List<GarageModel> garageModelList;
+    private FloatingActionButton btnGgDirection;
+    private Emitter.Listener onResponseGetAllGarages = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    JSONObject jsonObject = (JSONObject) args[0];
+                    Log.d("Garas", jsonObject.toString());
+                    Gson gson = new Gson();
+                    try {
+                        JSONArray listJsonGaras = jsonObject.getJSONArray(Constant.SERVER_GARAGES_RESULT);
+                        garageModelList = new ArrayList<GarageModel>();
+                        for (int i = 0; i < listJsonGaras.length(); i++) {
+                            GarageModel garageModel =
+                                    gson.fromJson(listJsonGaras.getJSONObject(i).toString(), GarageModel.class);
+                            garageModelList.add(garageModel);
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
+    };
 
     private void defaultToolbar() {
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -116,7 +154,9 @@ public class MapActivity extends AppCompatActivity
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         defaultToolbar();
-
+        SocketIOClient.client.mSocket.off();
+        SocketIOClient.client.mSocket.emit(Constant.REQUEST_GET_ALL_GARAGES);
+        SocketIOClient.client.mSocket.on(Constant.RESPONSE_GET_ALL_GARAGES, onResponseGetAllGarages);
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
@@ -128,13 +168,8 @@ public class MapActivity extends AppCompatActivity
                 .addApi(Places.PLACE_DETECTION_API)
                 .build();
         mGoogleApiClient.connect();
-        if (savedInstanceState != null) {
-            mCurrentLocation = savedInstanceState.getParcelable(Constant.KEY_LOCATION);
-            mCameraPosition = savedInstanceState.getParcelable(Constant.KEY_CAMERA_POSITION);
-        }
-
         btnMyLocation = (FloatingActionButton) findViewById(R.id.btnMyLocation);
-
+        btnGgDirection = (FloatingActionButton) findViewById(R.id.btnDirection);
         addressTitle = (TextView) findViewById(R.id.tv_add_title);
         addressDescription = (TextView) findViewById(R.id.tv_add_description);
         mCardView = (CardView) findViewById(R.id.cvAddress);
@@ -146,7 +181,6 @@ public class MapActivity extends AppCompatActivity
         });
 
         tvDistance = (TextView) findViewById(R.id.tv_nearest);
-
         btnBook = (Button) findViewById(R.id.btnFindGara);
         if (selectedGara != null) {
             btnBook.setEnabled(true);
@@ -157,7 +191,6 @@ public class MapActivity extends AppCompatActivity
         btnBook.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO: Use SharedPreference for sending location json instead of put Extra function
                 Intent bookingIntent = new Intent(getApplicationContext(), BookingActivity.class);
                 bookingIntent.putExtra(Constant.GARA_LATLNG, selectedGara);
                 bookingIntent.putExtra(Constant.GARA_LATLNG, selectedGara);
@@ -165,10 +198,7 @@ public class MapActivity extends AppCompatActivity
 
             }
         });
-
-
     }
-
 
     private void openAutocompleteActivity() {
         try {
@@ -185,7 +215,6 @@ public class MapActivity extends AppCompatActivity
         }
     }
 
-    // A place has been received; use requestCode to track the request.
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
@@ -205,11 +234,8 @@ public class MapActivity extends AppCompatActivity
                 addDefaultMarker(location);
             } else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {
                 Status status = PlaceAutocomplete.getStatus(this, data);
-                // TODO: Handle the error.
                 Log.i("TAG", status.getStatusMessage());
 
-            } else if (resultCode == RESULT_CANCELED) {
-                // The user canceled the operation.
             }
         }
         if (requestCode == 1) {
@@ -219,31 +245,32 @@ public class MapActivity extends AppCompatActivity
                     if (mPolyline != null) {
                         mPolyline.remove();
                     }
-                    LatLng dest = selectedGara;
-                    LatLng origin = new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude());
-
-                    // Getting URL to the Google Directions API
+                    final LatLng dest = selectedGara;
+                    final LatLng origin = new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude());
+                    btnGgDirection.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
+                                    Uri.parse(getDirectionsUrl(origin, dest, true)));
+                            startActivity(intent);
+                        }
+                    });
                     String url = getDirectionsUrl(origin, dest, false);
-
                     DownloadTask downloadTask = new DownloadTask();
-
-                    // Start downloading json data from Google Directions API
                     downloadTask.execute(url);
                 }
             }
         }
     }
 
-
     @Override
     public void onMapReady(final GoogleMap map) {
-
         googleMap = map;
         initMap();
         updateLocationUI();
         getDeviceLocation();
-        if (mLastKnownLocation != null) {
-            startIntentService(mLastKnownLocation);
+        for (GarageModel garageModel : garageModelList) {
+            placeCustomMarker(garageModel);
         }
     }
 
@@ -253,7 +280,10 @@ public class MapActivity extends AppCompatActivity
         btnMyLocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getDeviceLocation();
+                if (mLastKnownLocation != null)
+                    googleMap.animateCamera(CameraUpdateFactory.newLatLng(
+                            new LatLng(mLastKnownLocation.getLatitude(),
+                                    mLastKnownLocation.getLongitude())));
             }
         });
 
@@ -269,6 +299,49 @@ public class MapActivity extends AppCompatActivity
                 btnBook.setEnabled(true);
             }
         });
+
+        googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                selectedGara = marker.getPosition();
+                if (selectedGara != null) {
+                    btnBook.setEnabled(true);
+                }
+                Location location = new Location("");
+                location.setLatitude(marker.getPosition().latitude);
+                location.setLongitude(marker.getPosition().longitude);
+                startIntentService(location);
+                return false;
+            }
+        });
+    }
+
+    private void placeCustomMarker(GarageModel garageModel) {
+        Bitmap.Config conf = Bitmap.Config.ARGB_8888;
+        Bitmap bmp = Bitmap.createBitmap(60, 60, conf);
+        Canvas canvas1 = new Canvas(bmp);
+
+        Paint color = new Paint(Paint.LINEAR_TEXT_FLAG | Paint.ANTI_ALIAS_FLAG);
+        color.setTextSize(16);
+        color.setTextAlign(Paint.Align.CENTER);
+        color.setFakeBoldText(true);
+        color.setStyle(Paint.Style.FILL);
+        color.setSubpixelText(true);
+        color.setColor(Color.BLACK);
+
+        if (garageModel.getRemainSlot() == 0) {
+            canvas1.drawBitmap(BitmapFactory.decodeResource(getResources(),
+                    R.mipmap.ic_marker_gara_gray), 0, 0, color);
+        } else {
+            canvas1.drawBitmap(BitmapFactory.decodeResource(getResources(),
+                    R.mipmap.ic_marker_gara_red), 0, 0, color);
+        }
+        canvas1.drawText(String.valueOf(garageModel.getRemainSlot()), 28, 27, color);
+        Marker marker = googleMap.addMarker(new MarkerOptions()
+                .position(garageModel.getPosition())
+                .icon(BitmapDescriptorFactory.fromBitmap(bmp))
+                // Specifies the anchor to be at a particular point in the marker image.
+                .anchor(0.4f, 0.7f));
     }
 
     protected void startIntentService(Location location) {
@@ -322,11 +395,6 @@ public class MapActivity extends AppCompatActivity
             return;
         }
 
-    /*
-     * Request location permission, so that we can get the location of the
-     * device. The result of the permission request is handled by a callback,
-     * onRequestPermissionsResult.
-     */
         if (ContextCompat.checkSelfPermission(this.getApplicationContext(),
                 android.Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
@@ -341,7 +409,6 @@ public class MapActivity extends AppCompatActivity
             googleMap.setMyLocationEnabled(true);
         } else {
             googleMap.setMyLocationEnabled(false);
-
             mLastKnownLocation = null;
         }
     }
@@ -367,7 +434,7 @@ public class MapActivity extends AppCompatActivity
         if (mCameraPosition != null) {
             googleMap.moveCamera(CameraUpdateFactory.newCameraPosition(mCameraPosition));
         } else if (mLastKnownLocation != null) {
-            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
+            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
                     new LatLng(mLastKnownLocation.getLatitude(),
                             mLastKnownLocation.getLongitude()), Constant.DEFAULT_ZOOM));
         } else {
@@ -407,22 +474,13 @@ public class MapActivity extends AppCompatActivity
 
     private String getDirectionsUrl(LatLng origin, LatLng dest, Boolean redirect) {
 
-        // Origin of route
         String str_origin = "origin=" + origin.latitude + "," + origin.longitude;
-
-        // Destination of route
         String str_dest = "destination=" + dest.latitude + "," + dest.longitude;
-
-        // Sensor enabled
         String sensor = "sensor=false";
         String mode = "mode=driving";
-        // Building the parameters to the web service
         String parameters = str_origin + "&" + str_dest + "&" + sensor + "&" + mode;
-
-        // Output format
         String output = "json";
         String url;
-        // Building the url to the web service
         if (redirect) {
             url = getResources().getString(R.string.google_direction_api_redirect, parameters);
         } else {
@@ -433,30 +491,37 @@ public class MapActivity extends AppCompatActivity
         return url;
     }
 
+    public void centerIncidentRouteOnMap(List<LatLng> copiedPoints) {
+        double minLat = Integer.MAX_VALUE;
+        double maxLat = Integer.MIN_VALUE;
+        double minLon = Integer.MAX_VALUE;
+        double maxLon = Integer.MIN_VALUE;
+        for (LatLng point : copiedPoints) {
+            maxLat = Math.max(point.latitude, maxLat);
+            minLat = Math.min(point.latitude, minLat);
+            maxLon = Math.max(point.longitude, maxLon);
+            minLon = Math.min(point.longitude, minLon);
+        }
+        final LatLngBounds bounds = new LatLngBounds.Builder().include(new LatLng(maxLat, maxLon)).include(new LatLng(minLat, minLon)).build();
+        googleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 50));
+    }
+
     private String downloadUrl(String strUrl) throws IOException {
         String data = "";
         InputStream iStream = null;
         HttpURLConnection urlConnection = null;
         try {
             URL url = new URL(strUrl);
-
             urlConnection = (HttpURLConnection) url.openConnection();
-
             urlConnection.connect();
-
             iStream = urlConnection.getInputStream();
-
             BufferedReader br = new BufferedReader(new InputStreamReader(iStream));
-
             StringBuffer sb = new StringBuffer();
-
             String line = "";
             while ((line = br.readLine()) != null) {
                 sb.append(line);
             }
-
             data = sb.toString();
-
             br.close();
 
         } catch (Exception e) {
@@ -475,6 +540,13 @@ public class MapActivity extends AppCompatActivity
             outState.putParcelable(Constant.KEY_LOCATION, mLastKnownLocation);
             super.onSaveInstanceState(outState);
         }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mCameraPosition = googleMap.getCameraPosition();
+        mCurrentLocation = mLastKnownLocation;
     }
 
     @Override
@@ -564,9 +636,7 @@ public class MapActivity extends AppCompatActivity
         @Override
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
-
             ParserTask parserTask = new ParserTask();
-
             parserTask.execute(result);
 
         }
@@ -584,7 +654,6 @@ public class MapActivity extends AppCompatActivity
             try {
                 jObject = new JSONObject(jsonData[0]);
                 DirectionsJSONParser parser = new DirectionsJSONParser();
-
                 routes = parser.parse(jObject);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -619,7 +688,6 @@ public class MapActivity extends AppCompatActivity
                     double lat = Double.parseDouble(point.get("lat"));
                     double lng = Double.parseDouble(point.get("lng"));
                     LatLng position = new LatLng(lat, lng);
-
                     points.add(position);
                 }
 
@@ -627,6 +695,8 @@ public class MapActivity extends AppCompatActivity
                 lineOptions.width(10);
                 lineOptions.color(getResources().getColor(R.color.map_direction));
                 lineOptions.geodesic(true);
+                btnGgDirection.setVisibility(View.VISIBLE);
+                centerIncidentRouteOnMap(points);
 
             }
             tvDistance.setText(distance);

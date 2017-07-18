@@ -46,4 +46,13 @@
         <item name="android:foreground">@drawable/custom_bg</item>
     </style>
 
+    <style name="PinEeditText">
+        <item name="android:gravity">center</item>
+        <item name="android:maxLength">1</item>
+        <item name="android:minEms">2</item>
+        <item name="android:focusable">true</item>
+        <item name="android:focusableInTouchMode">true</item>
+        <item name="android:selectAllOnFocus">true</item>
+    </style>
+
 </resources>
