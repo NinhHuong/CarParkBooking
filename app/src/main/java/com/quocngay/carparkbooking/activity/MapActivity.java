@@ -1,5 +1,6 @@
 package com.quocngay.carparkbooking.activity;
 
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -20,6 +21,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -593,14 +595,18 @@ public class MapActivity extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
+
+
         int id = item.getItemId();
 
         if (id == R.id.nav_camera) {
             // Handle the camera action
         } else if (id == R.id.nav_gallery) {
 
-        } else if (id == R.id.nav_slideshow) {
-
+        } else if (id == R.id.nav_history) {
+            Intent intent = new Intent(MapActivity.this, HistoryActivity.class);
+//            finish();
+            startActivity(intent);
         } else if (id == R.id.nav_logout) {
 
         }
@@ -681,52 +687,6 @@ public class MapActivity extends AppCompatActivity
         }
     }
 
-    private class GetLocationDirection extends DirectionParserTask {
-
-        @Override
-        protected void onPostExecute(List<List<HashMap<String, String>>> result) {
-            ArrayList<LatLng> points = null;
-            PolylineOptions lineOptions = null;
-            MarkerOptions markerOptions = new MarkerOptions();
-            String distance = "";
-            String duration;
-            for (int i = 0; i < result.size(); i++) {
-                points = new ArrayList<>();
-                lineOptions = new PolylineOptions();
-
-                List<HashMap<String, String>> path = result.get(i);
-
-                for (int j = 0; j < path.size(); j++) {
-                    HashMap<String, String> point = path.get(j);
-
-                    if (j == 0) {
-                        distance = point.get("distance");
-                        continue;
-                    } else if (j == 1) {
-                        duration = point.get("duration");
-                        continue;
-                    }
-
-                    double lat = Double.parseDouble(point.get("lat"));
-                    double lng = Double.parseDouble(point.get("lng"));
-                    LatLng position = new LatLng(lat, lng);
-                    points.add(position);
-                }
-
-                lineOptions.addAll(points);
-                lineOptions.width(10);
-                lineOptions.color(getResources().getColor(R.color.map_direction));
-                lineOptions.geodesic(true);
-                btnGgDirection.setVisibility(View.VISIBLE);
-                FrameLayout contentView = (FrameLayout) getLayoutInflater().inflate(R.layout.tooltip, null);
-                showToolTip(btnGgDirection, contentView);
-                centerIncidentRouteOnMap(points);
-
-            }
-            tvDistance.setText(distance);
-            mPolyline = googleMap.addPolyline(lineOptions);
-        }
-    }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
