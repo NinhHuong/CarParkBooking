@@ -19,4 +19,5 @@
     <color name="card_bg">#ffffff</color>
     <color name="map_direction">#e53935</color>
     <color name="fore_bg">#50000000</color>
+    <color name="color_grey">#000</color>
 </resources>

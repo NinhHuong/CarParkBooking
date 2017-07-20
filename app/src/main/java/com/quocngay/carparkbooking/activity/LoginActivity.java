@@ -263,19 +263,19 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         if (Boolean.valueOf(rememberStatus) && !accountToken.isEmpty()) {
             SocketIOClient.client.mSocket.emit(Constant.REQUEST_CHECK_TOKEN, accountToken);
             SocketIOClient.client.mSocket.on(Constant.RESPONSE_CHECK_TOKEN, onResponseCheckToken);
+        } else {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            setContentView(R.layout.activity_login);
+            edtEmail = (EditText) findViewById(R.id.edtEmail);
+            edtPass = (EditText) findViewById(R.id.edtPassword);
+            Button btnLogin = (Button) findViewById(R.id.btnLogin);
+            TextView tvRegister = (TextView) findViewById(R.id.tvRegister);
+            TextView tvForgotPassword = (TextView) findViewById(R.id.tvForgotPass);
+            cbRemember = (CheckBox) findViewById(R.id.cbRemember);
+            btnLogin.setOnClickListener(this);
+            tvRegister.setOnClickListener(this);
+            tvForgotPassword.setOnClickListener(this);
         }
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        setContentView(R.layout.activity_login);
-        edtEmail = (EditText) findViewById(R.id.edtEmail);
-        edtPass = (EditText) findViewById(R.id.edtPassword);
-        Button btnLogin = (Button) findViewById(R.id.btnLogin);
-        TextView tvRegister = (TextView) findViewById(R.id.tvRegister);
-        TextView tvForgotPassword = (TextView) findViewById(R.id.tvForgotPass);
-        cbRemember = (CheckBox) findViewById(R.id.cbRemember);
-
-        btnLogin.setOnClickListener(this);
-        tvRegister.setOnClickListener(this);
-        tvForgotPassword.setOnClickListener(this);
 
     }
 

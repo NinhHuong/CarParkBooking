@@ -21,7 +21,7 @@ public class Constant {
             ".LOCATION_DATA_EXTRA";
     public static final int REQUEST_CODE_AUTOCOMPLETE = 10;
     public static final int REQUEST_CODE_BOOKING = 1;
-    public static final String GARA_LATLNG = "gara_latlng";
+    public static final String GARA_LOCATION = "gara_latlng";
     public static final String GARA_ADDRESS = "gara_address";
     public static final int DEFAULT_ZOOM = 15;
     public static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
@@ -51,9 +51,11 @@ public class Constant {
     public static final String REQUEST_GET_ALL_GARAGES = "request_all_garages";
     public static final String RESPONSE_GET_ALL_GARAGES = "response_all_garages";
     public static final String SERVER_GARAGES_RESULT = "Garages";
+    public static final String MY_LOCATION = "my_location";
     public static int PREF_MODE = 1;
-    //    public static String SERVER_HOST = "http://54.255.178.120:5000";
-    public static String SERVER_HOST = "http://192.168.1.5:5000";
+    //        public static String SERVER_HOST = "http://54.255.178.120:5000";
+    public static String SERVER_HOST = "http://192.168.152.1:5000";
+    //    public static String SERVER_HOST = "http://52.15.194.52:5000";
     public static String APP_PREF = "AppPref";
     public static String APP_PREF_TOKEN = "token";
     public static String APP_PREF_REMEMBER = "remember_status";

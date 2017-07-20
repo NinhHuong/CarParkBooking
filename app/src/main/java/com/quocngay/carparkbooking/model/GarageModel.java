@@ -34,11 +34,20 @@ public class GarageModel {
     private Date timeEnd;
     private String xStatus;
 
-    public GarageModel() {
+    public GarageModel(int id, String name, String address, int totalSlot, int busySlot, String locationX, String locationY, Date timeStart, Date timeEnd, String xStatus) {
+        this.id = id;
+        this.name = name;
+        this.address = address;
+        this.totalSlot = totalSlot;
+        this.busySlot = busySlot;
+        this.locationX = locationX;
+        this.locationY = locationY;
+        this.timeStart = timeStart;
+        this.timeEnd = timeEnd;
+        this.xStatus = xStatus;
     }
 
-    public GarageModel(LatLng position) {
-
+    public GarageModel() {
     }
 
     public int getId() {

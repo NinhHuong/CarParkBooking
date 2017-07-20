@@ -56,6 +56,11 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activity.LoginActivity" />
         </activity>
+        <activity android:name=".activity.NearestGaraActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activity.MapActivity" />
+        </activity>
     </application>
 
 </manifest>

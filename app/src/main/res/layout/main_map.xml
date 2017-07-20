@@ -3,6 +3,7 @@
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/map_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.quocngay.carparkbooking.activity.MapActivity">
@@ -48,8 +49,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:clickable="true"
-                android:clipToPadding="false"
-                android:transitionName="booking">
+                android:clipToPadding="false">
 
                 <include layout="@layout/form_address_infor" />
 
@@ -92,7 +92,7 @@
             android:layout_marginEnd="10dp"
             android:layout_marginRight="10dp"
             android:clickable="true"
-            android:visibility="visible"
+            android:visibility="gone"
             app:backgroundTint="@android:color/white"
             app:fabSize="normal"
             app:srcCompat="@drawable/ic_directions_black_24dp" />

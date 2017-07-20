@@ -10,7 +10,6 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.location.Location;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -28,16 +27,24 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.SpannableString;
 import android.text.TextUtils;
+import android.text.TextWatcher;
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.fenchtose.tooltip.Tooltip;
+import com.fenchtose.tooltip.TooltipAnimation;
 import com.github.nkzawa.emitter.Emitter;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -65,20 +72,15 @@ import com.google.gson.Gson;
 import com.quocngay.carparkbooking.R;
 import com.quocngay.carparkbooking.model.GarageModel;
 import com.quocngay.carparkbooking.other.Constant;
-import com.quocngay.carparkbooking.other.DirectionsJSONParser;
 import com.quocngay.carparkbooking.other.FetchAddressIntentService;
 import com.quocngay.carparkbooking.other.SocketIOClient;
+import com.quocngay.carparkbooking.tasks.DirectionParserTask;
+import com.quocngay.carparkbooking.tasks.DownloadTask;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -107,12 +109,12 @@ public class MapActivity extends AppCompatActivity
     private Button btnBook;
     private Polyline mPolyline;
     private TextView tvDistance;
-    private ActionBarDrawerToggle toggle;
     private Toolbar toolbar;
-    private DrawerLayout drawer;
     private LatLng selectedGara;
-    private List<GarageModel> garageModelList;
+    public static List<GarageModel> garageModelList;
     private FloatingActionButton btnGgDirection;
+    private ViewGroup root;
+
     private Emitter.Listener onResponseGetAllGarages = new Emitter.Listener() {
         @Override
         public void call(final Object... args) {
@@ -129,6 +131,7 @@ public class MapActivity extends AppCompatActivity
                             GarageModel garageModel =
                                     gson.fromJson(listJsonGaras.getJSONObject(i).toString(), GarageModel.class);
                             garageModelList.add(garageModel);
+                            placeCustomMarker(garageModel);
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -139,26 +142,27 @@ public class MapActivity extends AppCompatActivity
     };
 
     private void defaultToolbar() {
-        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        toggle = new ActionBarDrawerToggle(
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
         toggle.setDrawerSlideAnimationEnabled(true);
     }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_map);
+    private void initMapActivity() {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
+        root = (ViewGroup) findViewById(R.id.map_view);
+
         setSupportActionBar(toolbar);
         defaultToolbar();
-        SocketIOClient.client.mSocket.off();
-        SocketIOClient.client.mSocket.emit(Constant.REQUEST_GET_ALL_GARAGES);
-        SocketIOClient.client.mSocket.on(Constant.RESPONSE_GET_ALL_GARAGES, onResponseGetAllGarages);
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        MenuItem menuItem = navigationView.getMenu().findItem(R.id.nav_logout);
+        SpannableString s = new SpannableString(menuItem.getTitle());
+        s.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.map_direction)), 0, s.length(), 0);
+        menuItem.setTitle(s);
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .enableAutoManage(this, this)
@@ -170,9 +174,32 @@ public class MapActivity extends AppCompatActivity
         mGoogleApiClient.connect();
         btnMyLocation = (FloatingActionButton) findViewById(R.id.btnMyLocation);
         btnGgDirection = (FloatingActionButton) findViewById(R.id.btnDirection);
+
         addressTitle = (TextView) findViewById(R.id.tv_add_title);
+        addressTitle.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s.toString().isEmpty()) {
+                    mCardView.setVisibility(View.GONE);
+                } else {
+                    mCardView.setVisibility(View.VISIBLE);
+                }
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
         addressDescription = (TextView) findViewById(R.id.tv_add_description);
         mCardView = (CardView) findViewById(R.id.cvAddress);
+        mCardView.setVisibility(View.GONE);
         mCardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -182,22 +209,36 @@ public class MapActivity extends AppCompatActivity
 
         tvDistance = (TextView) findViewById(R.id.tv_nearest);
         btnBook = (Button) findViewById(R.id.btnFindGara);
-        if (selectedGara != null) {
-            btnBook.setEnabled(true);
-        } else {
-            btnBook.setEnabled(false);
+
+        if (selectedGara == null) {
+            btnBook.setText(getResources().getString(R.string.map_findgara));
+            btnBook.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(MapActivity.this, NearestGaraActivity.class);
+                    intent.putExtra(Constant.MY_LOCATION, mLastKnownLocation == null ? new Location("") : mLastKnownLocation);
+                    startActivity(intent);
+                }
+            });
         }
+    }
 
-        btnBook.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent bookingIntent = new Intent(getApplicationContext(), BookingActivity.class);
-                bookingIntent.putExtra(Constant.GARA_LATLNG, selectedGara);
-                bookingIntent.putExtra(Constant.GARA_LATLNG, selectedGara);
-                startActivityForResult(bookingIntent, Constant.REQUEST_CODE_BOOKING);
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_map);
+        initMapActivity();
+    }
 
-            }
-        });
+    private void showToolTip(View anchorView, View contentView) {
+        new Tooltip.Builder(getApplicationContext())
+                .anchor(anchorView, Tooltip.LEFT)
+                .content(contentView)
+                .animate(new TooltipAnimation(TooltipAnimation.FADE, 500))
+                .autoAdjust(true)
+                .autoCancel(2000)
+                .into(root)
+                .withTip(new Tooltip.Tip(15, 15, getResources().getColor(R.color.colorPrimary))).show();
     }
 
     private void openAutocompleteActivity() {
@@ -231,7 +272,7 @@ public class MapActivity extends AppCompatActivity
 
                 location.setLatitude(locationLatitude);
                 location.setLongitude(locationLongitude);
-                addDefaultMarker(location);
+                addMarker(location);
             } else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {
                 Status status = PlaceAutocomplete.getStatus(this, data);
                 Log.i("TAG", status.getStatusMessage());
@@ -256,8 +297,8 @@ public class MapActivity extends AppCompatActivity
                         }
                     });
                     String url = getDirectionsUrl(origin, dest, false);
-                    DownloadTask downloadTask = new DownloadTask();
-                    downloadTask.execute(url);
+                    GetAPIData getAPIData = new GetAPIData();
+                    getAPIData.execute(url);
                 }
             }
         }
@@ -269,9 +310,9 @@ public class MapActivity extends AppCompatActivity
         initMap();
         updateLocationUI();
         getDeviceLocation();
-        for (GarageModel garageModel : garageModelList) {
-            placeCustomMarker(garageModel);
-        }
+        SocketIOClient.client.mSocket.off();
+        SocketIOClient.client.mSocket.emit(Constant.REQUEST_GET_ALL_GARAGES);
+        SocketIOClient.client.mSocket.on(Constant.RESPONSE_GET_ALL_GARAGES, onResponseGetAllGarages);
     }
 
     private void initMap() {
@@ -287,16 +328,13 @@ public class MapActivity extends AppCompatActivity
             }
         });
 
-        googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-
+        googleMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
             @Override
-            public void onMapClick(LatLng latLng) {
-                selectedGara = latLng;
+            public void onMapLongClick(LatLng latLng) {
                 clickedLocation = new Location("");
                 clickedLocation.setLatitude(latLng.latitude);
                 clickedLocation.setLongitude(latLng.longitude);
-                addDefaultMarker(clickedLocation);
-                btnBook.setEnabled(true);
+                addMarker(clickedLocation);
             }
         });
 
@@ -305,7 +343,15 @@ public class MapActivity extends AppCompatActivity
             public boolean onMarkerClick(Marker marker) {
                 selectedGara = marker.getPosition();
                 if (selectedGara != null) {
-                    btnBook.setEnabled(true);
+                    btnBook.setText(getResources().getString(R.string.map_gara_choose));
+                    btnBook.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent bookingIntent = new Intent(getApplicationContext(), BookingActivity.class);
+                            bookingIntent.putExtra(Constant.GARA_LOCATION, selectedGara);
+                            startActivityForResult(bookingIntent, Constant.REQUEST_CODE_BOOKING);
+                        }
+                    });
                 }
                 Location location = new Location("");
                 location.setLatitude(marker.getPosition().latitude);
@@ -446,7 +492,7 @@ public class MapActivity extends AppCompatActivity
 
     }
 
-    private void addDefaultMarker(Location location) {
+    private void addMarker(Location location) {
         if (mMarker != null) {
             mMarker.remove();
         }
@@ -506,42 +552,6 @@ public class MapActivity extends AppCompatActivity
         googleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 50));
     }
 
-    private String downloadUrl(String strUrl) throws IOException {
-        String data = "";
-        InputStream iStream = null;
-        HttpURLConnection urlConnection = null;
-        try {
-            URL url = new URL(strUrl);
-            urlConnection = (HttpURLConnection) url.openConnection();
-            urlConnection.connect();
-            iStream = urlConnection.getInputStream();
-            BufferedReader br = new BufferedReader(new InputStreamReader(iStream));
-            StringBuffer sb = new StringBuffer();
-            String line = "";
-            while ((line = br.readLine()) != null) {
-                sb.append(line);
-            }
-            data = sb.toString();
-            br.close();
-
-        } catch (Exception e) {
-            Log.d("Exception", e.toString());
-        } finally {
-            iStream.close();
-            urlConnection.disconnect();
-        }
-        return data;
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        if (googleMap != null) {
-            outState.putParcelable(Constant.KEY_CAMERA_POSITION, googleMap.getCameraPosition());
-            outState.putParcelable(Constant.KEY_LOCATION, mLastKnownLocation);
-            super.onSaveInstanceState(outState);
-        }
-    }
-
     @Override
     protected void onPause() {
         super.onPause();
@@ -591,11 +601,7 @@ public class MapActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_slideshow) {
 
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
+        } else if (id == R.id.nav_logout) {
 
         }
 
@@ -618,58 +624,27 @@ public class MapActivity extends AppCompatActivity
         }
     }
 
-    private class DownloadTask extends AsyncTask<String, Void, String> {
-
-        @Override
-        protected String doInBackground(String... url) {
-
-            String data = "";
-
-            try {
-                data = downloadUrl(url[0]);
-            } catch (Exception e) {
-                Log.d("Background Task", e.toString());
-            }
-            return data;
-        }
+    public class GetAPIData extends DownloadTask {
 
         @Override
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
-            ParserTask parserTask = new ParserTask();
-            parserTask.execute(result);
+            new GetLocationDirection().execute(result);
 
         }
     }
 
-    private class ParserTask extends AsyncTask<String, Integer, List<List<HashMap<String, String>>>> {
-
-        // Parsing the data in non-ui thread
-        @Override
-        protected List<List<HashMap<String, String>>> doInBackground(String... jsonData) {
-
-            JSONObject jObject;
-            List<List<HashMap<String, String>>> routes = null;
-
-            try {
-                jObject = new JSONObject(jsonData[0]);
-                DirectionsJSONParser parser = new DirectionsJSONParser();
-                routes = parser.parse(jObject);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return routes;
-        }
+    private class GetLocationDirection extends DirectionParserTask {
 
         @Override
         protected void onPostExecute(List<List<HashMap<String, String>>> result) {
-            ArrayList points = null;
+            ArrayList<LatLng> points = null;
             PolylineOptions lineOptions = null;
             MarkerOptions markerOptions = new MarkerOptions();
             String distance = "";
             String duration;
             for (int i = 0; i < result.size(); i++) {
-                points = new ArrayList();
+                points = new ArrayList<>();
                 lineOptions = new PolylineOptions();
 
                 List<HashMap<String, String>> path = result.get(i);
@@ -677,10 +652,10 @@ public class MapActivity extends AppCompatActivity
                 for (int j = 0; j < path.size(); j++) {
                     HashMap<String, String> point = path.get(j);
 
-                    if (j == 0) {    // Get distance from the list
+                    if (j == 0) {
                         distance = point.get("distance");
                         continue;
-                    } else if (j == 1) { // Get duration from the list
+                    } else if (j == 1) {
                         duration = point.get("duration");
                         continue;
                     }
@@ -696,12 +671,69 @@ public class MapActivity extends AppCompatActivity
                 lineOptions.color(getResources().getColor(R.color.map_direction));
                 lineOptions.geodesic(true);
                 btnGgDirection.setVisibility(View.VISIBLE);
+                FrameLayout contentView = (FrameLayout) getLayoutInflater().inflate(R.layout.tooltip, null);
+                showToolTip(btnGgDirection, contentView);
                 centerIncidentRouteOnMap(points);
 
             }
             tvDistance.setText(distance);
-            // Drawing polyline in the Google Map for the i-th route
             mPolyline = googleMap.addPolyline(lineOptions);
+        }
+    }
+
+    private class GetLocationDirection extends DirectionParserTask {
+
+        @Override
+        protected void onPostExecute(List<List<HashMap<String, String>>> result) {
+            ArrayList<LatLng> points = null;
+            PolylineOptions lineOptions = null;
+            MarkerOptions markerOptions = new MarkerOptions();
+            String distance = "";
+            String duration;
+            for (int i = 0; i < result.size(); i++) {
+                points = new ArrayList<>();
+                lineOptions = new PolylineOptions();
+
+                List<HashMap<String, String>> path = result.get(i);
+
+                for (int j = 0; j < path.size(); j++) {
+                    HashMap<String, String> point = path.get(j);
+
+                    if (j == 0) {
+                        distance = point.get("distance");
+                        continue;
+                    } else if (j == 1) {
+                        duration = point.get("duration");
+                        continue;
+                    }
+
+                    double lat = Double.parseDouble(point.get("lat"));
+                    double lng = Double.parseDouble(point.get("lng"));
+                    LatLng position = new LatLng(lat, lng);
+                    points.add(position);
+                }
+
+                lineOptions.addAll(points);
+                lineOptions.width(10);
+                lineOptions.color(getResources().getColor(R.color.map_direction));
+                lineOptions.geodesic(true);
+                btnGgDirection.setVisibility(View.VISIBLE);
+                FrameLayout contentView = (FrameLayout) getLayoutInflater().inflate(R.layout.tooltip, null);
+                showToolTip(btnGgDirection, contentView);
+                centerIncidentRouteOnMap(points);
+
+            }
+            tvDistance.setText(distance);
+            mPolyline = googleMap.addPolyline(lineOptions);
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        if (googleMap != null) {
+            outState.putParcelable(Constant.KEY_CAMERA_POSITION, googleMap.getCameraPosition());
+            outState.putParcelable(Constant.KEY_LOCATION, mLastKnownLocation);
+            super.onSaveInstanceState(outState);
         }
     }
 
