@@ -51,7 +51,7 @@ public class Constant {
     public static final String REQUEST_GET_ALL_GARAGES = "request_all_garages";
     public static final String RESPONSE_GET_ALL_GARAGES = "response_all_garages";
     public static final String SERVER_GARAGES_RESULT = "Garages";
-    public static final String SERVER_PARK_INFO_RESULT = "ParkInfo";
+    public static final String SERVER_PARKING_INFO_RESULT = "ParkingInfo";
     public static final String MY_LOCATION = "my_location";
     public static int PREF_MODE = 1;
     //        public static String SERVER_HOST = "http://54.255.178.120:5000";
