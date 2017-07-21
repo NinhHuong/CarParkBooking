@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.quocngay.carparkbooking.activity.NearestGaraActivity;
 import com.quocngay.carparkbooking.model.LocationDataModel;
 
 import java.util.List;
@@ -13,11 +14,12 @@ import java.util.List;
 public class GaragesRecyclerViewAdapter extends RecyclerView.Adapter<GaragesRecyclerViewAdapter.ViewHolder> {
 
     private final List<LocationDataModel> mValues;
-//    private final OnListFragmentInteractionListener mListener;
+    private final NearestGaraActivity.OnListInteractionListener mListener;
 
-    public GaragesRecyclerViewAdapter(List<LocationDataModel> items) {
+    //
+    public GaragesRecyclerViewAdapter(List<LocationDataModel> items, NearestGaraActivity.OnListInteractionListener listener) {
         mValues = items;
-//        mListener = listener;
+        mListener = listener;
     }
 
     @Override
@@ -30,20 +32,21 @@ public class GaragesRecyclerViewAdapter extends RecyclerView.Adapter<GaragesRecy
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
+        if (mValues.get(position) == null) return;
         holder.mGaraTitle.setText(mValues.get(position).getGarageModel().getName());
-        holder.mGaraTitle.setText(mValues.get(position).getGarageModel().getAddress());
+        holder.mGaraAddress.setText(mValues.get(position).getGarageModel().getAddress());
         holder.mDuration.setText(mValues.get(position).getDuration());
         holder.mDistance.setText(mValues.get(position).getDistance());
-//        holder.mView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if (null != mListener) {
-//                    // Notify the active callbacks interface (the activity, if the
-//                    // fragment is attached to one) that an item has been selected.
-//                    mListener.onListFragmentInteraction(holder.mItem);
-//                }
-//            }
-//        });
+        holder.mView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (null != mListener) {
+                    // Notify the active callbacks interface (the activity, if the
+                    // fragment is attached to one) that an item has been selected.
+                    mListener.onListInteraction(holder.mItem);
+                }
+            }
+        });
     }
 
     @Override

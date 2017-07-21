@@ -3,6 +3,8 @@ package com.quocngay.carparkbooking.other;
 import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.quocngay.carparkbooking.model.GarageModel;
+import com.quocngay.carparkbooking.model.LocationDataModel;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -17,6 +19,15 @@ import java.util.List;
  */
 
 public class DirectionsJSONParser {
+
+    private GarageModel garageModel;
+
+    public DirectionsJSONParser(GarageModel garageModel) {
+        this.garageModel = garageModel;
+    }
+
+    public DirectionsJSONParser() {
+    }
 
     public List<List<HashMap<String, String>>> parse(JSONObject jObject) {
 
@@ -33,7 +44,7 @@ public class DirectionsJSONParser {
 
             for (int i = 0; i < jRoutes.length(); i++) {
                 jLegs = ((JSONObject) jRoutes.get(i)).getJSONArray("legs");
-                List path = new ArrayList<HashMap<String, String>>();
+                List<HashMap<String, String>> path = new ArrayList<HashMap<String, String>>();
 
                 for (int j = 0; j < jLegs.length(); j++) {
 
@@ -53,12 +64,12 @@ public class DirectionsJSONParser {
                     for (int k = 0; k < jSteps.length(); k++) {
                         String polyline = "";
                         polyline = (String) ((JSONObject) ((JSONObject) jSteps.get(k)).get("polyline")).get("points");
-                        List list = decodePoly(polyline);
+                        List<LatLng> list = decodePoly(polyline);
 
                         for (int l = 0; l < list.size(); l++) {
                             HashMap<String, String> hm = new HashMap<String, String>();
-                            hm.put("lat", Double.toString(((LatLng) list.get(l)).latitude));
-                            hm.put("lng", Double.toString(((LatLng) list.get(l)).longitude));
+                            hm.put("lat", Double.toString((list.get(l)).latitude));
+                            hm.put("lng", Double.toString((list.get(l)).longitude));
                             path.add(hm);
                         }
                     }
@@ -69,15 +80,44 @@ public class DirectionsJSONParser {
         } catch (JSONException e) {
             e.printStackTrace();
         } catch (Exception e) {
+            e.printStackTrace();
         }
         Log.d("Distance", jDistance.toString());
         Log.d("Duration", jDuration.toString());
         return routes;
     }
 
-    private List decodePoly(String encoded) {
+    public LocationDataModel parseWithoutRoutes(JSONObject jObject) {
 
-        List poly = new ArrayList();
+        JSONArray jRoutes = null;
+        JSONArray jLegs = null;
+        JSONObject jDistance = new JSONObject();
+        JSONObject jDuration = new JSONObject();
+        LocationDataModel locationDataModel = null;
+        try {
+
+            jRoutes = jObject.getJSONArray("routes");
+
+            for (int i = 0; i < jRoutes.length(); i++) {
+                jLegs = ((JSONObject) jRoutes.get(i)).getJSONArray("legs");
+                for (int j = 0; j < jLegs.length(); j++) {
+
+                    jDistance = ((JSONObject) jLegs.get(j)).getJSONObject("distance");
+                    jDuration = ((JSONObject) jLegs.get(j)).getJSONObject("duration");
+                }
+            }
+            locationDataModel = new LocationDataModel(garageModel, jDuration.getString("text"), jDistance.getString("text"));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        Log.d("Distance", jDistance.toString());
+        Log.d("Duration", jDuration.toString());
+        return locationDataModel;
+    }
+
+    private List<LatLng> decodePoly(String encoded) {
+
+        List<LatLng> poly = new ArrayList<>();
         int index = 0, len = encoded.length();
         int lat = 0, lng = 0;
 

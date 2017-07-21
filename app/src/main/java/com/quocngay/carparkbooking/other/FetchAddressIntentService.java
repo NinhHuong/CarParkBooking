@@ -47,7 +47,7 @@ public class FetchAddressIntentService extends IntentService {
                     location.getLatitude(),
                     location.getLongitude(),
                     // In this sample, get just a single address.
-                    1);
+                    3);
         } catch (IOException ioException) {
             // Catch network or other I/O problems.
             errorMessage = getString(R.string.service_not_available);
@@ -67,26 +67,28 @@ public class FetchAddressIntentService extends IntentService {
                 errorMessage = getString(R.string.no_address_found);
                 Log.e("TAG", errorMessage);
             }
-            deliverResultToReceiver(Constant.FAILURE_RESULT, errorMessage);
+            deliverResultToReceiver(Constant.FAILURE_RESULT, errorMessage, "");
         } else {
             Address address = addresses.get(0);
             ArrayList<String> addressFragments = new ArrayList<String>();
 
             // Fetch the address lines using getAddressLine,
             // join them, and send them to the thread.
-            for (int i = 0; i <= address.getMaxAddressLineIndex(); i++) {
+            String addressTitle = address.getAddressLine(0);
+            for (int i = 1; i <= address.getMaxAddressLineIndex(); i++) {
                 addressFragments.add(address.getAddressLine(i));
             }
             Log.i("TAG", getString(R.string.address_found));
             deliverResultToReceiver(Constant.SUCCESS_RESULT,
-                    TextUtils.join(", ", addressFragments));
+                    TextUtils.join(", ", addressFragments), addressTitle);
         }
     }
 
-    private void deliverResultToReceiver(int resultCode, String message) {
+    private void deliverResultToReceiver(int resultCode, String message, String title) {
 
         Bundle bundle = new Bundle();
         bundle.putString(Constant.RESULT_DATA_KEY, message);
+        bundle.putString(Constant.RESULT_TITLE, title);
         mReceiver.send(resultCode, bundle);
     }
 
