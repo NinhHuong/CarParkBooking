@@ -645,6 +645,7 @@ public class MapActivity extends AppCompatActivity
     }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -672,6 +673,8 @@ public class MapActivity extends AppCompatActivity
 
 =======
 >>>>>>> Improve nearest gara screen perormance
+=======
+>>>>>>> Design
     private class AddressResultReceiver extends ResultReceiver {
         AddressResultReceiver(Handler handler) {
             super(handler);
@@ -745,7 +748,10 @@ public class MapActivity extends AppCompatActivity
     }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> Design
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         if (googleMap != null) {
@@ -797,7 +803,10 @@ public class MapActivity extends AppCompatActivity
         } else if (id == R.id.nav_logout) {
             logout();
         }
+<<<<<<< HEAD
 >>>>>>> Improve nearest gara screen perormance
+=======
+>>>>>>> Design
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);

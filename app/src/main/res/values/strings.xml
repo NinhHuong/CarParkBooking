@@ -107,6 +107,7 @@
     <string name="action_logout">Đăng xuất</string>
     <string name="map_gara_choose">Chọn</string>
 <<<<<<< HEAD
+<<<<<<< HEAD
 
     <!-- Strings related to history -->
     <string name="time_book">Thời gian đặt</string>
@@ -115,9 +116,14 @@
     <string name="not_have_recort">Bạn chưa có đậu xe</string>
     <string name="title_activity_history_2">History_Activity2</string>
 =======
+=======
+>>>>>>> Design
     <string name="logout_successfull">Bạn đã đăng xuất</string>
     <string name="dialog_logout_message">Bạn có chắc chắn muốn đăng xuất</string>
     <string name="fire">Có</string>
     <string name="cancel">Không</string>
+<<<<<<< HEAD
 >>>>>>> Improve nearest gara screen perormance
+=======
+>>>>>>> Design
 </resources>

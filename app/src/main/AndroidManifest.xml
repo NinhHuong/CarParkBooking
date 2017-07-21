@@ -38,14 +38,6 @@
                 android:value=".activity.MapActivity" />
         </activity>
 
-        <service
-            android:name=".other.FetchAddressIntentService"
-            android:exported="false" />
-
-        <meta-data
-            android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyAPM7L8NUuNVQPMx5xozWcYCxOzKS-T6T8" />
-
         <activity android:name=".activity.ForgetPasswordActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -61,11 +53,23 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activity.MapActivity" />
         </activity>
+<<<<<<< HEAD
         <activity android:name=".activity.HistoryActivity" />
         <activity
             android:name=".activity.ForgetPasswordActivity$History_Activity2"
             android:label="@string/title_activity_history_2"
             android:theme="@style/AppTheme.NoActionBar"></activity>
+=======
+
+        <service
+            android:name=".other.FetchAddressIntentService"
+            android:exported="false" />
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyAPM7L8NUuNVQPMx5xozWcYCxOzKS-T6T8" />
+
+>>>>>>> Design
     </application>
 
 </manifest>
