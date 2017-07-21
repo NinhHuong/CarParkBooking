@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import com.github.nkzawa.emitter.Emitter;
 import com.quocngay.carparkbooking.R;
+import com.quocngay.carparkbooking.model.Principal;
 import com.quocngay.carparkbooking.other.Constant;
 import com.quocngay.carparkbooking.other.SocketIOClient;
 
@@ -83,7 +84,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             Toast.makeText(getApplicationContext(), getResources().getString(R.string.login_successfull), Toast.LENGTH_SHORT).show();
                             SharedPreferences.Editor editor = mSharedPref.edit();
                             editor.putString(Constant.APP_PREF_TOKEN, serverToken);
-                            editor.putString(Constant.APP_PREF_REMEMBER, String.valueOf(cbRemember.isChecked()));
+                            editor.putString(Constant.APP_PREF_ID, serverToken);
+                            editor.putBoolean(Constant.APP_PREF_REMEMBER, cbRemember.isChecked());
                             editor.apply();
                             Intent intent = new Intent(LoginActivity.this, MapActivity.class);
                             startActivity(intent);
@@ -99,6 +101,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             });
         }
     };
+    private String userId;
     private Emitter.Listener onNewMessageResultLogin = new Emitter.Listener() {
         @Override
         public void call(final Object... args) {
@@ -112,6 +115,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         boolean isPasswordCorrect = data.getBoolean(Constant.SERVER_RESPONSE_LOGIN_PARA_PASSWORD);
                         String isVerify = data.getString(Constant.IS_VERIFY);
                         serverToken = data.getString(Constant.SERVER_RESPONSE_LOGIN_PARA_TOKEN);
+                        userId = data.getString(Constant.SERVER_RESPONSE_LOGIN_PARA_ID);
                         if (!isEmailCorrect) {
                             Toast.makeText(getBaseContext(), getResources().getString(R.string.server_error_email), Toast.LENGTH_SHORT).show();
                             return;
@@ -121,10 +125,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             return;
                         }
                         if (isVerify.equals("1")) {
-                            SharedPreferences.Editor editor = mSharedPref.edit();
-                            editor.putString(Constant.APP_PREF_TOKEN, serverToken);
-                            editor.putString(Constant.APP_PREF_REMEMBER, String.valueOf(cbRemember.isChecked()));
-                            editor.apply();
+                            Principal principal = new Principal(getApplicationContext());
+                            principal.setId(userId);
+                            principal.setToken(serverToken);
+                            principal.setRemmember(cbRemember.isChecked());
                             Toast.makeText(getApplicationContext(), getResources().getString(R.string.login_successfull), Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(LoginActivity.this, MapActivity.class);
                             startActivity(intent);
@@ -257,10 +261,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         new SocketIOClient();
         mSharedPref = getSharedPreferences(Constant.APP_PREF, MODE_PRIVATE);
-
-        String accountToken = (mSharedPref.getString(Constant.APP_PREF_TOKEN, ""));
-        String rememberStatus = (mSharedPref.getString(Constant.APP_PREF_REMEMBER, "false"));
-        if (Boolean.valueOf(rememberStatus) && !accountToken.isEmpty()) {
+        Principal principal = new Principal(getApplicationContext());
+        String accountToken = principal.getToken();
+        Boolean rememberStatus = principal.getRemmember();
+        if (rememberStatus && !accountToken.isEmpty()) {
             SocketIOClient.client.mSocket.emit(Constant.REQUEST_CHECK_TOKEN, accountToken);
             SocketIOClient.client.mSocket.on(Constant.RESPONSE_CHECK_TOKEN, onResponseCheckToken);
         } else {

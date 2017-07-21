@@ -1,5 +1,7 @@
 package com.quocngay.carparkbooking.other;
 
+import android.content.Intent;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
@@ -52,9 +54,17 @@ public class Constant {
     public static final String RESPONSE_GET_ALL_GARAGES = "response_all_garages";
     public static final String SERVER_GARAGES_RESULT = "Garages";
     public static final String MY_LOCATION = "my_location";
+    public static final int REQUEST_CODE_NEAREST = 9;
+    public static final String RESULT_TITLE = "address_title";
+    public static final String REQUEST_FIND_CAR_BY_ACCOUNT_ID = "request_find_car_by_account_id";
+    public static final String RESPONSE_FIND_CAR_BY_ACCOUNT_ID = "response_find_car_by_account_id";
+    public static final String APP_PREF_ID = "user_id";
+    public static final String SERVER_RESPONSE_LOGIN_PARA_ID = "id";
+    public static final String VEHICLE_NUMBER = "vehicleNumber";
+
     public static int PREF_MODE = 1;
     //        public static String SERVER_HOST = "http://54.255.178.120:5000";
-    public static String SERVER_HOST = "http://192.168.152.1:5000";
+    public static String SERVER_HOST = "http://192.168.159.1:5000";
     //    public static String SERVER_HOST = "http://52.15.194.52:5000";
     public static String APP_PREF = "AppPref";
     public static String APP_PREF_TOKEN = "token";

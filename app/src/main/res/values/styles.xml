@@ -16,6 +16,7 @@
         <item name="android:textColor">@color/colorText</item>
         <item name="android:textColorSecondary">@color/colorTextSecondary</item>
         <item name="android:windowAnimationStyle">@null</item>
+        <!--<item name="android:colorControlHighlight">@color/colorPrimary</item>-->
     </style>
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
@@ -43,7 +44,6 @@
         <item name="contentPaddingLeft">5dp</item>
         <item name="contentPaddingRight">5dp</item>
         <item name="cardBackgroundColor">@android:color/white</item>
-        <item name="android:foreground">@drawable/custom_bg</item>
     </style>
 
     <style name="PinEeditText">

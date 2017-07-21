@@ -1,7 +1,9 @@
 package com.quocngay.carparkbooking.activity;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -24,6 +26,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
@@ -32,6 +35,7 @@ import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.style.ForegroundColorSpan;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -51,9 +55,14 @@ import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.PlaceDetectionApi;
+import com.google.android.gms.location.places.PlaceFilter;
+import com.google.android.gms.location.places.PlaceLikelihoodBuffer;
+import com.google.android.gms.location.places.PlaceReport;
 import com.google.android.gms.location.places.Places;
 import com.google.android.gms.location.places.ui.PlaceAutocomplete;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -71,6 +80,7 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.gson.Gson;
 import com.quocngay.carparkbooking.R;
 import com.quocngay.carparkbooking.model.GarageModel;
+import com.quocngay.carparkbooking.model.LocationDataModel;
 import com.quocngay.carparkbooking.other.Constant;
 import com.quocngay.carparkbooking.other.FetchAddressIntentService;
 import com.quocngay.carparkbooking.other.SocketIOClient;
@@ -108,7 +118,7 @@ public class MapActivity extends AppCompatActivity
     private String placeName = "";
     private Button btnBook;
     private Polyline mPolyline;
-    private TextView tvDistance;
+    private TextView addressDistance;
     private Toolbar toolbar;
     private LatLng selectedGara;
     public static List<GarageModel> garageModelList;
@@ -176,7 +186,9 @@ public class MapActivity extends AppCompatActivity
         btnGgDirection = (FloatingActionButton) findViewById(R.id.btnDirection);
 
         addressTitle = (TextView) findViewById(R.id.tv_add_title);
-        addressTitle.addTextChangedListener(new TextWatcher() {
+        addressDescription = (TextView) findViewById(R.id.tv_add_description);
+
+        addressDescription.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -197,7 +209,6 @@ public class MapActivity extends AppCompatActivity
 
             }
         });
-        addressDescription = (TextView) findViewById(R.id.tv_add_description);
         mCardView = (CardView) findViewById(R.id.cvAddress);
         mCardView.setVisibility(View.GONE);
         mCardView.setOnClickListener(new View.OnClickListener() {
@@ -207,19 +218,11 @@ public class MapActivity extends AppCompatActivity
             }
         });
 
-        tvDistance = (TextView) findViewById(R.id.tv_nearest);
+        addressDistance = (TextView) findViewById(R.id.tv_nearest);
         btnBook = (Button) findViewById(R.id.btnFindGara);
 
         if (selectedGara == null) {
-            btnBook.setText(getResources().getString(R.string.map_findgara));
-            btnBook.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(MapActivity.this, NearestGaraActivity.class);
-                    intent.putExtra(Constant.MY_LOCATION, mLastKnownLocation == null ? new Location("") : mLastKnownLocation);
-                    startActivity(intent);
-                }
-            });
+            btnFindStatus();
         }
     }
 
@@ -302,6 +305,26 @@ public class MapActivity extends AppCompatActivity
                 }
             }
         }
+
+        if (requestCode == Constant.REQUEST_CODE_NEAREST) {
+            if (resultCode == RESULT_OK) {
+                LocationDataModel locationDataModel = (LocationDataModel) data.getSerializableExtra(NearestGaraActivity.GARA_SELECTED);
+                setInfoViewContent(locationDataModel.getGarageModel().getName(), "", locationDataModel.getDistance());
+                Location location = new Location("");
+                location.setLatitude(Double.valueOf(locationDataModel.getGarageModel().getLocationX()));
+                location.setLongitude(Double.valueOf(locationDataModel.getGarageModel().getLocationY()));
+                startIntentService(location);
+                mCameraPosition = new CameraPosition(locationDataModel.getGarageModel().getPosition(),
+                        Constant.DEFAULT_ZOOM + 1, 0, 0);
+                btnFindStatus();
+            }
+        }
+    }
+
+    private void setInfoViewContent(String title, String description, String distance) {
+        addressTitle.setText(title);
+        addressDescription.setText(description);
+        addressDistance.setText(distance);
     }
 
     @Override
@@ -317,7 +340,7 @@ public class MapActivity extends AppCompatActivity
 
     private void initMap() {
         googleMap.getUiSettings().setMyLocationButtonEnabled(false);
-        googleMap.getUiSettings().setMapToolbarEnabled(true);
+        googleMap.getUiSettings().setMapToolbarEnabled(false);
         btnMyLocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -325,6 +348,18 @@ public class MapActivity extends AppCompatActivity
                     googleMap.animateCamera(CameraUpdateFactory.newLatLng(
                             new LatLng(mLastKnownLocation.getLatitude(),
                                     mLastKnownLocation.getLongitude())));
+            }
+        });
+
+        googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng latLng) {
+                mCardView.setVisibility(View.GONE);
+                selectedGara = null;
+                btnFindStatus();
+                if (mMarker != null) {
+                    mMarker.remove();
+                }
             }
         });
 
@@ -342,6 +377,9 @@ public class MapActivity extends AppCompatActivity
             @Override
             public boolean onMarkerClick(Marker marker) {
                 selectedGara = marker.getPosition();
+                if (mMarker != null) {
+                    mMarker.remove();
+                }
                 if (selectedGara != null) {
                     btnBook.setText(getResources().getString(R.string.map_gara_choose));
                     btnBook.setOnClickListener(new View.OnClickListener() {
@@ -362,10 +400,23 @@ public class MapActivity extends AppCompatActivity
         });
     }
 
+    private void btnFindStatus() {
+        btnBook.setText(getResources().getString(R.string.map_findgara));
+        btnBook.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MapActivity.this, NearestGaraActivity.class);
+                intent.putExtra(Constant.MY_LOCATION, mLastKnownLocation == null ? new Location("") : mLastKnownLocation);
+                startActivityForResult(intent, Constant.REQUEST_CODE_NEAREST);
+            }
+        });
+    }
+
     private void placeCustomMarker(GarageModel garageModel) {
         Bitmap.Config conf = Bitmap.Config.ARGB_8888;
-        Bitmap bmp = Bitmap.createBitmap(60, 60, conf);
-        Canvas canvas1 = new Canvas(bmp);
+        Bitmap bmp = Bitmap.createBitmap(80, 80, conf);
+        Canvas canvas = new Canvas(bmp);
+
 
         Paint color = new Paint(Paint.LINEAR_TEXT_FLAG | Paint.ANTI_ALIAS_FLAG);
         color.setTextSize(16);
@@ -375,15 +426,21 @@ public class MapActivity extends AppCompatActivity
         color.setSubpixelText(true);
         color.setColor(Color.BLACK);
 
+
+        DisplayMetrics metrics = getResources().getDisplayMetrics();
+        int x = (int) (metrics.densityDpi + 10f);
+        int y = (int) (metrics.densityDpi + 10f);
+
+
         if (garageModel.getRemainSlot() == 0) {
-            canvas1.drawBitmap(BitmapFactory.decodeResource(getResources(),
+            canvas.drawBitmap(BitmapFactory.decodeResource(getResources(),
                     R.mipmap.ic_marker_gara_gray), 0, 0, color);
         } else {
-            canvas1.drawBitmap(BitmapFactory.decodeResource(getResources(),
+            canvas.drawBitmap(BitmapFactory.decodeResource(getResources(),
                     R.mipmap.ic_marker_gara_red), 0, 0, color);
         }
-        canvas1.drawText(String.valueOf(garageModel.getRemainSlot()), 28, 27, color);
-        Marker marker = googleMap.addMarker(new MarkerOptions()
+        canvas.drawText(String.valueOf(garageModel.getRemainSlot()), x, y, color);
+        googleMap.addMarker(new MarkerOptions()
                 .position(garageModel.getPosition())
                 .icon(BitmapDescriptorFactory.fromBitmap(bmp))
                 // Specifies the anchor to be at a particular point in the marker image.
@@ -478,7 +535,7 @@ public class MapActivity extends AppCompatActivity
         //TODO: gete bug when gps is not enabled
         // Set the map's camera position to the current location of the device.
         if (mCameraPosition != null) {
-            googleMap.moveCamera(CameraUpdateFactory.newCameraPosition(mCameraPosition));
+            googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(mCameraPosition));
         } else if (mLastKnownLocation != null) {
             googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
                     new LatLng(mLastKnownLocation.getLatitude(),
@@ -498,9 +555,6 @@ public class MapActivity extends AppCompatActivity
         }
         startIntentService(location);
         mMarker = googleMap.addMarker(new MarkerOptions().position(new LatLng(location.getLatitude(), location.getLongitude())));
-        if (!placeName.isEmpty()) {
-            mMarker.setTitle(placeName);
-        }
     }
 
     @Override
@@ -522,9 +576,8 @@ public class MapActivity extends AppCompatActivity
 
         String str_origin = "origin=" + origin.latitude + "," + origin.longitude;
         String str_dest = "destination=" + dest.latitude + "," + dest.longitude;
-        String sensor = "sensor=false";
         String mode = "mode=driving";
-        String parameters = str_origin + "&" + str_dest + "&" + sensor + "&" + mode;
+        String parameters = str_origin + "&" + str_dest + "&" + mode;
         String output = "json";
         String url;
         if (redirect) {
@@ -589,27 +642,6 @@ public class MapActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
-    @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
-        int id = item.getItemId();
-
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_logout) {
-
-        }
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
-    }
-
     private class AddressResultReceiver extends ResultReceiver {
         AddressResultReceiver(Handler handler) {
             super(handler);
@@ -619,7 +651,9 @@ public class MapActivity extends AppCompatActivity
         protected void onReceiveResult(int resultCode, Bundle resultData) {
 
             String mAddressOutput = resultData.getString(Constant.RESULT_DATA_KEY);
-            addressTitle.setText(mAddressOutput);
+            String mAddressTitle = resultData.getString(Constant.RESULT_TITLE);
+            addressDescription.setText(mAddressOutput);
+            addressTitle.setText(mAddressTitle);
 
         }
     }
@@ -659,7 +693,6 @@ public class MapActivity extends AppCompatActivity
                         duration = point.get("duration");
                         continue;
                     }
-
                     double lat = Double.parseDouble(point.get("lat"));
                     double lng = Double.parseDouble(point.get("lng"));
                     LatLng position = new LatLng(lat, lng);
@@ -676,54 +709,7 @@ public class MapActivity extends AppCompatActivity
                 centerIncidentRouteOnMap(points);
 
             }
-            tvDistance.setText(distance);
-            mPolyline = googleMap.addPolyline(lineOptions);
-        }
-    }
-
-    private class GetLocationDirection extends DirectionParserTask {
-
-        @Override
-        protected void onPostExecute(List<List<HashMap<String, String>>> result) {
-            ArrayList<LatLng> points = null;
-            PolylineOptions lineOptions = null;
-            MarkerOptions markerOptions = new MarkerOptions();
-            String distance = "";
-            String duration;
-            for (int i = 0; i < result.size(); i++) {
-                points = new ArrayList<>();
-                lineOptions = new PolylineOptions();
-
-                List<HashMap<String, String>> path = result.get(i);
-
-                for (int j = 0; j < path.size(); j++) {
-                    HashMap<String, String> point = path.get(j);
-
-                    if (j == 0) {
-                        distance = point.get("distance");
-                        continue;
-                    } else if (j == 1) {
-                        duration = point.get("duration");
-                        continue;
-                    }
-
-                    double lat = Double.parseDouble(point.get("lat"));
-                    double lng = Double.parseDouble(point.get("lng"));
-                    LatLng position = new LatLng(lat, lng);
-                    points.add(position);
-                }
-
-                lineOptions.addAll(points);
-                lineOptions.width(10);
-                lineOptions.color(getResources().getColor(R.color.map_direction));
-                lineOptions.geodesic(true);
-                btnGgDirection.setVisibility(View.VISIBLE);
-                FrameLayout contentView = (FrameLayout) getLayoutInflater().inflate(R.layout.tooltip, null);
-                showToolTip(btnGgDirection, contentView);
-                centerIncidentRouteOnMap(points);
-
-            }
-            tvDistance.setText(distance);
+            addressDistance.setText(distance);
             mPolyline = googleMap.addPolyline(lineOptions);
         }
     }
@@ -735,6 +721,54 @@ public class MapActivity extends AppCompatActivity
             outState.putParcelable(Constant.KEY_LOCATION, mLastKnownLocation);
             super.onSaveInstanceState(outState);
         }
+    }
+
+    private void logout() {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(R.string.dialog_logout_message)
+                .setPositiveButton(R.string.fire, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        SharedPreferences mSharedPref = getSharedPreferences(Constant.APP_PREF, MODE_PRIVATE);
+                        SharedPreferences.Editor editor = mSharedPref.edit();
+                        editor.remove(Constant.APP_PREF_TOKEN);
+                        editor.remove(Constant.APP_PREF_REMEMBER);
+                        editor.apply();
+                        Intent intent = new Intent(MapActivity.this, LoginActivity.class);
+                        startActivity(intent);
+                        finish();
+                    }
+                })
+                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.dismiss();
+                    }
+                });
+        // Create the AlertDialog object and return it
+        builder.create().show();
+
+
+    }
+
+    @SuppressWarnings("StatementWithEmptyBody")
+    @Override
+    public boolean onNavigationItemSelected(MenuItem item) {
+        // Handle navigation view item clicks here.
+        int id = item.getItemId();
+
+        if (id == R.id.nav_camera) {
+            // Handle the camera action
+        } else if (id == R.id.nav_gallery) {
+
+        } else if (id == R.id.nav_slideshow) {
+
+        } else if (id == R.id.nav_logout) {
+            logout();
+        }
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
     }
 
 }

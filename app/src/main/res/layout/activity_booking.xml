@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.quocngay.carparkbooking.activity.BookingActivity">
 
     <include
-        android:id="@+id/main_app_bar"
+        android:id="@+id/book_app_bar"
         layout="@layout/app_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
@@ -21,5 +22,16 @@
         android:background="@drawable/custom_button_bg"
         android:text="@string/map_booking"
         android:textColor="@color/text_light_title" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/list_number"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:fadingEdgeLength="50dp"
+        android:orientation="vertical"
+        android:requiresFadingEdge="vertical"
+        app:layoutManager="LinearLayoutManager"
+        tools:listitem="@layout/item_car_number" />
 
 </RelativeLayout>

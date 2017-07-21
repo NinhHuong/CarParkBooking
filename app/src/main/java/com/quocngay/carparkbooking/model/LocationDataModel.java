@@ -1,10 +1,12 @@
 package com.quocngay.carparkbooking.model;
 
+import java.io.Serializable;
+
 /**
  * Created by Quang Si on 7/20/2017.
  */
 
-public class LocationDataModel {
+public class LocationDataModel implements Serializable{
 
     private String duration;
     private String distance;

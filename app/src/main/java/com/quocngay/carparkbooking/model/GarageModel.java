@@ -2,13 +2,14 @@ package com.quocngay.carparkbooking.model;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
  * Created by ninhh on 5/24/2017.
  */
 
-public class GarageModel {
+public class GarageModel implements Serializable{
 //    private static String KEY_SERVER_ID = "id";
 //    private static String KEY_SERVER_NAME = "name";
 //    private static String KEY_SERVER_ADDRESS = "address";
