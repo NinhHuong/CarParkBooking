@@ -644,8 +644,6 @@ public class MapActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -663,7 +661,7 @@ public class MapActivity extends AppCompatActivity
 //            finish();
             startActivity(intent);
         } else if (id == R.id.nav_logout) {
-
+            logout();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -671,10 +669,6 @@ public class MapActivity extends AppCompatActivity
         return true;
     }
 
-=======
->>>>>>> Improve nearest gara screen perormance
-=======
->>>>>>> Design
     private class AddressResultReceiver extends ResultReceiver {
         AddressResultReceiver(Handler handler) {
             super(handler);
@@ -747,11 +741,6 @@ public class MapActivity extends AppCompatActivity
         }
     }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-=======
->>>>>>> Design
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         if (googleMap != null) {
@@ -786,31 +775,6 @@ public class MapActivity extends AppCompatActivity
         builder.create().show();
 
 
-    }
-
-    @SuppressWarnings("StatementWithEmptyBody")
-    @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
-        int id = item.getItemId();
-
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_logout) {
-            logout();
-        }
-<<<<<<< HEAD
->>>>>>> Improve nearest gara screen perormance
-=======
->>>>>>> Design
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
     }
 
 }

@@ -65,15 +65,11 @@ public class Constant {
 
     public static int PREF_MODE = 1;
     //        public static String SERVER_HOST = "http://54.255.178.120:5000";
-<<<<<<< HEAD
-<<<<<<< HEAD
-    public static String SERVER_HOST = "http://192.168.0.110:5000";
-=======
+
+    //public static String SERVER_HOST = "http://192.168.0.110:5000";
+
     public static String SERVER_HOST = "http://192.168.159.1:5000";
->>>>>>> Improve nearest gara screen perormance
-=======
-    public static String SERVER_HOST = "http://192.168.159.1:5000";
->>>>>>> Design
+
     //    public static String SERVER_HOST = "http://52.15.194.52:5000";
     public static String APP_PREF = "AppPref";
     public static String APP_PREF_TOKEN = "token";
