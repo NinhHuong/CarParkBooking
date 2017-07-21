@@ -75,7 +75,7 @@ public class HistoryActivity extends AppCompatActivity {
 
         JSONArray listJsonGarasParkInfo = null;
         try {
-            listJsonGarasParkInfo = data.getJSONArray(Constant.SERVER_PARK_INFO_RESULT);
+            listJsonGarasParkInfo = data.getJSONArray(Constant.SERVER_PARKING_INFO_RESULT);
             mHistoryList = new ArrayList<ParkingInfoModel>();
             for (int i = 0; i < listJsonGarasParkInfo.length(); i++) {
                 p = gson.fromJson(listJsonGarasParkInfo.getJSONObject(i).toString(), ParkingInfoModel.class);
