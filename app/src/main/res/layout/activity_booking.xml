@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@android:color/white"
     tools:context="com.quocngay.carparkbooking.activity.BookingActivity">
 
     <include
@@ -23,15 +24,29 @@
         android:text="@string/map_booking"
         android:textColor="@color/text_light_title" />
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/list_number"
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:fadingEdgeLength="50dp"
-        android:orientation="vertical"
-        android:requiresFadingEdge="vertical"
-        app:layoutManager="LinearLayoutManager"
-        tools:listitem="@layout/item_car_number" />
+        android:layout_above="@+id/btn_book"
+        android:id="@+id/tv_license_number"
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:padding="10dp"
+        android:text="74C1-24811"
+        android:textAlignment="center"
+        android:textSize="40sp" />
+
+    <!--<android.support.v7.widget.RecyclerView-->
+    <!--android:id="@+id/list_number"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="200dp"-->
+    <!--android:layout_above="@id/btn_book"-->
+    <!--android:layout_centerInParent="true"-->
+    <!--android:fadingEdgeLength="50dp"-->
+    <!--android:orientation="vertical"-->
+    <!--android:requiresFadingEdge="vertical"-->
+    <!--app:layoutManager="LinearLayoutManager"-->
+    <!--tools:listitem="@layout/item_car_number" />-->
 
 </RelativeLayout>

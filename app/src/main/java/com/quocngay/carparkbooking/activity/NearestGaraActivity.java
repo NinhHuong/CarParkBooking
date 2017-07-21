@@ -65,8 +65,7 @@ public class NearestGaraActivity extends AppCompatActivity implements View.OnCli
         } else {
             mRecyclerView.setLayoutManager(new GridLayoutManager(this, mColumnCount));
         }
-        DividerItemDecoration mDividerItemDecoration = new DividerItemDecoration(mRecyclerView.getContext(),
-                layoutManager.getOrientation());
+
 
         for (GarageModel garageModel : MapActivity.garageModelList) {
             String url = getDirectionsUrl(new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude()), garageModel.getPosition(), false);
@@ -90,7 +89,8 @@ public class NearestGaraActivity extends AppCompatActivity implements View.OnCli
         if (dataModelList != null) {
             recyclerViewAdapter.notifyDataSetChanged();
         }
-
+        DividerItemDecoration mDividerItemDecoration = new DividerItemDecoration(mRecyclerView.getContext(),
+                layoutManager.getOrientation());
         mRecyclerView.addItemDecoration(mDividerItemDecoration);
     }
 

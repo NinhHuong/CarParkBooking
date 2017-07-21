@@ -1,26 +1,29 @@
 package com.quocngay.carparkbooking.activity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.BottomSheetDialog;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.LinearSnapHelper;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SnapHelper;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
+import com.bigkoo.pickerview.MyOptionsPickerView;
 import com.github.nkzawa.emitter.Emitter;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
-import com.quocngay.carparkbooking.GaragesRecyclerViewAdapter;
 import com.quocngay.carparkbooking.LicenseNumRecyclerViewAdapter;
 import com.quocngay.carparkbooking.R;
-import com.quocngay.carparkbooking.model.GarageModel;
 import com.quocngay.carparkbooking.model.LocationDataModel;
 import com.quocngay.carparkbooking.model.Principal;
 import com.quocngay.carparkbooking.other.Constant;
@@ -41,6 +44,9 @@ public class BookingActivity extends AppCompatActivity {
     private LicenseNumRecyclerViewAdapter recyclerViewAdapter;
     private String clientID;
     private List<String> licenseList;
+    MyOptionsPickerView licensePicker;
+    TextView tvLicenseNumber;
+    LinearLayoutManager layoutManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,14 +71,40 @@ public class BookingActivity extends AppCompatActivity {
             }
         });
 
-        mRecyclerView = (RecyclerView) findViewById(R.id.list_number);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        mRecyclerView.setLayoutManager(layoutManager);
+        tvLicenseNumber = (TextView) findViewById(R.id.tv_license_number);
+
         Principal principal = new Principal(getApplicationContext());
         SocketIOClient.client.mSocket.emit(Constant.REQUEST_FIND_CAR_BY_ACCOUNT_ID, principal.getId());
         SocketIOClient.client.mSocket.on(Constant.RESPONSE_FIND_CAR_BY_ACCOUNT_ID, onResponseFindCar);
+        final BottomSheetDialog dialog = new BottomSheetDialog(this);
+        dialog.setContentView(R.layout.dialog_license_list);
+        dialog.setTitle(getResources().getString(R.string.title_licence_picker));
 
+        mRecyclerView = (RecyclerView) dialog.findViewById(R.id.list_license);
+        layoutManager = new LinearLayoutManager(dialog.getContext());
+        mRecyclerView.setLayoutManager(layoutManager);
+        mRecyclerView.setHasFixedSize(true);
+        final OnListInteractionListener listener = new OnListInteractionListener() {
+            @Override
+            public void onListInteraction(String item) {
+                tvLicenseNumber.setText(item);
+                dialog.dismiss();
+            }
+        };
+        tvLicenseNumber.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                recyclerViewAdapter = new LicenseNumRecyclerViewAdapter(licenseList, listener);
+                mRecyclerView.setAdapter(recyclerViewAdapter);
+                dialog.show();
+            }
+        });
     }
+
+    public interface OnListInteractionListener {
+        void onListInteraction(String item);
+    }
+
 
     private Emitter.Listener onResponseFindCar = new Emitter.Listener() {
         @Override
@@ -97,8 +129,7 @@ public class BookingActivity extends AppCompatActivity {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                    recyclerViewAdapter = new LicenseNumRecyclerViewAdapter(licenseList);
-                    mRecyclerView.setAdapter(recyclerViewAdapter);
+                    tvLicenseNumber.setText(licenseList.get(0));
 
                 }
             });

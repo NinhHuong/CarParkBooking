@@ -110,4 +110,5 @@
     <string name="dialog_logout_message">Bạn có chắc chắn muốn đăng xuất</string>
     <string name="fire">Có</string>
     <string name="cancel">Không</string>
+    <string name="title_licence_picker">Chọn 1 biển số</string>
 </resources>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="10dp"
+        android:text="@string/title_licence_picker"
+        android:textColor="@android:color/white"
+        android:background="@color/colorPrimary"
+        android:textSize="18sp" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/list_license"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/btn_book"
+        android:layout_centerInParent="true"
+        android:fadingEdgeLength="50dp"
+        android:requiresFadingEdge="vertical"
+        app:layoutManager="LinearLayoutManager"
+        tools:listitem="@layout/item_car_number" />
+
+</LinearLayout>

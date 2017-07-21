@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.quocngay.carparkbooking.activity.BookingActivity;
 import com.quocngay.carparkbooking.activity.NearestGaraActivity;
 import com.quocngay.carparkbooking.model.LocationDataModel;
 
@@ -14,10 +15,11 @@ import java.util.List;
 public class LicenseNumRecyclerViewAdapter extends RecyclerView.Adapter<LicenseNumRecyclerViewAdapter.ViewHolder> {
 
     private final List<String> mValues;
-
+    private BookingActivity.OnListInteractionListener mListener;
     //
-    public LicenseNumRecyclerViewAdapter(List<String> items) {
+    public LicenseNumRecyclerViewAdapter(List<String> items, BookingActivity.OnListInteractionListener listener) {
         mValues = items;
+        this.mListener = listener;
     }
 
     @Override
@@ -32,7 +34,16 @@ public class LicenseNumRecyclerViewAdapter extends RecyclerView.Adapter<LicenseN
         holder.mItem = mValues.get(position);
         if (mValues.get(position) == null) return;
         holder.mLiencseNumber.setText(mValues.get(position).toString());
-
+        holder.mView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (null != mListener) {
+                    // Notify the active callbacks interface (the activity, if the
+                    // fragment is attached to one) that an item has been selected.
+                    mListener.onListInteraction(holder.mItem);
+                }
+            }
+        });
     }
 
     @Override
