@@ -50,4 +50,32 @@ public class ParkingInfoModel {
     public int getParkStatus() {
         return parkStatus;
     }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setCarID(int carID) {
+        this.carID = carID;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setTimeBooked(String timeBooked) {
+        this.timeBooked = timeBooked;
+    }
+
+    public void setTimeGoIn(String timeGoIn) {
+        this.timeGoIn = timeGoIn;
+    }
+
+    public void setTimeGoOut(String timeGoOut) {
+        this.timeGoOut = timeGoOut;
+    }
+
+    public void setParkStatus(int parkStatus) {
+        this.parkStatus = parkStatus;
+    }
 }

@@ -61,7 +61,11 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activity.MapActivity" />
         </activity>
-        <activity android:name=".activity.HistoryActivity"></activity>
+        <activity android:name=".activity.HistoryActivity" />
+        <activity
+            android:name=".activity.ForgetPasswordActivity$History_Activity2"
+            android:label="@string/title_activity_history_2"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>
