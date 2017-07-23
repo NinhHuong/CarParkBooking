@@ -33,7 +33,7 @@
             android:textColor="@color/text_dark_description"
             android:textSize="14sp" />
 
-        <LinearLayout
+        <FrameLayout
             android:id="@+id/info_duration"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -42,21 +42,10 @@
             android:layout_margin="@dimen/text_margin"
             android:gravity="center">
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:srcCompat="@drawable/ic_near_me_black_24dp" />
+            <include layout="@layout/container_distance" />
+        </FrameLayout>
 
-            <TextView
-                android:id="@+id/tv_gara_distance"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="52km"
-                android:textColor="@color/text_dark_description"
-                android:textSize="12sp" />
-        </LinearLayout>
-
-        <LinearLayout
+        <FrameLayout
             android:id="@+id/linearLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -65,19 +54,8 @@
             android:layout_toStartOf="@id/info_duration"
             android:gravity="center">
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:srcCompat="@drawable/ic_timer_black_24dp" />
-
-            <TextView
-                android:id="@+id/tv_gara_duration"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="12 phút"
-                android:textColor="@color/text_dark_description"
-                android:textSize="12sp" />
-        </LinearLayout>
+            <include layout="@layout/container_duration" />
+        </FrameLayout>
 
     </RelativeLayout>
 </RelativeLayout>

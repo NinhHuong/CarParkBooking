@@ -1,6 +1,5 @@
 package com.quocngay.carparkbooking.activity;
 
-import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -23,7 +22,6 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -57,14 +55,9 @@ import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.Place;
-import com.google.android.gms.location.places.PlaceDetectionApi;
-import com.google.android.gms.location.places.PlaceFilter;
-import com.google.android.gms.location.places.PlaceLikelihoodBuffer;
-import com.google.android.gms.location.places.PlaceReport;
 import com.google.android.gms.location.places.Places;
 import com.google.android.gms.location.places.ui.PlaceAutocomplete;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -85,6 +78,7 @@ import com.quocngay.carparkbooking.model.GarageModel;
 import com.quocngay.carparkbooking.model.LocationDataModel;
 import com.quocngay.carparkbooking.other.Constant;
 import com.quocngay.carparkbooking.other.FetchAddressIntentService;
+import com.quocngay.carparkbooking.other.MarkerAddressResult;
 import com.quocngay.carparkbooking.other.SocketIOClient;
 import com.quocngay.carparkbooking.tasks.DirectionParserTask;
 import com.quocngay.carparkbooking.tasks.DownloadTask;
@@ -101,6 +95,9 @@ public class MapActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener {
 
+    private static final String BTN_STATUS_FIND = "find";
+    private static final String BTN_STATUS_CHOOSE = "book";
+    private static final String BTN_STATUS_CANCEL = "cancle";
     private GoogleMap googleMap;
     private boolean mLocationPermissionGranted;
     private Location mLastKnownLocation;
@@ -113,19 +110,27 @@ public class MapActivity extends AppCompatActivity
     private TextView addressTitle;
     private TextView addressDescription;
     private String errorMessage = "";
-    private AddressResultReceiver mResultReceiver;
     private Location clickedLocation;
     private CardView mCardView;
     private Marker mMarker;
     private String placeName = "";
-    private Button btnBook;
+    private Button btnChoose;
+    private Button btnFind;
+    private Button btnCancel;
     private Polyline mPolyline;
     private TextView addressDistance;
     private Toolbar toolbar;
-    private LatLng selectedGara;
     public static List<GarageModel> garageModelList;
     private FloatingActionButton btnGgDirection;
     private ViewGroup root;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_map);
+        initMapActivity();
+    }
+
 
     private Emitter.Listener onResponseGetAllGarages = new Emitter.Listener() {
         @Override
@@ -152,6 +157,7 @@ public class MapActivity extends AppCompatActivity
             });
         }
     };
+    private Marker selectedGaraMarker;
 
     private void defaultToolbar() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -221,19 +227,15 @@ public class MapActivity extends AppCompatActivity
         });
 
         addressDistance = (TextView) findViewById(R.id.tv_nearest);
-        btnBook = (Button) findViewById(R.id.btnFindGara);
+        btnChoose = (Button) findViewById(R.id.btnChooseGara);
+        btnFind = (Button) findViewById(R.id.btnFindGara);
+        btnCancel = (Button) findViewById(R.id.btnCancelGara);
 
-        if (selectedGara == null) {
-            btnFindStatus();
+        if (selectedGaraMarker == null) {
+            btnMapStatus(BTN_STATUS_FIND);
         }
     }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_map);
-        initMapActivity();
-    }
 
     private void showToolTip(View anchorView, View contentView) {
         new Tooltip.Builder(getApplicationContext())
@@ -284,14 +286,14 @@ public class MapActivity extends AppCompatActivity
 
             }
         }
-        if (requestCode == 1) {
+        if (requestCode == Constant.REQUEST_CODE_BOOKING) {
             if (resultCode == RESULT_OK) {
                 Boolean bookingStatus = data.getBooleanExtra(Constant.BOOKING_STATUS, false);
                 if (bookingStatus) {
                     if (mPolyline != null) {
                         mPolyline.remove();
                     }
-                    final LatLng dest = selectedGara;
+                    final LatLng dest = selectedGaraMarker.getPosition();
                     final LatLng origin = new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude());
                     btnGgDirection.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -315,10 +317,10 @@ public class MapActivity extends AppCompatActivity
                 Location location = new Location("");
                 location.setLatitude(Double.valueOf(locationDataModel.getGarageModel().getLocationX()));
                 location.setLongitude(Double.valueOf(locationDataModel.getGarageModel().getLocationY()));
-                startIntentService(location);
+                getLocationAddress(location);
                 mCameraPosition = new CameraPosition(locationDataModel.getGarageModel().getPosition(),
                         Constant.DEFAULT_ZOOM + 1, 0, 0);
-                btnFindStatus();
+                btnMapStatus(BTN_STATUS_FIND);
             }
         }
     }
@@ -357,8 +359,8 @@ public class MapActivity extends AppCompatActivity
             @Override
             public void onMapClick(LatLng latLng) {
                 mCardView.setVisibility(View.GONE);
-                selectedGara = null;
-                btnFindStatus();
+                selectedGaraMarker = null;
+                btnMapStatus(BTN_STATUS_FIND);
                 if (mMarker != null) {
                     mMarker.remove();
                 }
@@ -377,41 +379,74 @@ public class MapActivity extends AppCompatActivity
 
         googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
-            public boolean onMarkerClick(Marker marker) {
-                selectedGara = marker.getPosition();
+            public boolean onMarkerClick(final Marker marker) {
                 if (mMarker != null) {
                     mMarker.remove();
                 }
-                if (selectedGara != null) {
-                    btnBook.setText(getResources().getString(R.string.map_gara_choose));
-                    btnBook.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Intent bookingIntent = new Intent(getApplicationContext(), BookingActivity.class);
-                            bookingIntent.putExtra(Constant.GARA_LOCATION, selectedGara);
-                            startActivityForResult(bookingIntent, Constant.REQUEST_CODE_BOOKING);
-                        }
-                    });
-                }
+                selectedGaraMarker = marker;
                 Location location = new Location("");
                 location.setLatitude(marker.getPosition().latitude);
                 location.setLongitude(marker.getPosition().longitude);
-                startIntentService(location);
+                getLocationAddress(location);
+                btnMapStatus(BTN_STATUS_CHOOSE);
                 return false;
             }
         });
     }
 
-    private void btnFindStatus() {
-        btnBook.setText(getResources().getString(R.string.map_findgara));
-        btnBook.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MapActivity.this, NearestGaraActivity.class);
-                intent.putExtra(Constant.MY_LOCATION, mLastKnownLocation == null ? new Location("") : mLastKnownLocation);
-                startActivityForResult(intent, Constant.REQUEST_CODE_NEAREST);
-            }
-        });
+    private void btnMapStatus(String status) {
+        if (status.equals(BTN_STATUS_FIND)) {
+            btnCancel.setVisibility(View.GONE);
+            btnFind.setVisibility(View.VISIBLE);
+            btnChoose.setVisibility(View.GONE);
+            btnFind.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(MapActivity.this, NearestGaraActivity.class);
+                    intent.putExtra(Constant.MY_LOCATION, mLastKnownLocation == null ? new Location("") : mLastKnownLocation);
+                    startActivityForResult(intent, Constant.REQUEST_CODE_NEAREST);
+                }
+            });
+        } else if (status.equals(BTN_STATUS_CHOOSE)) {
+            btnCancel.setVisibility(View.GONE);
+            btnFind.setVisibility(View.GONE);
+            btnChoose.setVisibility(View.VISIBLE);
+            btnChoose.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent bookingIntent = new Intent(getApplicationContext(), BookingActivity.class);
+                    bookingIntent.putExtra(Constant.GARA_DETAIL, (GarageModel) selectedGaraMarker.getTag());
+                    startActivityForResult(bookingIntent, Constant.REQUEST_CODE_BOOKING);
+                }
+            });
+        } else if (status.equals(BTN_STATUS_CANCEL)) {
+            btnCancel.setVisibility(View.VISIBLE);
+            btnFind.setVisibility(View.GONE);
+            btnChoose.setVisibility(View.GONE);
+            btnCancel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                }
+            });
+        }
+    }
+
+    private void cancelBooking() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(R.string.dialog_book_cancel_message)
+                .setPositiveButton(R.string.fire, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+
+                    }
+                })
+                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.dismiss();
+                    }
+                });
+        // Create the AlertDialog object and return it
+        builder.create().show();
     }
 
     private void placeCustomMarker(GarageModel garageModel) {
@@ -442,18 +477,28 @@ public class MapActivity extends AppCompatActivity
                     R.mipmap.ic_marker_gara_red), 0, 0, color);
         }
         canvas.drawText(String.valueOf(garageModel.getRemainSlot()), x, y, color);
-        googleMap.addMarker(new MarkerOptions()
+        getLocationAddressForMarker(garageModel);
+        Marker marker = googleMap.addMarker(new MarkerOptions()
                 .position(garageModel.getPosition())
                 .icon(BitmapDescriptorFactory.fromBitmap(bmp))
                 // Specifies the anchor to be at a particular point in the marker image.
                 .anchor(0.4f, 0.7f));
+        marker.setTag(garageModel);
     }
 
-    protected void startIntentService(Location location) {
+    protected void getLocationAddress(Location location) {
         Intent intent = new Intent(this, FetchAddressIntentService.class);
-        mResultReceiver = new AddressResultReceiver(new Handler());
+        AddressResultReceiver mResultReceiver = new AddressResultReceiver(new Handler());
         intent.putExtra(Constant.RECEIVER, mResultReceiver);
         intent.putExtra(Constant.LOCATION_DATA_EXTRA, location);
+        startService(intent);
+    }
+
+    protected void getLocationAddressForMarker(GarageModel garageModel) {
+        Intent intent = new Intent(this, FetchAddressIntentService.class);
+        MarkerAddressResult mResultReceiver = new MarkerAddressResult(new Handler(), garageModel);
+        intent.putExtra(Constant.RECEIVER, mResultReceiver);
+        intent.putExtra(Constant.LOCATION_DATA_EXTRA, garageModel.getLocation());
         startService(intent);
     }
 
@@ -555,7 +600,7 @@ public class MapActivity extends AppCompatActivity
         if (mMarker != null) {
             mMarker.remove();
         }
-        startIntentService(location);
+        getLocationAddress(location);
         mMarker = googleMap.addMarker(new MarkerOptions().position(new LatLng(location.getLatitude(), location.getLongitude())));
     }
 

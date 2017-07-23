@@ -1,5 +1,7 @@
 package com.quocngay.carparkbooking.model;
 
+import android.location.Location;
+
 import com.google.android.gms.maps.model.LatLng;
 
 import java.io.Serializable;
@@ -9,7 +11,7 @@ import java.util.Date;
  * Created by ninhh on 5/24/2017.
  */
 
-public class GarageModel implements Serializable{
+public class GarageModel implements Serializable {
 //    private static String KEY_SERVER_ID = "id";
 //    private static String KEY_SERVER_NAME = "name";
 //    private static String KEY_SERVER_ADDRESS = "address";
@@ -133,6 +135,13 @@ public class GarageModel implements Serializable{
 
     public LatLng getPosition() {
         return new LatLng(Double.valueOf(locationX), Double.valueOf(locationY));
+    }
+
+    public Location getLocation() {
+        Location location = new Location("");
+        location.setLatitude(Double.valueOf(locationX));
+        location.setLongitude(Double.valueOf(locationY));
+        return location;
     }
 
     public int getRemainSlot() {

@@ -70,7 +70,7 @@
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
 
-    <string name="map_findgara">Tìm bãi đỗ gần nhất</string>
+    <string name="map_gara_find">Tìm bãi đỗ gần nhất</string>
     <string name="google_direction_api">https://maps.googleapis.com/maps/api/directions/%1$s?%2$s</string>
     <string name="google_direction_api_redirect">https://www.google.com/maps/dir/?api=1&amp;%1$s</string>
     <string name="map_booking">Đặt chỗ</string>
@@ -119,4 +119,10 @@
     <string name="fire">Có</string>
     <string name="cancel">Không</string>
     <string name="title_licence_picker">Chọn 1 biển số</string>
+    <string name="booking_license_title">Biển số</string>
+    <string name="error_book_new">Có lỗi xảy ra! Vui lòng kiểm tra lại</string>
+    <string name="dialog_book_message">Bạn có chắc chắn muốn đặt chỗ</string>
+    <string name="dialog_book_title">Xác nhận đặt chỗ</string>
+    <string name="map_gara_cancel">Hủy</string>
+    <string name="dialog_book_cancel_message">Bạn có chắc chắn muốn hủy bỏ đặt chỗ?</string>
 </resources>

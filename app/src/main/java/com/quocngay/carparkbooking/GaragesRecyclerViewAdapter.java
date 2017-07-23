@@ -67,8 +67,8 @@ public class GaragesRecyclerViewAdapter extends RecyclerView.Adapter<GaragesRecy
             mView = view;
             mGaraTitle = (TextView) view.findViewById(R.id.tv_gara_title);
             mGaraAddress = (TextView) view.findViewById(R.id.tv_gara_address);
-            mDuration = (TextView) view.findViewById(R.id.tv_gara_duration);
-            mDistance = (TextView) view.findViewById(R.id.tv_gara_distance);
+            mDuration = (TextView) view.findViewById(R.id.tv_duration);
+            mDistance = (TextView) view.findViewById(R.id.tv_distance);
         }
     }
 }

@@ -25,6 +25,6 @@
         android:fadingEdgeLength="50dp"
         android:requiresFadingEdge="vertical"
         app:layoutManager="LinearLayoutManager"
-        tools:listitem="@layout/item_car_number" />
+        tools:listitem="@layout/item_license_number" />
 
 </LinearLayout>

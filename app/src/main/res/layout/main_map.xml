@@ -49,8 +49,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:clickable="true"
-                android:foreground="?android:attr/selectableItemBackground"
-                android:clipToPadding="false">
+                android:clipToPadding="false"
+                android:foreground="?android:attr/selectableItemBackground">
 
                 <include layout="@layout/form_address_infor" />
 
@@ -62,7 +62,25 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:background="@drawable/custom_button_bg"
-                android:text="@string/map_findgara"
+                android:text="@string/map_gara_find"
+                android:textColor="@color/text_light_title" />
+
+            <Button
+                android:id="@+id/btnChooseGara"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/custom_button_bg"
+                android:text="@string/map_gara_choose"
+                android:textColor="@color/text_light_title" />
+
+            <Button
+                android:id="@+id/btnCancelGara"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/custom_button_bg"
+                android:text="@string/map_gara_cancel"
                 android:textColor="@color/text_light_title" />
 
 
