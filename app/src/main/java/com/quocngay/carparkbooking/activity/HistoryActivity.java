@@ -12,6 +12,7 @@ import com.google.gson.Gson;
 import com.quocngay.carparkbooking.R;
 import com.quocngay.carparkbooking.model.GarageModel;
 import com.quocngay.carparkbooking.model.ParkingInfoModel;
+import com.quocngay.carparkbooking.model.Principal;
 import com.quocngay.carparkbooking.other.Constant;
 import com.quocngay.carparkbooking.other.HistoryListAdapter;
 import com.quocngay.carparkbooking.other.SocketIOClient;
@@ -39,7 +40,8 @@ public class HistoryActivity extends AppCompatActivity {
 
         lvHistory = (ListView) findViewById(R.id.lvHistory);
 
-        SocketIOClient.client.mSocket.emit("request_booking_account_id", 5);
+        String id = new Principal(getApplicationContext()).getId();
+        SocketIOClient.client.mSocket.emit("request_booking_account_id", id);
         SocketIOClient.client.mSocket.on("response_booking_account_id", onGetParkingInfo);
     }
 
