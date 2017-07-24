@@ -7,7 +7,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.quocngay.carparkbooking.R;
-import com.quocngay.carparkbooking.model.ParkingInfoModel;
+import com.quocngay.carparkbooking.model.ParkingInfoHistoryModel;
 
 import java.util.List;
 
@@ -18,9 +18,9 @@ import java.util.List;
 public class HistoryListAdapter extends BaseAdapter {
 
     private Context mContext;
-    private List<ParkingInfoModel> mParkingList;
+    private List<ParkingInfoHistoryModel> mParkingList;
 
-    public HistoryListAdapter(Context mContext, List<ParkingInfoModel> mParkingList) {
+    public HistoryListAdapter(Context mContext, List<ParkingInfoHistoryModel> mParkingList) {
         this.mContext = mContext;
         this.mParkingList = mParkingList;
     }

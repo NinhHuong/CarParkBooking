@@ -76,6 +76,8 @@ import com.google.gson.Gson;
 import com.quocngay.carparkbooking.R;
 import com.quocngay.carparkbooking.model.GarageModel;
 import com.quocngay.carparkbooking.model.LocationDataModel;
+import com.quocngay.carparkbooking.model.ParkingInfoModel;
+import com.quocngay.carparkbooking.model.Principal;
 import com.quocngay.carparkbooking.other.Constant;
 import com.quocngay.carparkbooking.other.FetchAddressIntentService;
 import com.quocngay.carparkbooking.other.MarkerAddressResult;
@@ -97,7 +99,10 @@ public class MapActivity extends AppCompatActivity
 
     private static final String BTN_STATUS_FIND = "find";
     private static final String BTN_STATUS_CHOOSE = "book";
-    private static final String BTN_STATUS_CANCEL = "cancle";
+    private static final String BTN_STATUS_CANCEL = "cancel";
+
+    public static List<GarageModel> garageModelList;
+
     private GoogleMap googleMap;
     private boolean mLocationPermissionGranted;
     private Location mLastKnownLocation;
@@ -107,22 +112,20 @@ public class MapActivity extends AppCompatActivity
     private Location mCurrentLocation;
     private int mMaxEntries = 50;
     private FloatingActionButton btnMyLocation;
-    private TextView addressTitle;
-    private TextView addressDescription;
+    private TextView addressTitle, addressDescription, addressDistance;
     private String errorMessage = "";
     private Location clickedLocation;
-    private CardView mCardView;
-    private Marker mMarker;
+    private CardView cardViewMarkerInfo;
+    private Marker mMarker, mSlectedGaraMarker;
     private String placeName = "";
-    private Button btnChoose;
-    private Button btnFind;
-    private Button btnCancel;
+    private Button btnChoose, btnFind, btnCancel;
     private Polyline mPolyline;
-    private TextView addressDistance;
     private Toolbar toolbar;
-    public static List<GarageModel> garageModelList;
     private FloatingActionButton btnGgDirection;
     private ViewGroup root;
+    private Emitter.Listener onResponseGetStatusParkingInfo;
+    private ParkingInfoModel mAppInitStatusBooked;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -131,6 +134,143 @@ public class MapActivity extends AppCompatActivity
         initMapActivity();
     }
 
+    @Override
+    public void onMapReady(final GoogleMap map) {
+        googleMap = map;
+        initMap();
+        updateLocationUI();
+        getDeviceLocation();
+        SocketIOClient.client.mSocket.off();
+        SocketIOClient.client.mSocket.emit(Constant.REQUEST_GET_ALL_GARAGES);
+        SocketIOClient.client.mSocket.on(Constant.RESPONSE_GET_ALL_GARAGES, onResponseGetAllGarages);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if (requestCode == Constant.REQUEST_CODE_AUTOCOMPLETE) {
+            if (resultCode == RESULT_OK) {
+                Place place = PlaceAutocomplete.getPlace(this, data);
+                Log.i("TAG", "Place: " + place.getName());
+                placeName = place.getName().toString();
+
+                googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
+                        place.getLatLng(), Constant.DEFAULT_ZOOM));
+
+                Location location = new Location("");
+                double locationLatitude = place.getLatLng().latitude;
+                double locationLongitude = place.getLatLng().longitude;
+                location.setLatitude(locationLatitude);
+                location.setLongitude(locationLongitude);
+                addMarker(location);
+            } else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {
+                Status status = PlaceAutocomplete.getStatus(this, data);
+                Log.i("TAG", status.getStatusMessage());
+
+            }
+        }
+
+        if (requestCode == Constant.REQUEST_CODE_BOOKING) {
+            if (resultCode == RESULT_OK) {
+                Boolean bookingStatus = data.getBooleanExtra(Constant.BOOKING_STATUS, false);
+                if (bookingStatus) {
+                    if (mPolyline != null) {
+                        mPolyline.remove();
+                    }
+                    final LatLng dest = mSlectedGaraMarker.getPosition();
+                    final LatLng origin = new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude());
+                    btnGgDirection.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
+                                    Uri.parse(getDirectionsUrl(origin, dest, true)));
+                            startActivity(intent);
+                        }
+                    });
+                    String url = getDirectionsUrl(origin, dest, false);
+                    GetAPIData getAPIData = new GetAPIData();
+                    getAPIData.execute(url);
+                    initMapBookedStatus();
+                }
+            }
+        }
+
+        if (requestCode == Constant.REQUEST_CODE_NEAREST) {
+            if (resultCode == RESULT_OK) {
+                LocationDataModel locationDataModel = (LocationDataModel) data.getSerializableExtra(NearestGaraActivity.GARA_SELECTED);
+                setInfoViewContent(locationDataModel.getGarageModel().getName(), "", locationDataModel.getDistance());
+                Location location = new Location("");
+                location.setLatitude(Double.valueOf(locationDataModel.getGarageModel().getLocationX()));
+                location.setLongitude(Double.valueOf(locationDataModel.getGarageModel().getLocationY()));
+                getLocationAddress(location);
+                mCameraPosition = new CameraPosition(locationDataModel.getGarageModel().getPosition(),
+                        Constant.DEFAULT_ZOOM + 1, 0, 0);
+                btnMapStatus(BTN_STATUS_FIND);
+            }
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mCameraPosition = googleMap.getCameraPosition();
+        mCurrentLocation = mLastKnownLocation;
+    }
+
+    @Override
+    public void onBackPressed() {
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.map, menu);
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.action_search) {
+            openAutocompleteActivity();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @SuppressWarnings("StatementWithEmptyBody")
+    @Override
+    public boolean onNavigationItemSelected(MenuItem item) {
+        // Handle navigation view item clicks here.
+
+
+        int id = item.getItemId();
+
+        if (id == R.id.nav_camera) {
+            // Handle the camera action
+        } else if (id == R.id.nav_gallery) {
+
+        } else if (id == R.id.nav_history) {
+            Intent intent = new Intent(MapActivity.this, HistoryActivity.class);
+//            finish();
+            startActivity(intent);
+        } else if (id == R.id.nav_logout) {
+            logout();
+        }
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
+    }
 
     private Emitter.Listener onResponseGetAllGarages = new Emitter.Listener() {
         @Override
@@ -148,7 +288,7 @@ public class MapActivity extends AppCompatActivity
                             GarageModel garageModel =
                                     gson.fromJson(listJsonGaras.getJSONObject(i).toString(), GarageModel.class);
                             garageModelList.add(garageModel);
-                            placeCustomMarker(garageModel);
+                            placeGaraMarker(garageModel);
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -157,7 +297,6 @@ public class MapActivity extends AppCompatActivity
             });
         }
     };
-    private Marker selectedGaraMarker;
 
     private void defaultToolbar() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -171,25 +310,61 @@ public class MapActivity extends AppCompatActivity
     private void initMapActivity() {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         root = (ViewGroup) findViewById(R.id.map_view);
-
         setSupportActionBar(toolbar);
         defaultToolbar();
+
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
         MenuItem menuItem = navigationView.getMenu().findItem(R.id.nav_logout);
         SpannableString s = new SpannableString(menuItem.getTitle());
         s.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.map_direction)), 0, s.length(), 0);
         menuItem.setTitle(s);
 
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .enableAutoManage(this, this)
-                .addConnectionCallbacks(this)
-                .addApi(LocationServices.API)
-                .addApi(Places.GEO_DATA_API)
-                .addApi(Places.PLACE_DETECTION_API)
-                .build();
-        mGoogleApiClient.connect();
+        initMapInitGoogleApi();
+        initMapInitElements();
+        initMapCheckBooking();
+
+    }
+
+    private void initMapCheckBooking() {
+        onResponseGetStatusParkingInfo = new Emitter.Listener() {
+            @Override
+            public void call(final Object... args) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        JSONObject jsonObject = (JSONObject) args[0];
+                        Gson gson = new Gson();
+
+                        try {
+                            if (jsonObject.getBoolean(Constant.RESULT)) {
+                                mAppInitStatusBooked = gson.fromJson(
+                                        jsonObject.getJSONObject(Constant.DATA).toString(),
+                                        ParkingInfoModel.class);
+                                btnMapStatus(BTN_STATUS_CANCEL);
+                                SocketIOClient.client.mSocket.off();
+
+                            } else {
+                                Log.e("Server", jsonObject.getString(jsonObject.getString(Constant.MESSAGE)));
+                                SocketIOClient.client.mSocket.off();
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+
+            }
+        };
+
+        SocketIOClient.client.mSocket.emit(Constant.REQUEST_PARKING_INFO_BY_ACCOUNT_ID,
+                new Principal(getApplicationContext()).getId());
+        SocketIOClient.client.mSocket.on(Constant.RESPONSE_PARKING_INFO_BY_ACCOUNT_ID,
+                onResponseGetStatusParkingInfo);
+
+    }
+
+    private void initMapInitElements() {
         btnMyLocation = (FloatingActionButton) findViewById(R.id.btnMyLocation);
         btnGgDirection = (FloatingActionButton) findViewById(R.id.btnDirection);
 
@@ -205,9 +380,9 @@ public class MapActivity extends AppCompatActivity
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (s.toString().isEmpty()) {
-                    mCardView.setVisibility(View.GONE);
+                    cardViewMarkerInfo.setVisibility(View.GONE);
                 } else {
-                    mCardView.setVisibility(View.VISIBLE);
+                    cardViewMarkerInfo.setVisibility(View.VISIBLE);
                 }
 
             }
@@ -217,9 +392,9 @@ public class MapActivity extends AppCompatActivity
 
             }
         });
-        mCardView = (CardView) findViewById(R.id.cvAddress);
-        mCardView.setVisibility(View.GONE);
-        mCardView.setOnClickListener(new View.OnClickListener() {
+        cardViewMarkerInfo = (CardView) findViewById(R.id.cvAddress);
+        cardViewMarkerInfo.setVisibility(View.GONE);
+        cardViewMarkerInfo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -231,11 +406,21 @@ public class MapActivity extends AppCompatActivity
         btnFind = (Button) findViewById(R.id.btnFindGara);
         btnCancel = (Button) findViewById(R.id.btnCancelGara);
 
-        if (selectedGaraMarker == null) {
+        if (mSlectedGaraMarker == null) {
             btnMapStatus(BTN_STATUS_FIND);
         }
     }
 
+    private void initMapInitGoogleApi() {
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .enableAutoManage(this, this)
+                .addConnectionCallbacks(this)
+                .addApi(LocationServices.API)
+                .addApi(Places.GEO_DATA_API)
+                .addApi(Places.PLACE_DETECTION_API)
+                .build();
+        mGoogleApiClient.connect();
+    }
 
     private void showToolTip(View anchorView, View contentView) {
         new Tooltip.Builder(getApplicationContext())
@@ -263,67 +448,6 @@ public class MapActivity extends AppCompatActivity
         }
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-        if (requestCode == Constant.REQUEST_CODE_AUTOCOMPLETE) {
-            if (resultCode == RESULT_OK) {
-                Place place = PlaceAutocomplete.getPlace(this, data);
-                Log.i("TAG", "Place: " + place.getName());
-                placeName = place.getName().toString();
-                Location location = new Location("");
-                double locationLatitude = place.getLatLng().latitude;
-                double locationLongitude = place.getLatLng().longitude;
-                googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
-                        new LatLng(locationLatitude, locationLongitude), Constant.DEFAULT_ZOOM));
-
-                location.setLatitude(locationLatitude);
-                location.setLongitude(locationLongitude);
-                addMarker(location);
-            } else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {
-                Status status = PlaceAutocomplete.getStatus(this, data);
-                Log.i("TAG", status.getStatusMessage());
-
-            }
-        }
-        if (requestCode == Constant.REQUEST_CODE_BOOKING) {
-            if (resultCode == RESULT_OK) {
-                Boolean bookingStatus = data.getBooleanExtra(Constant.BOOKING_STATUS, false);
-                if (bookingStatus) {
-                    if (mPolyline != null) {
-                        mPolyline.remove();
-                    }
-                    final LatLng dest = selectedGaraMarker.getPosition();
-                    final LatLng origin = new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude());
-                    btnGgDirection.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
-                                    Uri.parse(getDirectionsUrl(origin, dest, true)));
-                            startActivity(intent);
-                        }
-                    });
-                    String url = getDirectionsUrl(origin, dest, false);
-                    GetAPIData getAPIData = new GetAPIData();
-                    getAPIData.execute(url);
-                }
-            }
-        }
-
-        if (requestCode == Constant.REQUEST_CODE_NEAREST) {
-            if (resultCode == RESULT_OK) {
-                LocationDataModel locationDataModel = (LocationDataModel) data.getSerializableExtra(NearestGaraActivity.GARA_SELECTED);
-                setInfoViewContent(locationDataModel.getGarageModel().getName(), "", locationDataModel.getDistance());
-                Location location = new Location("");
-                location.setLatitude(Double.valueOf(locationDataModel.getGarageModel().getLocationX()));
-                location.setLongitude(Double.valueOf(locationDataModel.getGarageModel().getLocationY()));
-                getLocationAddress(location);
-                mCameraPosition = new CameraPosition(locationDataModel.getGarageModel().getPosition(),
-                        Constant.DEFAULT_ZOOM + 1, 0, 0);
-                btnMapStatus(BTN_STATUS_FIND);
-            }
-        }
-    }
 
     private void setInfoViewContent(String title, String description, String distance) {
         addressTitle.setText(title);
@@ -331,16 +455,6 @@ public class MapActivity extends AppCompatActivity
         addressDistance.setText(distance);
     }
 
-    @Override
-    public void onMapReady(final GoogleMap map) {
-        googleMap = map;
-        initMap();
-        updateLocationUI();
-        getDeviceLocation();
-        SocketIOClient.client.mSocket.off();
-        SocketIOClient.client.mSocket.emit(Constant.REQUEST_GET_ALL_GARAGES);
-        SocketIOClient.client.mSocket.on(Constant.RESPONSE_GET_ALL_GARAGES, onResponseGetAllGarages);
-    }
 
     private void initMap() {
         googleMap.getUiSettings().setMyLocationButtonEnabled(false);
@@ -355,11 +469,49 @@ public class MapActivity extends AppCompatActivity
             }
         });
 
+        if (mAppInitStatusBooked == null) {
+            initMapGeneralStatus();
+        } else {
+            initMapBookedStatus();
+        }
+    }
+
+    private void initMapBookedStatus() {
+        btnMapStatus(BTN_STATUS_CANCEL);
+        googleMap.setOnMapClickListener(null);
+        googleMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
+            @Override
+            public void onMapLongClick(LatLng latLng) {
+                clickedLocation = new Location("");
+                clickedLocation.setLatitude(latLng.latitude);
+                clickedLocation.setLongitude(latLng.longitude);
+                addMarker(clickedLocation);
+            }
+        });
+
+        googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(final Marker marker) {
+                if (mMarker != null) {
+                    mMarker.remove();
+                }
+                mSlectedGaraMarker = marker;
+                Location location = new Location("");
+                location.setLatitude(marker.getPosition().latitude);
+                location.setLongitude(marker.getPosition().longitude);
+                getLocationAddress(location);
+                return false;
+            }
+        });
+    }
+
+    private void initMapGeneralStatus() {
+
         googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
-                mCardView.setVisibility(View.GONE);
-                selectedGaraMarker = null;
+                cardViewMarkerInfo.setVisibility(View.GONE);
+                mSlectedGaraMarker = null;
                 btnMapStatus(BTN_STATUS_FIND);
                 if (mMarker != null) {
                     mMarker.remove();
@@ -383,7 +535,7 @@ public class MapActivity extends AppCompatActivity
                 if (mMarker != null) {
                     mMarker.remove();
                 }
-                selectedGaraMarker = marker;
+                mSlectedGaraMarker = marker;
                 Location location = new Location("");
                 location.setLatitude(marker.getPosition().latitude);
                 location.setLongitude(marker.getPosition().longitude);
@@ -395,10 +547,11 @@ public class MapActivity extends AppCompatActivity
     }
 
     private void btnMapStatus(String status) {
+
         if (status.equals(BTN_STATUS_FIND)) {
             btnCancel.setVisibility(View.GONE);
-            btnFind.setVisibility(View.VISIBLE);
             btnChoose.setVisibility(View.GONE);
+            btnFind.setVisibility(View.VISIBLE);
             btnFind.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -415,29 +568,65 @@ public class MapActivity extends AppCompatActivity
                 @Override
                 public void onClick(View v) {
                     Intent bookingIntent = new Intent(getApplicationContext(), BookingActivity.class);
-                    bookingIntent.putExtra(Constant.GARA_DETAIL, (GarageModel) selectedGaraMarker.getTag());
+                    bookingIntent.putExtra(Constant.GARA_DETAIL, (GarageModel) mSlectedGaraMarker.getTag());
                     startActivityForResult(bookingIntent, Constant.REQUEST_CODE_BOOKING);
                 }
             });
         } else if (status.equals(BTN_STATUS_CANCEL)) {
-            btnCancel.setVisibility(View.VISIBLE);
+
             btnFind.setVisibility(View.GONE);
             btnChoose.setVisibility(View.GONE);
+            btnCancel.setVisibility(View.VISIBLE);
             btnCancel.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
+                    cancelBooking(mAppInitStatusBooked);
                 }
             });
         }
     }
 
-    private void cancelBooking() {
+    private Emitter.Listener onResponseCancelBooking = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    JSONObject jsonObject = (JSONObject) args[0];
+                    try {
+                        if (jsonObject.getBoolean(Constant.RESULT)) {
+                            mAppInitStatusBooked = null;
+                            Toast.makeText(MapActivity.this,
+                                    getResources().getString(R.string.book_cancel_successfull),
+                                    Toast.LENGTH_SHORT).show();
+                            btnMapStatus(BTN_STATUS_FIND);
+                            initMapGeneralStatus();
+                            SocketIOClient.client.mSocket.off();
+                        } else {
+                            Log.d("Cancel book", jsonObject.getString(Constant.MESSAGE));
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+
+        }
+    };
+
+    private void cancelBooking(final ParkingInfoModel parkingInfoModel) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(R.string.dialog_book_cancel_message)
                 .setPositiveButton(R.string.fire, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
 
+                        //TODO: Bug - Return from google map -> app crash
+                        SocketIOClient.client.mSocket.emit(
+                                Constant.REQUEST_EDIT_PARKING_INFO_BY_ID_STATUS,
+                                parkingInfoModel.getId(), Constant.PARKING_INFO_STATUS_CANCEL);
+                        SocketIOClient.client.mSocket.on(
+                                Constant.RESPONSE_EDIT_PARKING_INFO_BY_ID_STATUS,
+                                onResponseCancelBooking);
                     }
                 })
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -449,7 +638,7 @@ public class MapActivity extends AppCompatActivity
         builder.create().show();
     }
 
-    private void placeCustomMarker(GarageModel garageModel) {
+    private void placeGaraMarker(GarageModel garageModel) {
         Bitmap.Config conf = Bitmap.Config.ARGB_8888;
         Bitmap bmp = Bitmap.createBitmap(80, 80, conf);
         Canvas canvas = new Canvas(bmp);
@@ -652,67 +841,6 @@ public class MapActivity extends AppCompatActivity
         googleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 50));
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        mCameraPosition = googleMap.getCameraPosition();
-        mCurrentLocation = mLastKnownLocation;
-    }
-
-    @Override
-    public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.map, menu);
-
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        if (id == R.id.action_search) {
-            openAutocompleteActivity();
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    @SuppressWarnings("StatementWithEmptyBody")
-    @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
-
-
-        int id = item.getItemId();
-
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_history) {
-            Intent intent = new Intent(MapActivity.this, HistoryActivity.class);
-//            finish();
-            startActivity(intent);
-        } else if (id == R.id.nav_logout) {
-            logout();
-        }
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
-    }
 
     private class AddressResultReceiver extends ResultReceiver {
         AddressResultReceiver(Handler handler) {

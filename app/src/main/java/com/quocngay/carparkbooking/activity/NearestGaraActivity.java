@@ -6,7 +6,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -19,18 +18,15 @@ import android.widget.ProgressBar;
 import com.google.android.gms.maps.model.LatLng;
 import com.quocngay.carparkbooking.GaragesRecyclerViewAdapter;
 import com.quocngay.carparkbooking.R;
-import com.quocngay.carparkbooking.dummy.DummyContent;
 import com.quocngay.carparkbooking.model.GarageModel;
 import com.quocngay.carparkbooking.model.LocationDataModel;
 import com.quocngay.carparkbooking.other.Constant;
 import com.quocngay.carparkbooking.other.DirectionsJSONParser;
-import com.quocngay.carparkbooking.tasks.DirectionParserTask;
 import com.quocngay.carparkbooking.tasks.DownloadTask;
 
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class NearestGaraActivity extends AppCompatActivity implements View.OnClickListener {

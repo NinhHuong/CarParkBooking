@@ -63,14 +63,21 @@ public class Constant {
     public static final String SERVER_RESPONSE_LOGIN_PARA_ID = "id";
     public static final String VEHICLE_NUMBER = "vehicleNumber";
     public static final String GARA_DETAIL = "gara_detail";
-    public static final String REQUEST_ADD_NEW_PARKING_INFO= "request_add_new_booking";
+    public static final String REQUEST_ADD_NEW_PARKING_INFO = "request_add_new_booking";
     public static final String RESPONSE_ADD_NEW_PARKING_INFO = "response_add_new_booking";
+    public static final String REQUEST_PARKING_INFO_BY_ACCOUNT_ID = "request_booking_account_id";
+    public static final String RESPONSE_PARKING_INFO_BY_ACCOUNT_ID = "response_booking_account_id";
+    public static final String REQUEST_EDIT_PARKING_INFO_BY_ID_STATUS =
+            "request_edit_parking_info_id_status";
+    public static final String RESPONSE_EDIT_PARKING_INFO_BY_ID_STATUS =
+            "response_edit_parking_info_id_status";
+
     public static int PREF_MODE = 1;
     //        public static String SERVER_HOST = "http://54.255.178.120:5000";
 
     //public static String SERVER_HOST = "http://192.168.0.110:5000";
 
-    public static String SERVER_HOST = "http://192.168.159.1:5000";
+    public static String SERVER_HOST = "http://192.168.196.1:5000";
 
     //    public static String SERVER_HOST = "http://52.15.194.52:5000";
     public static String APP_PREF = "AppPref";
@@ -101,5 +108,8 @@ public class Constant {
     public static DateFormat KEY_DATE_TIME_DURATION_FORMAT = new SimpleDateFormat("dd:HH:mm", Locale.getDefault());
     public static int KEY_COUNT_DOWN_INTERVAL = 1000;
     public static int KEY_COUNT_UP_INTERVAL = 60 * 1000;
-
+    public static int PARKING_INFO_STATUS_BOOKED = 0;
+    public static int PARKING_INFO_STATUS_CHECKEDIN = 1;
+    public static int PARKING_INFO_STATUS_CHECKEDOUT = 2;
+    public static int PARKING_INFO_STATUS_CANCEL = 3;
 }

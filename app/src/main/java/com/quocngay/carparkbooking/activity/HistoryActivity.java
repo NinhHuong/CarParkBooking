@@ -1,6 +1,5 @@
 package com.quocngay.carparkbooking.activity;
 
-import android.os.Debug;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -10,8 +9,7 @@ import android.widget.Toast;
 import com.github.nkzawa.emitter.Emitter;
 import com.google.gson.Gson;
 import com.quocngay.carparkbooking.R;
-import com.quocngay.carparkbooking.model.GarageModel;
-import com.quocngay.carparkbooking.model.ParkingInfoModel;
+import com.quocngay.carparkbooking.model.ParkingInfoHistoryModel;
 import com.quocngay.carparkbooking.model.Principal;
 import com.quocngay.carparkbooking.other.Constant;
 import com.quocngay.carparkbooking.other.HistoryListAdapter;
@@ -24,14 +22,13 @@ import org.json.JSONObject;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 public class HistoryActivity extends AppCompatActivity {
     ListView lvHistory;
     HistoryListAdapter adapter;
-    List<ParkingInfoModel> mHistoryList;
+    List<ParkingInfoHistoryModel> mHistoryList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,8 +38,8 @@ public class HistoryActivity extends AppCompatActivity {
         lvHistory = (ListView) findViewById(R.id.lvHistory);
 
         String id = new Principal(getApplicationContext()).getId();
-        SocketIOClient.client.mSocket.emit("request_booking_account_id", id);
-        SocketIOClient.client.mSocket.on("response_booking_account_id", onGetParkingInfo);
+        SocketIOClient.client.mSocket.emit("request_booking_history_account_id", id);
+        SocketIOClient.client.mSocket.on("response_booking_history_account_id", onGetParkingInfo);
     }
 
     private Emitter.Listener onGetParkingInfo = new Emitter.Listener() {
@@ -72,15 +69,15 @@ public class HistoryActivity extends AppCompatActivity {
     };
 
     void addDataToList(JSONObject data) {
-        ParkingInfoModel p;
+        ParkingInfoHistoryModel p;
         Gson gson = new Gson();
 
         JSONArray listJsonGarasParkInfo = null;
         try {
             listJsonGarasParkInfo = data.getJSONArray(Constant.SERVER_PARKING_INFO_RESULT);
-            mHistoryList = new ArrayList<ParkingInfoModel>();
+            mHistoryList = new ArrayList<ParkingInfoHistoryModel>();
             for (int i = 0; i < listJsonGarasParkInfo.length(); i++) {
-                p = gson.fromJson(listJsonGarasParkInfo.getJSONObject(i).toString(), ParkingInfoModel.class);
+                p = gson.fromJson(listJsonGarasParkInfo.getJSONObject(i).toString(), ParkingInfoHistoryModel.class);
                 p.setTimeBooked( ChangeDateTime(p.getTimeBooked()));
                 p.setTimeGoIn( ChangeDateTime(p.getTimeGoIn()));
                 p.setTimeGoOut( ChangeDateTime(p.getTimeGoOut()));
