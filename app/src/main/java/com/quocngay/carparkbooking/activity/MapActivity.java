@@ -258,10 +258,10 @@ public class MapActivity extends AppCompatActivity
         if (id == R.id.nav_camera) {
             // Handle the camera action
         } else if (id == R.id.nav_gallery) {
-
+            Intent intent = new Intent(MapActivity.this, CarManagerActivity.class);
+            startActivity(intent);
         } else if (id == R.id.nav_history) {
             Intent intent = new Intent(MapActivity.this, HistoryActivity.class);
-//            finish();
             startActivity(intent);
         } else if (id == R.id.nav_logout) {
             logout();

@@ -38,8 +38,8 @@ public class HistoryActivity extends AppCompatActivity {
         lvHistory = (ListView) findViewById(R.id.lvHistory);
 
         String id = new Principal(getApplicationContext()).getId();
-        SocketIOClient.client.mSocket.emit("request_booking_history_account_id", id);
-        SocketIOClient.client.mSocket.on("response_booking_history_account_id", onGetParkingInfo);
+        SocketIOClient.client.mSocket.emit(Constant.REQUEST_BOOK_HISTORY, id);
+        SocketIOClient.client.mSocket.on(Constant.RESPONSE_BOOK_HISTORY, onGetParkingInfo);
     }
 
     private Emitter.Listener onGetParkingInfo = new Emitter.Listener() {
@@ -58,7 +58,6 @@ public class HistoryActivity extends AppCompatActivity {
                         } else {
                             Toast.makeText(getApplicationContext(), R.string.not_have_recort, Toast.LENGTH_SHORT).show();
                         }
-
                         SocketIOClient.client.mSocket.off();
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -74,7 +73,7 @@ public class HistoryActivity extends AppCompatActivity {
 
         JSONArray listJsonGarasParkInfo = null;
         try {
-            listJsonGarasParkInfo = data.getJSONArray(Constant.SERVER_PARKING_INFO_RESULT);
+            listJsonGarasParkInfo = data.getJSONArray(Constant.DATA);
             mHistoryList = new ArrayList<ParkingInfoHistoryModel>();
             for (int i = 0; i < listJsonGarasParkInfo.length(); i++) {
                 p = gson.fromJson(listJsonGarasParkInfo.getJSONObject(i).toString(), ParkingInfoHistoryModel.class);

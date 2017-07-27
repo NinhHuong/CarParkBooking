@@ -5,7 +5,7 @@
     <string name="home_map">Map</string>
     <string name="home_history">History</string>
     <string name="home_profile">Profile</string>
-
+    <string name="car_number">Biển số xe:</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
@@ -114,6 +114,12 @@
     <string name="not_have_recort">Bạn chưa có đậu xe</string>
     <string name="title_activity_history_2">History_Activity2</string>
 
+    <!-- Strings related to car manager -->
+    <string name="not_have_car">Bạn chưa có xe</string>
+    <string name="had_delete_car">Bạn vừa xóa xe</string>
+
+
+    <string name="error_general">Có lỗi đâu đấy</string>
     <string name="logout_successfull">Bạn đã đăng xuất</string>
     <string name="dialog_logout_message">Bạn có chắc chắn muốn đăng xuất</string>
     <string name="fire">Có</string>

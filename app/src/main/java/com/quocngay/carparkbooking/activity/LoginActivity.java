@@ -116,6 +116,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         String isVerify = data.getString(Constant.IS_VERIFY);
                         serverToken = data.getString(Constant.SERVER_RESPONSE_LOGIN_PARA_TOKEN);
                         userId = data.getString(Constant.SERVER_RESPONSE_LOGIN_PARA_ID);
+                        Log.w("Account account",data.toString());
+                        Log.w("User id",userId);
                         if (!isEmailCorrect) {
                             Toast.makeText(getBaseContext(), getResources().getString(R.string.server_error_email), Toast.LENGTH_SHORT).show();
                             return;
