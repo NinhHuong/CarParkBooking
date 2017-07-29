@@ -67,6 +67,11 @@ public class Constant {
     public static final String RESPONSE_ADD_NEW_PARKING_INFO = "response_add_new_booking";
     public static final String REQUEST_PARKING_INFO_BY_ACCOUNT_ID = "request_booking_account_id";
     public static final String RESPONSE_PARKING_INFO_BY_ACCOUNT_ID = "response_booking_account_id";
+
+    //region PARKING INFO
+    public static final String REQUEST_BOOK_HISTORY = "request_booking_history_account_id";
+    public static final String RESPONSE_BOOK_HISTORY= "response_booking_history_account_id";
+
     public static final String REQUEST_EDIT_PARKING_INFO_BY_ID_STATUS =
             "request_edit_parking_info_id_status";
     public static final String RESPONSE_EDIT_PARKING_INFO_BY_ID_STATUS =
@@ -74,12 +79,23 @@ public class Constant {
     public static final String KEY_MAIN_MAP = "google_map";
     public static final String BOOKING_MAP_SIZE = "600x300";
 
+    //endregion
+
+    //region CAR
+    public static final String REQUEST_CAR_CUSTOMER = "request_find_car_by_account_id";
+    public static final String RESPONSE_CAR_CUSTOMER= "response_find_car_by_account_id";
+
+    public static final String REQUEST_DELETE_CAR = "request_remove_car_by_id";
+    public static final String RESPONSE_DELETE_CAR = "response_remove_car_by_id";
+
+    //endregion
+
     public static int PREF_MODE = 1;
     //        public static String SERVER_HOST = "http://54.255.178.120:5000";
 
-    //public static String SERVER_HOST = "http://192.168.0.110:5000";
+    public static String SERVER_HOST = "http://192.168.1.30:5000";
 
-    public static String SERVER_HOST = "http://192.168.1.2:5000";
+    //public static String SERVER_HOST = "http://192.168.1.2:5000";
 
     //    public static String SERVER_HOST = "http://52.15.194.52:5000";
     public static String APP_PREF = "AppPref";
