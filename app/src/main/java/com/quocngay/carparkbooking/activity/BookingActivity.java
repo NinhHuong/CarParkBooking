@@ -18,6 +18,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,6 +33,7 @@ import com.quocngay.carparkbooking.model.LocationDataModel;
 import com.quocngay.carparkbooking.model.Principal;
 import com.quocngay.carparkbooking.other.Constant;
 import com.quocngay.carparkbooking.other.SocketIOClient;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -59,21 +61,35 @@ public class BookingActivity extends AppCompatActivity {
     private Principal principal;
     private CarModel mCurrentCar;
     private AlertDialog.Builder mBookAlertDialog;
+    private TextView tvRemainSlots;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_booking);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_booking);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
 
         assert actionBar != null;
         actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setDisplayShowTitleEnabled(false);
 
         markerGara = (GarageModel) getIntent().getSerializableExtra(Constant.GARA_DETAIL);
+        ImageView imageView = (ImageView) findViewById(R.id.iv_gara_map);
+        Picasso.with(this).load(getMapImageUrl()).into(imageView);
+        tvRemainSlots = (TextView) findViewById(R.id.tv_gara_detail_remain);
 
+        if (markerGara.getRemainSlot() == 0) {
+            tvRemainSlots.setText(getResources().getString(R.string.booking_slot_not_available));
+            tvRemainSlots.setTextColor(getResources().getColor(R.color.colorNotAvailable));
+        } else {
+            tvRemainSlots.setText(getResources().getString(R.string.booking_slot_available,
+                    markerGara.getRemainSlot(),
+                    markerGara.getTotalSlot()));
+            tvRemainSlots.setTextColor(getResources().getColor(R.color.colorAvailable));
+        }
         principal = new Principal(getApplicationContext());
         btnBook = (Button) findViewById(R.id.btn_book);
         btnBook.setOnClickListener(new View.OnClickListener() {
@@ -106,8 +122,8 @@ public class BookingActivity extends AppCompatActivity {
 
         tvGaraTitle = (TextView) findViewById(R.id.tv_gara_detail_title);
         tvGaraDes = (TextView) findViewById(R.id.tv_gara_detail_des);
-        tvGaraDuration = (TextView) findViewById(R.id.tv_duration);
-        tvGaraDistance = (TextView) findViewById(R.id.tv_distance);
+        tvGaraDuration = (TextView) findViewById(R.id.tv_duration_book);
+        tvGaraDistance = (TextView) findViewById(R.id.tv_distance_book);
 
         tvGaraTitle.setText(markerGara.getName());
         tvGaraDes.setText(markerGara.getAddress());
@@ -145,6 +161,17 @@ public class BookingActivity extends AppCompatActivity {
 
     public interface OnListInteractionListener {
         void onListInteraction(CarModel item);
+    }
+
+    private String getMapImageUrl() {
+        String url = getResources().getString(
+                R.string.book_url_map_image,
+                markerGara.getLocationX() + "," + markerGara.getLocationY(),
+                Constant.DEFAULT_ZOOM,
+                Constant.BOOKING_MAP_SIZE,
+                markerGara.getLocationX() + "," + markerGara.getLocationY()).replaceAll(" ", "");
+
+        return url;
     }
 
 

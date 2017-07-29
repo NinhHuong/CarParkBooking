@@ -71,13 +71,15 @@ public class Constant {
             "request_edit_parking_info_id_status";
     public static final String RESPONSE_EDIT_PARKING_INFO_BY_ID_STATUS =
             "response_edit_parking_info_id_status";
+    public static final String KEY_MAIN_MAP = "google_map";
+    public static final String BOOKING_MAP_SIZE = "600x300";
 
     public static int PREF_MODE = 1;
     //        public static String SERVER_HOST = "http://54.255.178.120:5000";
 
     //public static String SERVER_HOST = "http://192.168.0.110:5000";
 
-    public static String SERVER_HOST = "http://192.168.196.1:5000";
+    public static String SERVER_HOST = "http://192.168.1.2:5000";
 
     //    public static String SERVER_HOST = "http://52.15.194.52:5000";
     public static String APP_PREF = "AppPref";

@@ -124,7 +124,7 @@ public class MapActivity extends AppCompatActivity
     private FloatingActionButton btnGgDirection;
     private ViewGroup root;
     private Emitter.Listener onResponseGetStatusParkingInfo;
-    private ParkingInfoModel mAppInitStatusBooked;
+    private ParkingInfoModel mParkingInfoModel;
 
 
     @Override
@@ -170,6 +170,7 @@ public class MapActivity extends AppCompatActivity
             }
         }
 
+        //TODO: set content for mParkingInfoModel param
         if (requestCode == Constant.REQUEST_CODE_BOOKING) {
             if (resultCode == RESULT_OK) {
                 Boolean bookingStatus = data.getBooleanExtra(Constant.BOOKING_STATUS, false);
@@ -187,9 +188,11 @@ public class MapActivity extends AppCompatActivity
                             startActivity(intent);
                         }
                     });
+                    //Draw direction to destination point
                     String url = getDirectionsUrl(origin, dest, false);
                     GetAPIData getAPIData = new GetAPIData();
                     getAPIData.execute(url);
+                    initMapCheckBooking();
                     initMapBookedStatus();
                 }
             }
@@ -335,17 +338,18 @@ public class MapActivity extends AppCompatActivity
                     public void run() {
                         JSONObject jsonObject = (JSONObject) args[0];
                         Gson gson = new Gson();
-
                         try {
                             if (jsonObject.getBoolean(Constant.RESULT)) {
-                                mAppInitStatusBooked = gson.fromJson(
+                                mParkingInfoModel = gson.fromJson(
                                         jsonObject.getJSONObject(Constant.DATA).toString(),
                                         ParkingInfoModel.class);
-                                btnMapStatus(BTN_STATUS_CANCEL);
+                                if (mParkingInfoModel.getParkingStatus() == Constant.PARKING_INFO_STATUS_BOOKED) {
+                                    btnMapStatus(BTN_STATUS_CANCEL);
+                                }
                                 SocketIOClient.client.mSocket.off();
 
                             } else {
-                                Log.e("Server", jsonObject.getString(jsonObject.getString(Constant.MESSAGE)));
+                                Log.e("Server", jsonObject.getString(Constant.MESSAGE));
                                 SocketIOClient.client.mSocket.off();
                             }
                         } catch (JSONException e) {
@@ -469,10 +473,10 @@ public class MapActivity extends AppCompatActivity
             }
         });
 
-        if (mAppInitStatusBooked == null) {
-            initMapGeneralStatus();
-        } else {
+        if (mParkingInfoModel != null && mParkingInfoModel.getParkingStatus() == Constant.PARKING_INFO_STATUS_BOOKED) {
             initMapBookedStatus();
+        } else {
+            initMapGeneralStatus();
         }
     }
 
@@ -506,6 +510,10 @@ public class MapActivity extends AppCompatActivity
     }
 
     private void initMapGeneralStatus() {
+        mParkingInfoModel = null;
+        if (mPolyline != null) {
+            mPolyline.remove();
+        }
 
         googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
@@ -580,7 +588,7 @@ public class MapActivity extends AppCompatActivity
             btnCancel.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    cancelBooking(mAppInitStatusBooked);
+                    cancelBooking();
                 }
             });
         }
@@ -595,12 +603,12 @@ public class MapActivity extends AppCompatActivity
                     JSONObject jsonObject = (JSONObject) args[0];
                     try {
                         if (jsonObject.getBoolean(Constant.RESULT)) {
-                            mAppInitStatusBooked = null;
                             Toast.makeText(MapActivity.this,
                                     getResources().getString(R.string.book_cancel_successfull),
                                     Toast.LENGTH_SHORT).show();
                             btnMapStatus(BTN_STATUS_FIND);
                             initMapGeneralStatus();
+
                             SocketIOClient.client.mSocket.off();
                         } else {
                             Log.d("Cancel book", jsonObject.getString(Constant.MESSAGE));
@@ -614,7 +622,7 @@ public class MapActivity extends AppCompatActivity
         }
     };
 
-    private void cancelBooking(final ParkingInfoModel parkingInfoModel) {
+    private void cancelBooking() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(R.string.dialog_book_cancel_message)
                 .setPositiveButton(R.string.fire, new DialogInterface.OnClickListener() {
@@ -623,7 +631,7 @@ public class MapActivity extends AppCompatActivity
                         //TODO: Bug - Return from google map -> app crash
                         SocketIOClient.client.mSocket.emit(
                                 Constant.REQUEST_EDIT_PARKING_INFO_BY_ID_STATUS,
-                                parkingInfoModel.getId(), Constant.PARKING_INFO_STATUS_CANCEL);
+                                mParkingInfoModel.getId(), Constant.PARKING_INFO_STATUS_CANCEL);
                         SocketIOClient.client.mSocket.on(
                                 Constant.RESPONSE_EDIT_PARKING_INFO_BY_ID_STATUS,
                                 onResponseCancelBooking);
@@ -640,7 +648,7 @@ public class MapActivity extends AppCompatActivity
 
     private void placeGaraMarker(GarageModel garageModel) {
         Bitmap.Config conf = Bitmap.Config.ARGB_8888;
-        Bitmap bmp = Bitmap.createBitmap(80, 80, conf);
+        Bitmap bmp = Bitmap.createBitmap(150, 150, conf);
         Canvas canvas = new Canvas(bmp);
 
 
