@@ -7,11 +7,40 @@
     android:background="@android:color/white"
     tools:context="com.quocngay.carparkbooking.activity.BookingActivity">
 
-    <include
-        android:id="@+id/book_app_bar"
-        layout="@layout/app_bar"
+
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/app_bar_booking"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="@dimen/app_bar_height"
+        android:fitsSystemWindows="true"
+        android:theme="@style/AppTheme.NoActionBar.AppBarOverlay">
+
+        <android.support.design.widget.CollapsingToolbarLayout
+            android:id="@+id/toolbar_layout_booking"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fitsSystemWindows="true"
+            app:contentScrim="?attr/colorPrimary"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed">
+
+            <ImageView
+                android:id="@+id/iv_gara_map"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fitsSystemWindows="true"
+                app:layout_collapseMode="parallax"
+                android:scaleType="centerCrop" />
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar_booking"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                app:layout_collapseMode="pin"
+                app:popupTheme="@style/AppTheme.NoActionBar.PopupOverlay" />
+
+
+        </android.support.design.widget.CollapsingToolbarLayout>
+    </android.support.design.widget.AppBarLayout>
 
     <Button
         android:id="@+id/btn_book"
@@ -24,109 +53,57 @@
         android:text="@string/map_booking"
         android:textColor="@color/text_light_title" />
 
-    <FrameLayout
-        android:id="@+id/license_container"
+    <LinearLayout
+        android:id="@+id/container_license"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/btn_book"
         android:layout_centerHorizontal="true"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:background="@drawable/bg_textview_dark">
+        android:orientation="vertical">
 
         <TextView
-            android:id="@+id/tv_license_number"
+            android:id="@+id/tv_license_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="?android:attr/selectableItemBackground"
-            android:padding="10dp"
-            android:text="74C1-24811"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:text="@string/booking_license_title"
             android:textAlignment="center"
-            android:textSize="40sp" />
-    </FrameLayout>
+            android:textSize="18sp" />
 
-    <TextView
-        android:id="@+id/tv_license_title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@id/license_container"
-        android:layout_marginBottom="10dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:text="@string/booking_license_title"
-        android:textAlignment="center"
-        android:textSize="18sp" />
 
-    <RelativeLayout
+        <FrameLayout
+            android:id="@+id/license_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/bg_textview_dark">
+
+            <TextView
+                android:id="@+id/tv_license_number"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?android:attr/selectableItemBackground"
+                android:padding="10dp"
+                android:text="74C1-24811"
+                android:textAlignment="center"
+                android:textSize="40sp" />
+        </FrameLayout>
+
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/container_gara_detail"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@id/tv_license_title"
-        android:layout_below="@id/book_app_bar"
-        android:layout_margin="10dp">
+        android:layout_above="@id/container_license"
+        android:layout_below="@id/app_bar_booking">
 
+        <include layout="@layout/content_scrolling" />
+    </FrameLayout>
 
-        <TextView
-            android:id="@+id/tv_gara_detail_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="TextView"
-            android:textSize="20sp" />
-
-        <TextView
-            android:id="@+id/tv_gara_detail_des"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/tv_gara_detail_title"
-            android:layout_marginTop="10dp"
-            android:text="TextView" />
-
-
-        <FrameLayout
-            android:id="@+id/linearLayout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:layout_below="@id/tv_gara_detail_title"
-            android:layout_marginTop="10dp"
-            android:gravity="center">
-
-            <include layout="@layout/container_duration" />
-        </FrameLayout>
-
-        <FrameLayout
-            android:id="@+id/info_duration"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignStart="@+id/linearLayout"
-            android:layout_below="@+id/linearLayout"
-            android:layout_marginTop="10dp"
-            android:gravity="center">
-
-            <include layout="@layout/container_distance" />
-        </FrameLayout>
-
-        <TextView
-            android:id="@+id/tv_gara_detail_total"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:text="TextView" />
-
-        <TextView
-            android:id="@+id/tv_gara_detail_busy"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:text="TextView" />
-
-        <TextView
-            android:id="@+id/tv_gara_detail_booked"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:text="TextView" />
-
-    </RelativeLayout>
 
 </RelativeLayout>
