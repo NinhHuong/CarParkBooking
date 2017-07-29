@@ -65,7 +65,8 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyAPM7L8NUuNVQPMx5xozWcYCxOzKS-T6T8" />
 
-        <activity android:name=".activity.CarManagerActivity"></activity>
+        <activity android:name=".activity.CarManagerActivity" />
+        <activity android:name=".activity.SecurityActivity"></activity>
     </application>
 
 </manifest>
