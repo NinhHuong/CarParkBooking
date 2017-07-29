@@ -117,6 +117,9 @@
     <!-- Strings related to car manager -->
     <string name="not_have_car">Bạn chưa có xe</string>
     <string name="had_delete_car">Bạn vừa xóa xe</string>
+    <string name="add_new_car">Thêm xe mới</string>
+    <string name="dialog_button_add">Thêm</string>
+    <string name="log_cannt_add">Xe đã được đăng kí</string>
 
 
     <string name="error_general">Có lỗi đâu đấy</string>
@@ -129,6 +132,8 @@
     <string name="error_book_new">Có lỗi xảy ra! Vui lòng kiểm tra lại</string>
     <string name="dialog_book_message">Bạn có chắc chắn muốn đặt chỗ</string>
     <string name="dialog_book_title">Xác nhận đặt chỗ</string>
+    <string name="dialog_delete_title">Xác nhân xóa xe</string>
+    <string name="dialog_delete_car">Bạn có chắc chắn muốn xóa xe</string>
     <string name="map_gara_cancel">Hủy đặt chỗ</string>
     <string name="dialog_book_cancel_message">Bạn có chắc chắn muốn hủy bỏ đặt chỗ?</string>
     <string name="error_server">Có lỗi xảy ra!</string>
@@ -136,7 +141,8 @@
     <string name="today">Hôm nay</string>
     <string name="book_url_map_image">https://maps.googleapis.com/maps/api/staticmap?center=%1$s&amp;zoom=%2$d&amp;size=%3$s&amp;maptype=roadmap&amp;markers=%4$s&amp;key=AIzaSyAPM7L8NUuNVQPMx5xozWcYCxOzKS-T6T8</string>
     <string name="title_activity_scrolling">ScrollingActivity</string>
-
     <string name="booking_slot_not_available">Đã hết chỗ trống!</string>
     <string name="booking_slot_available">Còn %1$d / %2$d chỗ trống.</string>
+
+
 </resources>

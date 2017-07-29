@@ -88,12 +88,14 @@ public class Constant {
     public static final String REQUEST_DELETE_CAR = "request_remove_car_by_id";
     public static final String RESPONSE_DELETE_CAR = "response_remove_car_by_id";
 
+    public static final String REQUEST_ADD_CAR = "request_add_new_car";
+    public static final String RESPONSE_ADD_CAR = "response_add_new_car";
     //endregion
 
     public static int PREF_MODE = 1;
     //        public static String SERVER_HOST = "http://54.255.178.120:5000";
 
-    public static String SERVER_HOST = "http://192.168.1.30:5000";
+    public static String SERVER_HOST = "http://192.168.0.110:5000";
 
     //public static String SERVER_HOST = "http://192.168.1.2:5000";
 
