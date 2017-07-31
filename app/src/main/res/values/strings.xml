@@ -123,6 +123,7 @@
 
 
     <string name="error_general">Có lỗi đâu đấy</string>
+    <string name="error_select_car">Hãy chọn xe</string>
     <string name="logout_successfull">Bạn đã đăng xuất</string>
     <string name="dialog_logout_message">Bạn có chắc chắn muốn đăng xuất</string>
     <string name="fire">Có</string>
@@ -144,5 +145,10 @@
     <string name="booking_slot_not_available">Đã hết chỗ trống!</string>
     <string name="booking_slot_available">Còn %1$d / %2$d chỗ trống.</string>
 
-
+    <string name="title_car_get_in">Xe đi vào</string>
+    <string name="title_car_get_iut">Xe đi ra</string>
+    <string name="title_btn_car_get_in">Cho xe vào</string>
+    <string name="title_btn_car_get_iut">Cho xe ra</string>
+    <string name="title_car_vehicle">Biển số</string>
+    <string name="title_fill_vehicle">Biển số nhập</string>
 </resources>

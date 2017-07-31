@@ -29,6 +29,7 @@ import org.json.JSONObject;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.Security;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -56,7 +57,23 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     try {
                         Boolean result = jsonObject.getBoolean(Constant.RESULT);
                         if (result) {
-                            Intent intent = new Intent(LoginActivity.this, MapActivity.class);
+                            Intent intent = null;
+                            role = jsonObject.getString(Constant.SERVER_RESPONSE_LOGIN_PARA_ROLE);
+                            switch (role) {
+                                case "1":
+                                    break;
+                                case "2":
+                                    break;
+                                case "3":
+                                    intent = new Intent(LoginActivity.this, SecurityActivity.class);
+                                    break;
+                                case "4":
+                                    intent = new Intent(LoginActivity.this, MapActivity.class);
+                                    break;
+                                default:
+                                    break;
+                            }
+
                             startActivity(intent);
                             finish();
                             SocketIOClient.client.mSocket.off();
@@ -84,7 +101,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             Toast.makeText(getApplicationContext(), getResources().getString(R.string.login_successfull), Toast.LENGTH_SHORT).show();
                             SharedPreferences.Editor editor = mSharedPref.edit();
                             editor.putString(Constant.APP_PREF_TOKEN, serverToken);
-                            editor.putString(Constant.APP_PREF_ID, serverToken);
+                            editor.putString(Constant.APP_PREF_ID, userId);
                             editor.putBoolean(Constant.APP_PREF_REMEMBER, cbRemember.isChecked());
                             editor.apply();
                             Intent intent = new Intent(LoginActivity.this, MapActivity.class);
@@ -102,6 +119,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
     };
     private String userId;
+    private String role;
     private Emitter.Listener onNewMessageResultLogin = new Emitter.Listener() {
         @Override
         public void call(final Object... args) {
@@ -116,8 +134,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         String isVerify = data.getString(Constant.IS_VERIFY);
                         serverToken = data.getString(Constant.SERVER_RESPONSE_LOGIN_PARA_TOKEN);
                         userId = data.getString(Constant.SERVER_RESPONSE_LOGIN_PARA_ID);
-                        Log.w("Account account",data.toString());
-                        Log.w("User id",userId);
+                        role = data.getString(Constant.SERVER_RESPONSE_LOGIN_PARA_ROLE);
+                        Log.w("Account account", data.toString());
+                        Log.w("User id", userId);
                         if (!isEmailCorrect) {
                             Toast.makeText(getBaseContext(), getResources().getString(R.string.server_error_email), Toast.LENGTH_SHORT).show();
                             return;
@@ -129,10 +148,26 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         if (isVerify.equals("1")) {
                             Principal principal = new Principal(getApplicationContext());
                             principal.setId(userId);
+                            principal.setRole(role);
                             principal.setToken(serverToken);
                             principal.setRemmember(cbRemember.isChecked());
                             Toast.makeText(getApplicationContext(), getResources().getString(R.string.login_successfull), Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent(LoginActivity.this, MapActivity.class);
+                            Intent intent = null;
+                            switch (role) {
+                                case "1":
+                                    break;
+                                case "2":
+                                    break;
+                                case "3":
+                                    intent = new Intent(LoginActivity.this, SecurityActivity.class);
+                                    break;
+                                case "4":
+                                    intent = new Intent(LoginActivity.this, MapActivity.class);
+                                    break;
+                                default:
+                                    break;
+                            }
+
                             startActivity(intent);
                             finish();
                             SocketIOClient.client.mSocket.off();

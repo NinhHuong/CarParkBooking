@@ -254,13 +254,11 @@ public class MapActivity extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
-
-
         int id = item.getItemId();
 
         if (id == R.id.nav_camera) {
             // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
+        } else if (id == R.id.nav_car_manager) {
             Intent intent = new Intent(MapActivity.this, CarManagerActivity.class);
             startActivity(intent);
         } else if (id == R.id.nav_history) {
@@ -954,8 +952,6 @@ public class MapActivity extends AppCompatActivity
                 });
         // Create the AlertDialog object and return it
         builder.create().show();
-
-
     }
 
 }

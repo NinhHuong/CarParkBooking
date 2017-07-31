@@ -61,6 +61,7 @@ public class Constant {
     public static final String RESPONSE_FIND_CAR_BY_ACCOUNT_ID = "response_find_car_by_account_id";
     public static final String APP_PREF_ID = "user_id";
     public static final String SERVER_RESPONSE_LOGIN_PARA_ID = "id";
+    public static final String SERVER_RESPONSE_LOGIN_PARA_ROLE = "role";
     public static final String VEHICLE_NUMBER = "vehicleNumber";
     public static final String GARA_DETAIL = "gara_detail";
     public static final String REQUEST_ADD_NEW_PARKING_INFO = "request_add_new_booking";
@@ -81,6 +82,11 @@ public class Constant {
 
     //endregion
 
+    //region HISTORY
+    public static final String REQUEST_BOOKING_HISTORY_ACCOUNT_ID = "request_booking_history_account_id";
+    public static final String RESPONSE_BOOKING_HISTORY_ACCOUNT_ID= "response_booking_history_account_id";
+    //endregion
+
     //region CAR
     public static final String REQUEST_CAR_CUSTOMER = "request_find_car_by_account_id";
     public static final String RESPONSE_CAR_CUSTOMER= "response_find_car_by_account_id";
@@ -90,6 +96,24 @@ public class Constant {
 
     public static final String REQUEST_ADD_CAR = "request_add_new_car";
     public static final String RESPONSE_ADD_CAR = "response_add_new_car";
+    //endregion
+
+    //region Security
+    public static final String REQUEST_CAR_WILL_IN = "request_car_go_in";
+    public static final String RESPONSE_CAR_WILL_IN = "response_car_go_in";
+
+    public static final String REQUEST_CAR_WILL_OUT = "request_car_go_out";
+    public static final String RESPONSE_CAR_WILL_OUT = "response_car_go_out";
+
+    public static final String REQUEST_ONE_CAR_IN_ID = "request_one_car_in_by_id";
+    public static final String REQUEST_ONE_CAR_IN_NUMBER = "request_one_car_in_by_vehicle_number";
+    public static final String RESPONSE_ONE_CAR_IN = "response_one_car_in";
+
+    public static final String REQUEST_ONE_CAR_OUT = "request_one_car_out";
+    public static final String RESPONSE_ONE_CAR_OUT = "response_one_car_out";
+
+    public static final String REQUEST_GET_GARAGE_ID = "request_find_security_by_account_id";
+    public static final String RESPONSE_GET_GARAGE_ID = "response_find_security_by_account_id";
     //endregion
 
     public static int PREF_MODE = 1;
@@ -103,6 +127,7 @@ public class Constant {
     public static String APP_PREF = "AppPref";
     public static String APP_PREF_TOKEN = "token";
     public static String APP_PREF_REMEMBER = "remember_status";
+    public static String APP_PREF_ROLE = "role";
     public static String SERVER_RESPONSE_LOGIN_PARA_EMAIL = "email";
     public static String SERVER_RESPONSE_LOGIN_PARA_PASSWORD = "password";
     public static String SERVER_RESPONSE_LOGIN_PARA_TOKEN = "token";

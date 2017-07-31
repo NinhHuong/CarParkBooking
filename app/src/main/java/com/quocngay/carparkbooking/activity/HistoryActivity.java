@@ -62,8 +62,8 @@ public class HistoryActivity extends AppCompatActivity {
         mProgressBar = (ProgressBar) findViewById(R.id.progress_history);
 
         SocketIOClient.client.mSocket.off();
-        SocketIOClient.client.mSocket.emit("request_booking_history_account_id", id);
-        SocketIOClient.client.mSocket.on("response_booking_history_account_id", new Emitter.Listener() {
+        SocketIOClient.client.mSocket.emit(Constant.REQUEST_BOOKING_HISTORY_ACCOUNT_ID, id);
+        SocketIOClient.client.mSocket.on(Constant.RESPONSE_BOOKING_HISTORY_ACCOUNT_ID, new Emitter.Listener() {
 
             @Override
             public void call(final Object... args) {

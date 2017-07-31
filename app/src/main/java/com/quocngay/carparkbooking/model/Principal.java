@@ -14,7 +14,7 @@ public class Principal {
     private String id;
     private String token;
     private Boolean remmember;
-
+    private String role;
     SharedPreferences mSharedPref;
     SharedPreferences.Editor editor;
 
@@ -44,6 +44,15 @@ public class Principal {
 
     public Boolean getRemmember() {
         return mSharedPref.getBoolean(Constant.APP_PREF_REMEMBER, false);
+    }
+
+    public String getRole() {
+        return mSharedPref.getString(Constant.APP_PREF_ROLE, "");
+    }
+
+    public void setRole(String role) {
+        editor.putString(Constant.APP_PREF_ROLE, role);
+        editor.apply();
     }
 
     public void setRemmember(Boolean remmember) {
