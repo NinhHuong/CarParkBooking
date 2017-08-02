@@ -84,18 +84,24 @@ public class Constant {
     //region CAR
     public static final String REQUEST_CAR_CUSTOMER = "request_find_car_by_account_id";
     public static final String RESPONSE_CAR_CUSTOMER= "response_find_car_by_account_id";
+    public static final String REQUEST_ADD_NEW_CAR = "request_add_new_car";
+    public static final String REQUEST_REMOVE_CAR_BY_ID= "request_remove_car_by_id";
 
     public static final String REQUEST_DELETE_CAR = "request_remove_car_by_id";
     public static final String RESPONSE_DELETE_CAR = "response_remove_car_by_id";
-
+    public static final String RESPONSE_ADD_NEW_CAR = "response_add_new_car";
+    public static final String RESPONSE_REMOVE_CAR_BY_ID= "response_remove_car_by_id";
     //endregion
+
+    public static final String REQUEST_GET_GARAGE_BY_ID = "request_get_garage_by_id";
+    public static final String RESPONSE_GET_GARAGE_BY_ID = "response_get_garage_by_id";
 
     public static int PREF_MODE = 1;
     //        public static String SERVER_HOST = "http://54.255.178.120:5000";
 
-    public static String SERVER_HOST = "http://192.168.1.30:5000";
+    //public static String SERVER_HOST = "http://192.168.1.30:5000";
 
-    //public static String SERVER_HOST = "http://192.168.1.2:5000";
+    public static String SERVER_HOST = "http://192.168.196.1:5000";
 
     //    public static String SERVER_HOST = "http://52.15.194.52:5000";
     public static String APP_PREF = "AppPref";

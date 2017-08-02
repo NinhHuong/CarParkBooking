@@ -23,7 +23,6 @@
             android:paddingBottom="10dp"
             android:paddingLeft="85dp"
             android:paddingTop="10dp"
-            android:text="TextView"
             android:textSize="20sp" />
 
 
@@ -33,8 +32,7 @@
             android:layout_height="wrap_content"
             android:paddingLeft="85dp"
             android:layout_marginBottom="10dp"
-            android:layout_marginTop="10dp"
-            android:text="TextView" />
+            android:layout_marginTop="10dp"/>
 
         <View
             style="@style/Divider"
@@ -55,8 +53,7 @@
             <TextView
                 android:id="@+id/tv_gara_detail_des"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="TextView" />
+                android:layout_height="wrap_content" />
 
         </LinearLayout>
 
@@ -68,7 +65,6 @@
             android:id="@+id/container_duration"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/container_address"
             android:gravity="center">
 
             <ImageView
@@ -80,8 +76,7 @@
             <TextView
                 android:id="@+id/tv_duration_book"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="12 phút" />
+                android:layout_height="wrap_content" />
         </LinearLayout>
 
         <View
@@ -92,7 +87,6 @@
             android:id="@+id/container_direction"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/container_duration"
             android:gravity="center">
 
             <ImageView
@@ -104,8 +98,7 @@
             <TextView
                 android:id="@+id/tv_distance_book"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="52km" />
+                android:layout_height="wrap_content" />
         </LinearLayout>
     </LinearLayout>
 </android.support.v4.widget.NestedScrollView>

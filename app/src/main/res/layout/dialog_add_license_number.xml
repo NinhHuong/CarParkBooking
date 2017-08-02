@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="20dp">
+
+    <TextView
+        android:id="@+id/dl_add_car_description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="@string/dialog_add_car_message" />
+
+    <EditText
+        android:id="@+id/edt_license_number"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/dl_add_car_description"
+        android:layout_marginTop="30dp"
+        android:hint="@string/dialog_add_car_input_hint"
+        android:inputType="text"
+        android:maxLines="1"
+        android:textAlignment="center"
+        android:textSize="30sp" />
+
+
+    <Button
+        android:id="@+id/btn_continue"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/edt_license_number"
+        android:layout_marginTop="30dp"
+        android:background="@drawable/custom_button_bg"
+        android:text="@string/dialog_btn_add"
+        android:textAlignment="center" />
+
+    <TextView
+        android:id="@+id/tv_cancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/btn_continue"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:text="@string/dialog_btn_cancel"
+        android:textAlignment="center" />
+
+</RelativeLayout>

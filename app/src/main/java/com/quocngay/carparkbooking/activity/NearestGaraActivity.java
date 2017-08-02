@@ -27,7 +27,9 @@ import com.quocngay.carparkbooking.tasks.DownloadTask;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 public class NearestGaraActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -64,9 +66,11 @@ public class NearestGaraActivity extends AppCompatActivity implements View.OnCli
 
 
         for (GarageModel garageModel : MapActivity.garageModelList) {
-            String url = getDirectionsUrl(new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude()), garageModel.getPosition(), false);
-            GetAPIDataForNearest getAPIData = new GetAPIDataForNearest(garageModel);
-            getAPIData.execute(url);
+            if(garageModel.getRemainSlot() > 0) {
+                String url = getDirectionsUrl(new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude()), garageModel.getPosition(), false);
+                GetAPIDataForNearest getAPIData = new GetAPIDataForNearest(garageModel);
+                getAPIData.execute(url);
+            }
         }
         dataModelList = new ArrayList<>();
         OnListInteractionListener listener = new OnListInteractionListener() {
@@ -97,7 +101,8 @@ public class NearestGaraActivity extends AppCompatActivity implements View.OnCli
         String str_dest = "destination=" + dest.latitude + "," + dest.longitude;
         String sensor = "sensor=false";
         String mode = "mode=driving";
-        String parameters = str_origin + "&" + str_dest + "&" + sensor + "&" + mode;
+        String language = "language=" + Locale.getDefault().getLanguage();
+        String parameters = str_origin + "&" + str_dest + "&" + sensor + "&" + mode + "&" + language;
         String output = "json";
         String url;
         if (redirect) {
@@ -162,6 +167,7 @@ public class NearestGaraActivity extends AppCompatActivity implements View.OnCli
         @Override
         protected void onPostExecute(LocationDataModel result) {
             dataModelList.add(result);
+            Collections.sort(dataModelList);
             recyclerViewAdapter.notifyDataSetChanged();
             mRecyclerView.setVisibility(View.VISIBLE);
         }

@@ -61,7 +61,6 @@ public class HistoryActivity extends AppCompatActivity {
         String id = new Principal(getApplicationContext()).getId();
         mProgressBar = (ProgressBar) findViewById(R.id.progress_history);
 
-        SocketIOClient.client.mSocket.off();
         SocketIOClient.client.mSocket.emit("request_booking_history_account_id", id);
         SocketIOClient.client.mSocket.on("response_booking_history_account_id", new Emitter.Listener() {
 
@@ -79,7 +78,7 @@ public class HistoryActivity extends AppCompatActivity {
                             } else {
                                 Toast.makeText(getApplicationContext(), R.string.not_have_recort, Toast.LENGTH_SHORT).show();
                             }
-                            SocketIOClient.client.mSocket.off();
+                            SocketIOClient.client.mSocket.off("response_booking_history_account_id");
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }

@@ -1,17 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="?android:attr/selectableItemBackground"
-    android:gravity="center">
+    android:layout_height="?attr/actionBarSize"
+    android:background="?android:attr/selectableItemBackground">
 
     <TextView
         android:id="@+id/tv_license_number"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingBottom="20dp"
-        android:paddingTop="20dp"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:gravity="center"
+        android:hint="123"
+        android:maxLines="1"
         android:textAlignment="center"
         android:textSize="20sp" />
 
-</LinearLayout>
+
+    <ImageButton
+        android:id="@+id/btn_license_remove"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:background="@drawable/custom_remove_button_bg"
+        android:layout_margin="@dimen/text_margin"
+        app:srcCompat="@drawable/ic_remove_black" />
+
+    <View style="@style/Divider" />
+</RelativeLayout>

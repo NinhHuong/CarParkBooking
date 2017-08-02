@@ -6,10 +6,10 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
@@ -35,8 +35,8 @@ import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.style.ForegroundColorSpan;
-import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -84,6 +84,8 @@ import com.quocngay.carparkbooking.other.MarkerAddressResult;
 import com.quocngay.carparkbooking.other.SocketIOClient;
 import com.quocngay.carparkbooking.tasks.DirectionParserTask;
 import com.quocngay.carparkbooking.tasks.DownloadTask;
+import com.quocngay.carparkbooking.tasks.GetDirectionApiData;
+import com.quocngay.carparkbooking.tasks.GetLocationDistanceDuration;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -92,6 +94,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 public class MapActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
@@ -112,11 +115,11 @@ public class MapActivity extends AppCompatActivity
     private Location mCurrentLocation;
     private int mMaxEntries = 50;
     private FloatingActionButton btnMyLocation;
-    private TextView addressTitle, addressDescription, addressDistance;
+    private TextView tvAddressTitle, tvAddressDescription, tvAddressDuration, tvAddressDistance;
     private String errorMessage = "";
     private Location clickedLocation;
     private CardView cardViewMarkerInfo;
-    private Marker mMarker, mSlectedGaraMarker;
+    private Marker mOrtherMarker, mSelectedGaraMarker;
     private String placeName = "";
     private Button btnChoose, btnFind, btnCancel;
     private Polyline mPolyline;
@@ -125,6 +128,7 @@ public class MapActivity extends AppCompatActivity
     private ViewGroup root;
     private Emitter.Listener onResponseGetStatusParkingInfo;
     private ParkingInfoModel mParkingInfoModel;
+    private TextView tvGarageSlots;
 
 
     @Override
@@ -140,7 +144,6 @@ public class MapActivity extends AppCompatActivity
         initMap();
         updateLocationUI();
         getDeviceLocation();
-        SocketIOClient.client.mSocket.off();
         SocketIOClient.client.mSocket.emit(Constant.REQUEST_GET_ALL_GARAGES);
         SocketIOClient.client.mSocket.on(Constant.RESPONSE_GET_ALL_GARAGES, onResponseGetAllGarages);
     }
@@ -178,7 +181,7 @@ public class MapActivity extends AppCompatActivity
                     if (mPolyline != null) {
                         mPolyline.remove();
                     }
-                    final LatLng dest = mSlectedGaraMarker.getPosition();
+                    final LatLng dest = mSelectedGaraMarker.getPosition();
                     final LatLng origin = new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude());
                     btnGgDirection.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -201,7 +204,10 @@ public class MapActivity extends AppCompatActivity
         if (requestCode == Constant.REQUEST_CODE_NEAREST) {
             if (resultCode == RESULT_OK) {
                 LocationDataModel locationDataModel = (LocationDataModel) data.getSerializableExtra(NearestGaraActivity.GARA_SELECTED);
-                setInfoViewContent(locationDataModel.getGarageModel().getName(), "", locationDataModel.getDistance());
+                setInfoViewContent(locationDataModel.getGarageModel().getName(),
+                        locationDataModel.getGarageModel().getAddress(),
+                        locationDataModel.getDuration(),
+                        locationDataModel.getDistance());
                 Location location = new Location("");
                 location.setLatitude(Double.valueOf(locationDataModel.getGarageModel().getLocationX()));
                 location.setLongitude(Double.valueOf(locationDataModel.getGarageModel().getLocationY()));
@@ -289,10 +295,12 @@ public class MapActivity extends AppCompatActivity
                         garageModelList = new ArrayList<GarageModel>();
                         for (int i = 0; i < listJsonGaras.length(); i++) {
                             GarageModel garageModel =
-                                    gson.fromJson(listJsonGaras.getJSONObject(i).toString(), GarageModel.class);
+                                    gson.fromJson(listJsonGaras.getJSONObject(i).toString(),
+                                            GarageModel.class);
                             garageModelList.add(garageModel);
-                            placeGaraMarker(garageModel);
+                            addCustomGaraMarker(garageModel);
                         }
+                        SocketIOClient.client.mSocket.off(Constant.RESPONSE_GET_ALL_GARAGES);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -346,12 +354,11 @@ public class MapActivity extends AppCompatActivity
                                 if (mParkingInfoModel.getParkingStatus() == Constant.PARKING_INFO_STATUS_BOOKED) {
                                     btnMapStatus(BTN_STATUS_CANCEL);
                                 }
-                                SocketIOClient.client.mSocket.off();
 
                             } else {
                                 Log.e("Server", jsonObject.getString(Constant.MESSAGE));
-                                SocketIOClient.client.mSocket.off();
                             }
+                            SocketIOClient.client.mSocket.off(Constant.RESPONSE_PARKING_INFO_BY_ACCOUNT_ID);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -372,10 +379,10 @@ public class MapActivity extends AppCompatActivity
         btnMyLocation = (FloatingActionButton) findViewById(R.id.btnMyLocation);
         btnGgDirection = (FloatingActionButton) findViewById(R.id.btnDirection);
 
-        addressTitle = (TextView) findViewById(R.id.tv_add_title);
-        addressDescription = (TextView) findViewById(R.id.tv_add_description);
+        tvAddressTitle = (TextView) findViewById(R.id.tv_info_title);
+        tvAddressDescription = (TextView) findViewById(R.id.tv_info_description);
 
-        addressDescription.addTextChangedListener(new TextWatcher() {
+        tvAddressDescription.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -405,12 +412,15 @@ public class MapActivity extends AppCompatActivity
             }
         });
 
-        addressDistance = (TextView) findViewById(R.id.tv_nearest);
+        tvAddressDuration = (TextView) findViewById(R.id.tv_duration);
+        tvAddressDistance = (TextView) findViewById(R.id.tv_distance);
+        tvGarageSlots = (TextView) findViewById(R.id.tv_info_slots);
+
         btnChoose = (Button) findViewById(R.id.btnChooseGara);
         btnFind = (Button) findViewById(R.id.btnFindGara);
         btnCancel = (Button) findViewById(R.id.btnCancelGara);
 
-        if (mSlectedGaraMarker == null) {
+        if (mSelectedGaraMarker == null) {
             btnMapStatus(BTN_STATUS_FIND);
         }
     }
@@ -453,10 +463,11 @@ public class MapActivity extends AppCompatActivity
     }
 
 
-    private void setInfoViewContent(String title, String description, String distance) {
-        addressTitle.setText(title);
-        addressDescription.setText(description);
-        addressDistance.setText(distance);
+    private void setInfoViewContent(String title, String description, String duration, String distance) {
+        tvAddressTitle.setText(title);
+        tvAddressDescription.setText(description);
+        tvAddressDistance.setText(distance);
+        tvAddressDuration.setText(duration);
     }
 
 
@@ -496,14 +507,16 @@ public class MapActivity extends AppCompatActivity
         googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(final Marker marker) {
-                if (mMarker != null) {
-                    mMarker.remove();
+                if (mOrtherMarker != null) {
+                    mOrtherMarker.remove();
                 }
-                mSlectedGaraMarker = marker;
+                mSelectedGaraMarker = marker;
                 Location location = new Location("");
                 location.setLatitude(marker.getPosition().latitude);
                 location.setLongitude(marker.getPosition().longitude);
                 getLocationAddress(location);
+                setMarkerInfo(marker);
+
                 return false;
             }
         });
@@ -519,11 +532,12 @@ public class MapActivity extends AppCompatActivity
             @Override
             public void onMapClick(LatLng latLng) {
                 cardViewMarkerInfo.setVisibility(View.GONE);
-                mSlectedGaraMarker = null;
+                mSelectedGaraMarker = null;
                 btnMapStatus(BTN_STATUS_FIND);
-                if (mMarker != null) {
-                    mMarker.remove();
+                if (mOrtherMarker != null) {
+                    mOrtherMarker.remove();
                 }
+
             }
         });
 
@@ -540,18 +554,59 @@ public class MapActivity extends AppCompatActivity
         googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(final Marker marker) {
-                if (mMarker != null) {
-                    mMarker.remove();
+                if (mOrtherMarker != null) {
+                    mOrtherMarker.remove();
                 }
-                mSlectedGaraMarker = marker;
+                mSelectedGaraMarker = marker;
                 Location location = new Location("");
                 location.setLatitude(marker.getPosition().latitude);
                 location.setLongitude(marker.getPosition().longitude);
                 getLocationAddress(location);
+                setMarkerInfo(marker);
+
                 btnMapStatus(BTN_STATUS_CHOOSE);
                 return false;
             }
         });
+    }
+
+    private void setMarkerInfo(final Marker marker) {
+        String directionUrl = getDirectionsUrl(
+                new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude()),
+                marker.getPosition(),
+                false);
+        if (marker.getTag() == null) {
+            tvAddressDuration.setText("");
+            tvAddressDistance.setText("");
+            tvGarageSlots.setText("");
+        } else {
+            new GetDirectionApiData((GarageModel) marker.getTag()) {
+                @Override
+                protected void onPostExecute(String result) {
+                    super.onPostExecute(result);
+
+                    new GetLocationDistanceDuration((GarageModel) marker.getTag()) {
+
+                        @Override
+                        protected void onPostExecute(LocationDataModel result) {
+                            tvAddressDuration.setText(result.getDuration());
+                            tvAddressDistance.setText(result.getDistance());
+                            int remainSlots = result.getGarageModel().getRemainSlot();
+                            tvGarageSlots.setText(remainSlots + " / " + result
+                                            .getGarageModel()
+                                            .getTotalSlot());
+                            if(remainSlots <= 0){
+                                tvGarageSlots.setTextColor(getResources().getColor(R.color.colorNotAvailable));
+                            }else{
+                                tvGarageSlots.setTextColor(getResources().getColor(R.color.colorAvailable));
+                            }
+
+                        }
+                    }.execute(result);
+
+                }
+            }.execute(directionUrl);
+        }
     }
 
     private void btnMapStatus(String status) {
@@ -576,7 +631,8 @@ public class MapActivity extends AppCompatActivity
                 @Override
                 public void onClick(View v) {
                     Intent bookingIntent = new Intent(getApplicationContext(), BookingActivity.class);
-                    bookingIntent.putExtra(Constant.GARA_DETAIL, (GarageModel) mSlectedGaraMarker.getTag());
+                    bookingIntent.putExtra(Constant.GARA_DETAIL, (GarageModel) mSelectedGaraMarker.getTag());
+                    bookingIntent.putExtra(Constant.MY_LOCATION, mLastKnownLocation == null ? new Location("") : mLastKnownLocation);
                     startActivityForResult(bookingIntent, Constant.REQUEST_CODE_BOOKING);
                 }
             });
@@ -608,11 +664,10 @@ public class MapActivity extends AppCompatActivity
                                     Toast.LENGTH_SHORT).show();
                             btnMapStatus(BTN_STATUS_FIND);
                             initMapGeneralStatus();
-
-                            SocketIOClient.client.mSocket.off();
                         } else {
                             Log.d("Cancel book", jsonObject.getString(Constant.MESSAGE));
                         }
+                        SocketIOClient.client.mSocket.off(Constant.RESPONSE_EDIT_PARKING_INFO_BY_ID_STATUS);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -646,41 +701,41 @@ public class MapActivity extends AppCompatActivity
         builder.create().show();
     }
 
-    private void placeGaraMarker(GarageModel garageModel) {
-        Bitmap.Config conf = Bitmap.Config.ARGB_8888;
-        Bitmap bmp = Bitmap.createBitmap(150, 150, conf);
-        Canvas canvas = new Canvas(bmp);
-
-
-        Paint color = new Paint(Paint.LINEAR_TEXT_FLAG | Paint.ANTI_ALIAS_FLAG);
-        color.setTextSize(16);
-        color.setTextAlign(Paint.Align.CENTER);
-        color.setFakeBoldText(true);
-        color.setStyle(Paint.Style.FILL);
-        color.setSubpixelText(true);
-        color.setColor(Color.BLACK);
-
-
-        DisplayMetrics metrics = getResources().getDisplayMetrics();
-        int x = (int) (metrics.densityDpi + 10f);
-        int y = (int) (metrics.densityDpi + 10f);
-
-
-        if (garageModel.getRemainSlot() == 0) {
-            canvas.drawBitmap(BitmapFactory.decodeResource(getResources(),
-                    R.mipmap.ic_marker_gara_gray), 0, 0, color);
-        } else {
-            canvas.drawBitmap(BitmapFactory.decodeResource(getResources(),
-                    R.mipmap.ic_marker_gara_red), 0, 0, color);
-        }
-        canvas.drawText(String.valueOf(garageModel.getRemainSlot()), x, y, color);
+    private void addCustomGaraMarker(GarageModel garageModel) {
         getLocationAddressForMarker(garageModel);
         Marker marker = googleMap.addMarker(new MarkerOptions()
                 .position(garageModel.getPosition())
-                .icon(BitmapDescriptorFactory.fromBitmap(bmp))
-                // Specifies the anchor to be at a particular point in the marker image.
-                .anchor(0.4f, 0.7f));
+                .icon(BitmapDescriptorFactory.fromBitmap(
+                        getMarkerBitmapFromView(garageModel.getRemainSlot()))));
         marker.setTag(garageModel);
+    }
+
+    private Bitmap getMarkerBitmapFromView(int slotNumber) {
+
+        View customMarkerView = ((LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.custom_marker, null);
+        customMarkerView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        TextView markerImageView = (TextView) customMarkerView.findViewById(R.id.tv_slot_number);
+
+        if (slotNumber <= 0) {
+            customMarkerView.setBackground(getResources().getDrawable(R.mipmap.ic_marker_gara_gray));
+            markerImageView.setText(String.valueOf(0));
+        } else {
+            customMarkerView.setBackground(getResources().getDrawable(R.mipmap.ic_marker_gara_red));
+            markerImageView.setText(String.valueOf(slotNumber));
+        }
+
+        customMarkerView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+        customMarkerView.layout(0, 0, customMarkerView.getMeasuredWidth(), customMarkerView.getMeasuredHeight());
+        customMarkerView.buildDrawingCache();
+        Bitmap returnedBitmap = Bitmap.createBitmap(customMarkerView.getMeasuredWidth(), customMarkerView.getMeasuredHeight(),
+                Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(returnedBitmap);
+        canvas.drawColor(Color.WHITE, PorterDuff.Mode.SRC_IN);
+        Drawable drawable = customMarkerView.getBackground();
+        if (drawable != null)
+            drawable.draw(canvas);
+        customMarkerView.draw(canvas);
+        return returnedBitmap;
     }
 
     protected void getLocationAddress(Location location) {
@@ -794,11 +849,11 @@ public class MapActivity extends AppCompatActivity
     }
 
     private void addMarker(Location location) {
-        if (mMarker != null) {
-            mMarker.remove();
+        if (mOrtherMarker != null) {
+            mOrtherMarker.remove();
         }
         getLocationAddress(location);
-        mMarker = googleMap.addMarker(new MarkerOptions().position(new LatLng(location.getLatitude(), location.getLongitude())));
+        mOrtherMarker = googleMap.addMarker(new MarkerOptions().position(new LatLng(location.getLatitude(), location.getLongitude())));
     }
 
     @Override
@@ -821,7 +876,8 @@ public class MapActivity extends AppCompatActivity
         String str_origin = "origin=" + origin.latitude + "," + origin.longitude;
         String str_dest = "destination=" + dest.latitude + "," + dest.longitude;
         String mode = "mode=driving";
-        String parameters = str_origin + "&" + str_dest + "&" + mode;
+        String language = "language=" + Locale.getDefault().getLanguage();
+        String parameters = str_origin + "&" + str_dest + "&" + mode + "&" + language;
         String output = "json";
         String url;
         if (redirect) {
@@ -860,8 +916,8 @@ public class MapActivity extends AppCompatActivity
 
             String mAddressOutput = resultData.getString(Constant.RESULT_DATA_KEY);
             String mAddressTitle = resultData.getString(Constant.RESULT_TITLE);
-            addressDescription.setText(mAddressOutput);
-            addressTitle.setText(mAddressTitle);
+            tvAddressDescription.setText(mAddressOutput);
+            tvAddressTitle.setText(mAddressTitle);
 
         }
     }
@@ -917,7 +973,7 @@ public class MapActivity extends AppCompatActivity
                 centerIncidentRouteOnMap(points);
 
             }
-            addressDistance.setText(distance);
+            tvAddressDistance.setText(distance);
             mPolyline = googleMap.addPolyline(lineOptions);
         }
     }

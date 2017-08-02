@@ -28,8 +28,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:fitsSystemWindows="true"
-                app:layout_collapseMode="parallax"
-                android:scaleType="centerCrop" />
+                android:scaleType="centerCrop"
+                app:layout_collapseMode="parallax" />
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar_booking"
@@ -57,9 +57,9 @@
         android:id="@+id/container_license"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="vertical"
         android:layout_above="@+id/btn_book"
-        android:layout_centerHorizontal="true"
-        android:orientation="vertical">
+        android:layout_alignParentStart="true">
 
         <TextView
             android:id="@+id/tv_license_title"
@@ -88,9 +88,17 @@
                 android:layout_height="wrap_content"
                 android:background="?android:attr/selectableItemBackground"
                 android:padding="10dp"
-                android:text="74C1-24811"
                 android:textAlignment="center"
                 android:textSize="40sp" />
+
+            <ImageButton
+                android:id="@+id/btn_add_license"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone"
+                android:background="?android:attr/selectableItemBackground"
+                app:srcCompat="@drawable/ic_add_black" />
+
         </FrameLayout>
 
     </LinearLayout>

@@ -1,30 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <TextView
+    <include
+        android:id="@+id/dialog_title_container"
+        layout="@layout/app_bar" />
+
+    <!--<RelativeLayout-->
+    <!--android:id="@+id/dialog_title_container"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="?attr/actionBarSize"-->
+    <!--android:background="@color/colorPrimaryLight">-->
+
+    <!--<TextView-->
+    <!--android:id="@+id/dl_license_list_title"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="match_parent"-->
+    <!--android:layout_alignParentStart="true"-->
+    <!--android:layout_marginStart="10dp"-->
+    <!--android:paddingBottom="15dp"-->
+    <!--android:paddingTop="15dp"-->
+    <!--android:text="@string/title_licence_picker"-->
+    <!--android:textSize="18sp" />-->
+
+    <!--</RelativeLayout>-->
+
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
+        android:layout_marginTop="?attr/actionBarSize">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/list_license"
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layoutManager="LinearLayoutManager"
+            tools:listitem="@layout/item_license_number" />
+    </FrameLayout>
+
+    <ImageView
+        android:id="@+id/dl_fab_add_license"
+        android:layout_width="?attr/actionBarSize"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?android:attr/selectableItemBackground"
+        android:clickable="true"
         android:padding="10dp"
-        android:text="@string/title_licence_picker"
-        android:textColor="@android:color/white"
-        android:background="@color/colorPrimary"
-        android:textSize="18sp" />
+        app:layout_anchor="@id/dialog_title_container"
+        app:layout_anchorGravity="right|center_vertical"
+        app:srcCompat="@drawable/ic_add_black" />
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/list_license"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@id/btn_book"
-        android:layout_centerInParent="true"
-        android:fadingEdgeLength="50dp"
-        android:requiresFadingEdge="vertical"
-        app:layoutManager="LinearLayoutManager"
-        tools:listitem="@layout/item_license_number" />
 
-</LinearLayout>
+</android.support.design.widget.CoordinatorLayout>

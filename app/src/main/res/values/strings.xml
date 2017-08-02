@@ -139,4 +139,14 @@
 
     <string name="booking_slot_not_available">Đã hết chỗ trống!</string>
     <string name="booking_slot_available">Còn %1$d / %2$d chỗ trống.</string>
+    <string name="dialog_add_car_message">Lưu ý! Bạn chỉ được thêm tối đa 5 biển số</string>
+    <string name="dialog_btn_add">Thêm</string>
+    <string name="dialog_add_car_input_hint">Nhập biển số</string>
+    <string name="dialog_add_car_title">Thêm biển số</string>
+    <string name="success_add_license">Thêm biển số thành công!</string>
+    <string name="error_add_license_limit">Số biển số đã quá giới hạn!</string>
+    <string name="booking_message_add_license">Vui lòng thêm biển số xe trước khi đặt.</string>
+    <string name="dialog_remove_license_item">Xóa biển số</string>
+    <string name="dialog_remove_license_item_message">Bạn có chắc muốn xóa?</string>
+
 </resources>
