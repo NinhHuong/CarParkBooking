@@ -22,6 +22,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -79,7 +80,6 @@ public class SecurityActivity extends AppCompatActivity implements NavigationVie
         SocketIOClient.client.mSocket.on(Constant.RESPONSE_ONE_CAR_IN, onCarOut);
         SocketIOClient.client.mSocket.on(Constant.RESPONSE_ONE_CAR_OUT, onCarOut);
 
-
         spnCarIn.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
@@ -91,13 +91,13 @@ public class SecurityActivity extends AppCompatActivity implements NavigationVie
             public void onNothingSelected(AdapterView<?> parentView) {
             }
         });
+
         spnCarOut.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                 ParkingInfoSecurityModel parkingModel = (ParkingInfoSecurityModel) parentView.getItemAtPosition(position);
 
                 carOutID = parkingModel.getId();
-
             }
 
             @Override
@@ -109,16 +109,22 @@ public class SecurityActivity extends AppCompatActivity implements NavigationVie
         btnCarGoIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (carInID > 0)
-                    SocketIOClient.client.mSocket.emit(Constant.REQUEST_ONE_CAR_IN_ID, carInID, garageId);
-                else if (edtCarInByHand.getText().toString().compareTo("") != 0)
-                    SocketIOClient.client.mSocket.emit(
-                            Constant.REQUEST_ONE_CAR_IN_NUMBER,
-                            edtCarInByHand.getText().toString(),
-                            garageId);
-                else
+                String carUse = "";
+                String request = "";
+                String title = "";
+                if (carInID > 0) {
+                    carUse = String.valueOf(carInID);
+                    request = Constant.REQUEST_ONE_CAR_IN_ID;
+                    title = spnCarIn.getSelectedItem().toString();
+                } else if (edtCarInByHand.getText().toString().compareTo("") != 0) {
+                    carUse = edtCarInByHand.getText().toString();
+                    title = carUse;
+                    request = Constant.REQUEST_ONE_CAR_IN_NUMBER;
+                } else
                     Toast.makeText(getBaseContext(), R.string.error_select_car, Toast.LENGTH_SHORT).show();
 
+                if(carUse.compareTo("")!= 0 && request.compareTo("")!=0)
+                    CreateDialog(title,getResources().getString(R.string.dialog_message_car_in),request,carUse);
             }
         });
 
@@ -126,7 +132,10 @@ public class SecurityActivity extends AppCompatActivity implements NavigationVie
             @Override
             public void onClick(View v) {
                 if (carOutID > 0)
-                    SocketIOClient.client.mSocket.emit(Constant.REQUEST_ONE_CAR_OUT, carOutID, garageId);
+                    CreateDialog(spnCarOut.getSelectedItem().toString(),
+                            getResources().getString(R.string.dialog_message_car_out),
+                            Constant.REQUEST_ONE_CAR_OUT,
+                            String.valueOf(carOutID));
                 else
                     Toast.makeText(getBaseContext(), R.string.error_select_car, Toast.LENGTH_SHORT).show();
             }
@@ -252,7 +261,7 @@ public class SecurityActivity extends AppCompatActivity implements NavigationVie
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
 
-         if (id == R.id.nav_logout) {
+        if (id == R.id.nav_logout) {
             logout();
         }
 
@@ -309,5 +318,37 @@ public class SecurityActivity extends AppCompatActivity implements NavigationVie
         drawer.addDrawerListener(toggle);
         toggle.syncState();
         toggle.setDrawerSlideAnimationEnabled(true);
+    }
+
+    private void CreateDialog(String title, String message, final String request, final String carUse) {
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(SecurityActivity.this);
+        // Setting Dialog Title
+        alertDialog.setTitle(title);
+
+        // Setting Dialog Message
+        alertDialog.setMessage(message);
+
+        // Setting Icon to Dialog
+        alertDialog.setIcon(R.drawable.ic_directions_car_black_24dp);
+
+        // Setting Positive "Yes" Button
+        alertDialog.setPositiveButton(getResources().getString(R.string.dialog_button_ok),
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        SocketIOClient.client.mSocket.emit(request, carUse, garageId);
+                    }
+                });
+        // Setting Negative "NO" Button
+        alertDialog.setNegativeButton(getResources().getString(R.string.dialog_btn_cancel),
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Write your code here to execute after dialog
+                        dialog.cancel();
+                    }
+                });
+        // closed
+
+        // Showing Alert Message
+        alertDialog.show();
     }
 }

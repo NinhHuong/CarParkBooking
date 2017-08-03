@@ -122,6 +122,11 @@
     <string name="log_cannt_add">Xe đã được đăng kí</string>
 
 
+    <!-- Strings related to security -->
+    <string name="dialog_button_ok">Ok</string>
+    <string name="dialog_message_car_in">Bạn có muốn cho xe này vào?</string>
+    <string name="dialog_message_car_out">Bạn có muốn cho xe này ra?</string>
+
     <string name="error_general">Có lỗi đâu đấy</string>
     <string name="error_select_car">Hãy chọn xe</string>
     <string name="logout_successfull">Bạn đã đăng xuất</string>
