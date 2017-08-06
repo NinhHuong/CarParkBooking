@@ -106,7 +106,9 @@ public class DirectionsJSONParser {
                     jDuration = ((JSONObject) jLegs.get(j)).getJSONObject("duration");
                 }
             }
-            locationDataModel = new LocationDataModel(garageModel, jDuration.getString("text"), jDistance.getString("text"));
+            locationDataModel = new LocationDataModel(garageModel,
+                    jDuration.getString("text"), jDuration.getLong("value"),
+                    jDistance.getString("text"), jDistance.getLong("value"));
         } catch (JSONException e) {
             e.printStackTrace();
         }

@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.quocngay.carparkbooking.activity.BookingActivity"
     tools:showIn="@layout/activity_booking">
@@ -12,29 +12,26 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@id/tv_license_title"
-        android:layout_below="@id/app_bar_booking"
         android:layout_margin="10dp"
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/tv_gara_detail_title"
+            android:id="@+id/tv_gara_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingBottom="10dp"
             android:paddingLeft="85dp"
             android:paddingTop="10dp"
-            android:text="TextView"
             android:textSize="20sp" />
 
 
         <TextView
-            android:id="@+id/tv_gara_detail_remain"
+            android:id="@+id/tv_gara_remain"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingLeft="85dp"
             android:layout_marginBottom="10dp"
-            android:layout_marginTop="10dp"
-            android:text="TextView" />
+            android:layout_marginTop="10dp"/>
 
         <View
             style="@style/Divider"
@@ -53,10 +50,9 @@
                 app:srcCompat="@drawable/ic_place_black_30dp" />
 
             <TextView
-                android:id="@+id/tv_gara_detail_des"
+                android:id="@+id/tv_gara_des"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="TextView" />
+                android:layout_height="wrap_content" />
 
         </LinearLayout>
 
@@ -68,7 +64,6 @@
             android:id="@+id/container_duration"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/container_address"
             android:gravity="center">
 
             <ImageView
@@ -80,19 +75,17 @@
             <TextView
                 android:id="@+id/tv_duration_book"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="12 phút" />
+                android:layout_height="wrap_content" />
         </LinearLayout>
 
         <View
             style="@style/Divider"
-            android:layout_marginLeft="85dp" />
+            android:layout_marginStart="85dp" />
 
         <LinearLayout
             android:id="@+id/container_direction"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/container_duration"
             android:gravity="center">
 
             <ImageView
@@ -104,8 +97,7 @@
             <TextView
                 android:id="@+id/tv_distance_book"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="52km" />
+                android:layout_height="wrap_content" />
         </LinearLayout>
     </LinearLayout>
 </android.support.v4.widget.NestedScrollView>

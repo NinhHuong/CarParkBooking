@@ -11,17 +11,11 @@ import com.quocngay.carparkbooking.model.GarageModel;
  * Created by Quang Si on 7/22/2017.
  */
 
-public class MarkerAddressResult extends ResultReceiver {
-    /**
-     * Create a new ResultReceive to receive results.  Your
-     * {@link #onReceiveResult} method will be called from the thread running
-     * <var>handler</var> if given, or from an arbitrary thread if null.
-     *
-     * @param handler
-     */
+public class AddressResult extends ResultReceiver {
+
     private GarageModel garageModel;
 
-    public MarkerAddressResult(Handler handler, GarageModel garageModel) {
+    public AddressResult(Handler handler, GarageModel garageModel) {
         super(handler);
         this.garageModel = garageModel;
     }

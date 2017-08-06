@@ -62,8 +62,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             loginSuccess(role);
 
                             finish();
-                            SocketIOClient.client.mSocket.off();
-                            return;
+                            SocketIOClient.client.mSocket.off(Constant.RESPONSE_CHECK_TOKEN);
+                        } else {
+                            Log.e(Constant.RESPONSE_CHECK_TOKEN,
+                                    jsonObject.getString(Constant.MESSAGE));
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -93,10 +95,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             Intent intent = new Intent(LoginActivity.this, MapActivity.class);
                             startActivity(intent);
                             finish();
-                            SocketIOClient.client.mSocket.off();
                         } else {
                             Toast.makeText(getApplicationContext(), R.string.error_code, Toast.LENGTH_SHORT).show();
                         }
+                        SocketIOClient.client.mSocket.off(Constant.RESPONSE_COMPARE_CODE);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -142,11 +144,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             loginSuccess(role);
 
                             finish();
-                            SocketIOClient.client.mSocket.off();
                         } else {
                             initCodeDialog();
-
                         }
+                        SocketIOClient.client.mSocket.off(Constant.RESPONSE_RESULT_LOGIN);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -267,8 +268,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        new SocketIOClient();
+        if (SocketIOClient.client == null) {
+            new SocketIOClient();
+        }
         mSharedPref = getSharedPreferences(Constant.APP_PREF, MODE_PRIVATE);
         Principal principal = new Principal(getApplicationContext());
         principal.setIsLogin(false);

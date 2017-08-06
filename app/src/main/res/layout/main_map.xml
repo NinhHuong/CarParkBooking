@@ -75,12 +75,12 @@
                 android:textColor="@color/text_light_title" />
 
             <Button
-                android:id="@+id/btnCancelGara"
+                android:id="@+id/btnBookDetail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:background="@drawable/custom_button_bg_cancel"
-                android:text="@string/map_gara_cancel"
+                android:background="@drawable/custom_button_bg"
+                android:text="@string/map_book_detail"
                 android:textColor="@color/text_light_title" />
 
 

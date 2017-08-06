@@ -13,6 +13,7 @@ public class Principal {
 
     private String id;
     private String token;
+    private String firebaseToken;
     private Boolean remmember;
     private String role;
     private boolean isLogin;
@@ -72,6 +73,13 @@ public class Principal {
         editor.apply();
     }
 
+    public String getFirebaseToken() {
+        return mSharedPref.getString(Constant.APP_PREF_FIREBASE_REMEMBER, "");
+    }
 
-
+    public void setFirebaseToken(String firebaseToken) {
+        this.firebaseToken = firebaseToken;
+        editor.putString(Constant.APP_PREF_FIREBASE_REMEMBER, this.firebaseToken);
+        editor.apply();
+    }
 }

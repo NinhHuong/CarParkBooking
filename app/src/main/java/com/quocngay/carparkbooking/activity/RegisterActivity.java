@@ -47,7 +47,7 @@ public class RegisterActivity extends AppCompatActivity {
                             intent.putExtra(Constant.EMAIL, email);
                             intent.putExtra(Constant.PASSWORD, password);
                             setResult(RESULT_OK, intent);
-                            SocketIOClient.client.mSocket.off();
+                            SocketIOClient.client.mSocket.off(Constant.RESPONSE_CREATE_ACCOUNT);
                             finish();
                         }
                     } catch (JSONException e) {

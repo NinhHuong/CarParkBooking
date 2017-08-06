@@ -1,4 +1,4 @@
-package com.quocngay.carparkbooking.other;
+package com.quocngay.carparkbooking.services;
 
 import android.app.IntentService;
 import android.content.Intent;
@@ -11,6 +11,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.quocngay.carparkbooking.R;
+import com.quocngay.carparkbooking.other.Constant;
 
 import java.io.IOException;
 import java.util.ArrayList;

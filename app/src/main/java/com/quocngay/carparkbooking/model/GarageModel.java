@@ -12,19 +12,6 @@ import java.util.Date;
  */
 
 public class GarageModel implements Serializable {
-//    private static String KEY_SERVER_ID = "id";
-//    private static String KEY_SERVER_NAME = "name";
-//    private static String KEY_SERVER_ADDRESS = "address";
-//    private static String KEY_SERVER_PICTURE = "picture";
-//    private static String KEY_SERVER_TOTAL = "total_slot";
-//    private static String KEY_SERVER_BUSY = "busy_slot";
-//    private static String KEY_SERVER_BOOKING = "booking_slot";
-//    private static String KEY_SERVER_LOCATION_X = "location_x";
-//    private static String KEY_SERVER_LOCATION_Y = "location_y";
-//    private static String KEY_SERVER_LOCATION_Z = "location_z";
-//    public static String KEY_SERVER_LIST_GARAGE = "garageList";
-//
-//    private static String TAG = GarageModel.class.getSimpleName();
 
     private int id;
     private String name;

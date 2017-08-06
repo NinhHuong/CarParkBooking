@@ -36,10 +36,10 @@ public class NewPasswordActivity extends AppCompatActivity {
                         if (result) {
                             Toast.makeText(getApplicationContext(), getResources().getString(R.string.forget_reset_success), Toast.LENGTH_SHORT).show();
                             finish();
-                            SocketIOClient.client.mSocket.off();
                         } else {
                             Toast.makeText(getApplicationContext(), getResources().getString(R.string.error_network), Toast.LENGTH_SHORT).show();
                         }
+                        SocketIOClient.client.mSocket.off(Constant.SERVER_RESPONSE_CHANGE_PASSWORD);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
