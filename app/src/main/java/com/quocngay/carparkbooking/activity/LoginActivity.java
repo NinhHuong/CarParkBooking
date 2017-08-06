@@ -60,7 +60,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             startActivity(intent);
                             finish();
                             SocketIOClient.client.mSocket.off(Constant.RESPONSE_CHECK_TOKEN);
-                            return;
+                        } else {
+                            Log.e(Constant.RESPONSE_CHECK_TOKEN,
+                                    jsonObject.getString(Constant.MESSAGE));
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -116,8 +118,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         String isVerify = data.getString(Constant.IS_VERIFY);
                         serverToken = data.getString(Constant.SERVER_RESPONSE_LOGIN_PARA_TOKEN);
                         userId = data.getString(Constant.SERVER_RESPONSE_LOGIN_PARA_ID);
-                        Log.w("Account account",data.toString());
-                        Log.w("User id",userId);
+                        Log.w("Account account", data.toString());
+                        Log.w("User id", userId);
                         if (!isEmailCorrect) {
                             Toast.makeText(getBaseContext(), getResources().getString(R.string.server_error_email), Toast.LENGTH_SHORT).show();
                             return;
@@ -259,8 +261,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        new SocketIOClient();
+        if (SocketIOClient.client == null) {
+            new SocketIOClient();
+        }
         mSharedPref = getSharedPreferences(Constant.APP_PREF, MODE_PRIVATE);
         Principal principal = new Principal(getApplicationContext());
         String accountToken = principal.getToken();

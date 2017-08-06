@@ -33,7 +33,7 @@ public class ListHeader implements Item {
     public View getView(LayoutInflater inflater, View convertView) {
         View view;
         if (convertView == null) {
-            view = (View) inflater.inflate(R.layout.item_header, null);
+            view = inflater.inflate(R.layout.item_header, null);
         } else {
             view = convertView;
         }

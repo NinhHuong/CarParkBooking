@@ -54,6 +54,10 @@ public class ParkingInfoModel {
         return timeBooked;
     }
 
+    public String getTimeBookedFormatted() {
+        return timeBooked;
+    }
+
     public void setTimeBooked(String timeBooked) {
         this.timeBooked = timeBooked;
     }

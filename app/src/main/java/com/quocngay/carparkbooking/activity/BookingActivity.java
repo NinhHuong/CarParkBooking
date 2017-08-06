@@ -5,10 +5,8 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.BottomSheetDialog;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -27,18 +25,16 @@ import android.widget.Toast;
 
 import com.github.nkzawa.emitter.Emitter;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.gson.Gson;
 import com.quocngay.carparkbooking.LicenseNumRecyclerViewAdapter;
 import com.quocngay.carparkbooking.R;
 import com.quocngay.carparkbooking.model.CarModel;
 import com.quocngay.carparkbooking.model.GarageModel;
 import com.quocngay.carparkbooking.model.LocationDataModel;
-import com.quocngay.carparkbooking.model.ParkingInfoModel;
 import com.quocngay.carparkbooking.model.Principal;
 import com.quocngay.carparkbooking.other.Constant;
-import com.quocngay.carparkbooking.other.DirectionsJSONParser;
 import com.quocngay.carparkbooking.other.SocketIOClient;
-import com.quocngay.carparkbooking.tasks.DownloadTask;
 import com.quocngay.carparkbooking.tasks.GetDirectionApiData;
 import com.quocngay.carparkbooking.tasks.GetLocationDistanceDuration;
 import com.squareup.picasso.Picasso;
@@ -85,7 +81,7 @@ public class BookingActivity extends AppCompatActivity {
                     try {
                         if (jsonObject.getBoolean(Constant.RESULT)) {
                             markerGara = gson.fromJson(
-                                    jsonObject.getJSONObject(Constant.DATA).toString(),
+                                    jsonObject.getJSONArray(Constant.DATA).getJSONObject(0).toString(),
                                     GarageModel.class);
                         } else {
                             Log.e("Server error", jsonObject.getString(Constant.MESSAGE));
@@ -106,8 +102,8 @@ public class BookingActivity extends AppCompatActivity {
         initToolbar();
         principal = new Principal(getApplicationContext());
         markerGara = (GarageModel) getIntent().getSerializableExtra(Constant.GARA_DETAIL);
+        mMyLocation = getIntent().getParcelableExtra(Constant.MY_LOCATION);
         requestGaraDetail();
-        mMyLocation = (Location) getIntent().getParcelableExtra(Constant.MY_LOCATION);
         initBookingElements();
         initLicenseList();
 
@@ -120,7 +116,7 @@ public class BookingActivity extends AppCompatActivity {
     }
 
     private void initToolbar() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_booking);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_booking_image);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
 
@@ -131,9 +127,9 @@ public class BookingActivity extends AppCompatActivity {
 
     @SuppressLint("SimpleDateFormat")
     private void initBookingElements() {
-        ImageView imageView = (ImageView) findViewById(R.id.iv_gara_map);
+        ImageView imageView = (ImageView) findViewById(R.id.iv_map);
         Picasso.with(this).load(getMapImageUrl()).into(imageView);
-        tvRemainSlots = (TextView) findViewById(R.id.tv_gara_detail_remain);
+        tvRemainSlots = (TextView) findViewById(R.id.tv_gara_remain);
 
         if (markerGara.getRemainSlot() <= 0) {
             tvRemainSlots.setText(getResources().getString(R.string.booking_slot_not_available));
@@ -170,11 +166,15 @@ public class BookingActivity extends AppCompatActivity {
                                     Calendar c = Calendar.getInstance();
                                     SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                                     String bookTime = df.format(c.getTime());
-                                    SocketIOClient.client.mSocket.emit(Constant.REQUEST_ADD_NEW_PARKING_INFO,
+                                    SocketIOClient.client.mSocket.emit(
+                                            Constant.REQUEST_ADD_NEW_PARKING_INFO_BY_USER,
                                             mCurrentCar.getId(),
                                             markerGara.getId(),
-                                            bookTime);
-                                    SocketIOClient.client.mSocket.on(Constant.RESPONSE_ADD_NEW_PARKING_INFO, onResponseAddParkingInfo);
+                                            bookTime,
+                                            FirebaseInstanceId.getInstance().getToken());
+                                    SocketIOClient.client.mSocket.on(
+                                            Constant.RESPONSE_ADD_NEW_PARKING_INFO_BY_USER,
+                                            onResponseAddParkingInfo);
                                 }
                             })
                             .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -182,14 +182,13 @@ public class BookingActivity extends AppCompatActivity {
                                     dialog.dismiss();
                                 }
                             });
-                    // Create the AlertDialog object and return it
                     mBookAlertDialog.create().show();
                 }
             }
         });
 
-        tvGaraTitle = (TextView) findViewById(R.id.tv_gara_detail_title);
-        tvGaraDes = (TextView) findViewById(R.id.tv_gara_detail_des);
+        tvGaraTitle = (TextView) findViewById(R.id.tv_gara_title);
+        tvGaraDes = (TextView) findViewById(R.id.tv_gara_des);
         tvGaraDuration = (TextView) findViewById(R.id.tv_duration_book);
         tvGaraDistance = (TextView) findViewById(R.id.tv_distance_book);
 
@@ -355,10 +354,13 @@ public class BookingActivity extends AppCompatActivity {
                             intent.putExtra(Constant.BOOKING_STATUS, true);
                             setResult(RESULT_OK, intent);
                             finish();
-                        } else {
-                            Toast.makeText(BookingActivity.this, getResources().getString(R.string.error_book_new), Toast.LENGTH_SHORT).show();
-                        }
 
+                        } else {
+                            Toast.makeText(BookingActivity.this,
+                                    getResources().getString(R.string.error_book_new),
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    SocketIOClient.client.mSocket.off(Constant.REQUEST_ADD_NEW_PARKING_INFO_BY_USER);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }

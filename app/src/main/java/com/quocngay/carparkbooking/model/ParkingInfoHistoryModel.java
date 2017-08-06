@@ -102,7 +102,7 @@ public class ParkingInfoHistoryModel implements Item, Comparable<ParkingInfoHist
     public View getView(LayoutInflater inflater, View convertView) {
         View view;
         if (convertView == null) {
-            view = (View) inflater.inflate(R.layout.item_history, null);
+            view = inflater.inflate(R.layout.item_history, null);
             // Do some initialization
         } else {
             view = convertView;

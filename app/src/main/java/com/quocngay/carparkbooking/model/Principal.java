@@ -13,6 +13,7 @@ public class Principal {
 
     private String id;
     private String token;
+    private String firebaseToken;
     private Boolean remmember;
 
     SharedPreferences mSharedPref;
@@ -49,6 +50,16 @@ public class Principal {
     public void setRemmember(Boolean remmember) {
         this.remmember = remmember;
         editor.putBoolean(Constant.APP_PREF_REMEMBER, this.remmember);
+        editor.apply();
+    }
+
+    public String getFirebaseToken() {
+        return mSharedPref.getString(Constant.APP_PREF_FIREBASE_REMEMBER, "");
+    }
+
+    public void setFirebaseToken(String firebaseToken) {
+        this.firebaseToken = firebaseToken;
+        editor.putString(Constant.APP_PREF_FIREBASE_REMEMBER, this.firebaseToken);
         editor.apply();
     }
 }
