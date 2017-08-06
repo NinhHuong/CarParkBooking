@@ -12,9 +12,11 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.text.InputType;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -24,6 +26,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.nkzawa.emitter.Emitter;
@@ -123,8 +126,8 @@ public class SecurityActivity extends AppCompatActivity implements NavigationVie
                 } else
                     Toast.makeText(getBaseContext(), R.string.error_select_car, Toast.LENGTH_SHORT).show();
 
-                if(carUse.compareTo("")!= 0 && request.compareTo("")!=0)
-                    CreateDialog(title,getResources().getString(R.string.dialog_message_car_in),request,carUse);
+                if (carUse.compareTo("") != 0 && request.compareTo("") != 0)
+                    CreateDialog(title, getResources().getString(R.string.dialog_message_car_in), request, carUse);
             }
         });
 
@@ -158,13 +161,13 @@ public class SecurityActivity extends AppCompatActivity implements NavigationVie
                         if (!result) return;
 
                         JSONArray jsSecurity = data.getJSONArray(Constant.DATA);
-                        Log.i("Data JSONObject", jsSecurity.toString());
                         garageId = jsSecurity.getJSONObject(0).getString("garageID");
-                        Log.i("Data garageId", garageId);
 
-                        SocketIOClient.client.mSocket.emit(Constant.REQUEST_CAR_WILL_IN, garageId);
-                        SocketIOClient.client.mSocket.emit(Constant.REQUEST_CAR_WILL_OUT, garageId);
-                        SocketIOClient.client.mSocket.off(Constant.RESPONSE_GET_GARAGE_ID);
+                        int garageStatus = jsSecurity.getJSONObject(0).getInt("xStatus");
+                        final int totalSlot = jsSecurity.getJSONObject(0).getInt("totalSlot");
+                        if (garageStatus == 0) {
+                            dialogOpenGarage(totalSlot);
+                        }
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -300,7 +303,7 @@ public class SecurityActivity extends AppCompatActivity implements NavigationVie
         setSupportActionBar(toolbar);
         defaultToolbar();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view_security);
         navigationView.setNavigationItemSelectedListener(this);
         MenuItem menuItem = navigationView.getMenu().findItem(R.id.nav_logout);
         SpannableString s = new SpannableString(menuItem.getTitle());
@@ -344,6 +347,66 @@ public class SecurityActivity extends AppCompatActivity implements NavigationVie
                     public void onClick(DialogInterface dialog, int which) {
                         // Write your code here to execute after dialog
                         dialog.cancel();
+                    }
+                });
+        // closed
+
+        // Showing Alert Message
+        alertDialog.show();
+    }
+
+    private void dialogOpenGarage(final int totalSlot) {
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(SecurityActivity.this);
+
+        // Setting Dialog Title
+        TextView txtTitle = new TextView(SecurityActivity.this);
+        txtTitle.setText(getResources().getString(R.string.dialog_title_open_garage));
+        txtTitle.setPadding(40, 40, 40, 40);
+        txtTitle.setGravity(Gravity.CENTER);
+        txtTitle.setTextSize(30);
+        alertDialog.setCustomTitle(txtTitle);
+
+        // Setting Dialog Message
+        alertDialog.setMessage(getResources().getString(R.string.dialog_message_total_slot) + ": " + totalSlot);
+
+        final EditText input = new EditText(SecurityActivity.this);
+        input.setInputType(InputType.TYPE_CLASS_NUMBER);
+//        input.setHint("Số xe hiện tại");
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT);
+        input.setLayoutParams(lp);
+        alertDialog.setView(input);
+
+        // Setting Positive "Yes" Button
+        alertDialog.setPositiveButton(getResources().getString(R.string.dialog_button_ok),
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        String s = input.getText().toString();
+                        if (s.matches("\\d+")) {
+                            int currentSlotBusy = Integer.parseInt(input.getText().toString());
+                            if (currentSlotBusy > totalSlot) {
+                                Toast.makeText(getBaseContext(), getResources().getString(R.string.error_incorrect_number_slot), Toast.LENGTH_SHORT).show();
+                                dialogOpenGarage(totalSlot);
+                            } else {
+                                SocketIOClient.client.mSocket.emit(Constant.REQUEST_CAR_WILL_IN, garageId);
+                                SocketIOClient.client.mSocket.emit(Constant.REQUEST_CAR_WILL_OUT, garageId);
+                                SocketIOClient.client.mSocket.emit(Constant.REQUEST_EDIT_GARAGE_STATUS, garageId, currentSlotBusy, Constant.STATUS_GARAGE_OPEN);
+                                SocketIOClient.client.mSocket.off(Constant.RESPONSE_GET_GARAGE_ID);
+                            }
+                        } else {
+                            Toast.makeText(getBaseContext(),getResources().getString(R.string.error_field_required), Toast.LENGTH_SHORT).show();
+                            dialogOpenGarage(totalSlot);
+                        }
+                    }
+                });
+        // Setting Negative "NO" Button
+        alertDialog.setNegativeButton(getResources().getString(R.string.dialog_btn_cancel),
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Write your code here to execute after dialog
+                        dialog.cancel();
+                        finish();
                     }
                 });
         // closed

@@ -96,6 +96,7 @@
     <string name="action_sign_in_short">Register</string>
     <string name="error_invalid_email">This email address is invalid</string>
     <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_incorrect_number_slot">Số chỗ bận phải bé hơn tổng số chỗ</string>
     <string name="error_mismatch_password">Your confirmation password is mismatch</string>
     <string name="forget_reset_success">Lấy lại mật khẩu thành công!</string>
     <string name="error_code">Mã lỗi! Hãy kiểm tra lại</string>
@@ -126,6 +127,8 @@
     <string name="dialog_button_ok">Ok</string>
     <string name="dialog_message_car_in">Bạn có muốn cho xe này vào?</string>
     <string name="dialog_message_car_out">Bạn có muốn cho xe này ra?</string>
+    <string name="dialog_title_open_garage">Mở cửa garage</string>
+    <string name="dialog_message_total_slot">Tổng số chỗ</string>
 
     <string name="error_general">Có lỗi đâu đấy</string>
     <string name="error_select_car">Hãy chọn xe</string>
@@ -156,4 +159,5 @@
     <string name="title_btn_car_get_iut">Cho xe ra</string>
     <string name="title_car_vehicle">Biển số</string>
     <string name="title_fill_vehicle">Biển số nhập</string>
+    <string name="title_activity_admin">AdminActivity</string>
 </resources>

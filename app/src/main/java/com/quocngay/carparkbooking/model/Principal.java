@@ -15,6 +15,8 @@ public class Principal {
     private String token;
     private Boolean remmember;
     private String role;
+    private boolean isLogin;
+
     SharedPreferences mSharedPref;
     SharedPreferences.Editor editor;
 
@@ -46,6 +48,10 @@ public class Principal {
         return mSharedPref.getBoolean(Constant.APP_PREF_REMEMBER, false);
     }
 
+    public boolean getIsLogin() {
+        return mSharedPref.getBoolean(Constant.APP_PREF_IS_LOGIN, false);
+    }
+
     public String getRole() {
         return mSharedPref.getString(Constant.APP_PREF_ROLE, "");
     }
@@ -60,4 +66,12 @@ public class Principal {
         editor.putBoolean(Constant.APP_PREF_REMEMBER, this.remmember);
         editor.apply();
     }
+
+    public void setIsLogin(boolean isLogin) {
+        editor.putBoolean(Constant.APP_PREF_IS_LOGIN, isLogin);
+        editor.apply();
+    }
+
+
+
 }

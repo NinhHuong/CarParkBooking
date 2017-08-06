@@ -930,7 +930,6 @@ public class MapActivity extends AppCompatActivity
     }
 
     private void logout() {
-
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(R.string.dialog_logout_message)
                 .setPositiveButton(R.string.fire, new DialogInterface.OnClickListener() {

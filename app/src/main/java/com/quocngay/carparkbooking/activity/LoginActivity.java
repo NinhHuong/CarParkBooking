@@ -57,24 +57,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     try {
                         Boolean result = jsonObject.getBoolean(Constant.RESULT);
                         if (result) {
-                            Intent intent = null;
                             role = jsonObject.getString(Constant.SERVER_RESPONSE_LOGIN_PARA_ROLE);
-                            switch (role) {
-                                case "1":
-                                    break;
-                                case "2":
-                                    break;
-                                case "3":
-                                    intent = new Intent(LoginActivity.this, SecurityActivity.class);
-                                    break;
-                                case "4":
-                                    intent = new Intent(LoginActivity.this, MapActivity.class);
-                                    break;
-                                default:
-                                    break;
-                            }
 
-                            startActivity(intent);
+                            loginSuccess(role);
+
                             finish();
                             SocketIOClient.client.mSocket.off();
                             return;
@@ -152,23 +138,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             principal.setToken(serverToken);
                             principal.setRemmember(cbRemember.isChecked());
                             Toast.makeText(getApplicationContext(), getResources().getString(R.string.login_successfull), Toast.LENGTH_SHORT).show();
-                            Intent intent = null;
-                            switch (role) {
-                                case "1":
-                                    break;
-                                case "2":
-                                    break;
-                                case "3":
-                                    intent = new Intent(LoginActivity.this, SecurityActivity.class);
-                                    break;
-                                case "4":
-                                    intent = new Intent(LoginActivity.this, MapActivity.class);
-                                    break;
-                                default:
-                                    break;
-                            }
 
-                            startActivity(intent);
+                            loginSuccess(role);
+
                             finish();
                             SocketIOClient.client.mSocket.off();
                         } else {
@@ -299,6 +271,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         new SocketIOClient();
         mSharedPref = getSharedPreferences(Constant.APP_PREF, MODE_PRIVATE);
         Principal principal = new Principal(getApplicationContext());
+        principal.setIsLogin(false);
         String accountToken = principal.getToken();
         Boolean rememberStatus = principal.getRemmember();
         if (rememberStatus && !accountToken.isEmpty()) {
@@ -375,4 +348,31 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             }
         }
     }
+
+    private void loginSuccess(String role){
+        Intent intent = null;
+
+        if (role.matches("\\d+")) {
+            int roleValue = Integer.parseInt(role);
+            switch (roleValue) {
+                case Constant.ROLE_SUPER_ADMIN_VALUE:
+                    break;
+                case Constant.ROLE_ADMIN_VALUE:
+                    intent = new Intent(LoginActivity.this, AdminActivity.class);
+                    break;
+                case Constant.ROLE_SECURITY_VALUE:
+                    intent = new Intent(LoginActivity.this, SecurityActivity.class);
+                    break;
+                case Constant.ROLE_USER_VALUE:
+                    intent = new Intent(LoginActivity.this, MapActivity.class);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        startActivity(intent);
+        new Principal(getApplicationContext()).setIsLogin(true);
+    }
+
 }

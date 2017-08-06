@@ -39,7 +39,7 @@ dependencies {
     compile 'com.android.support:support-vector-drawable:25.3.1'
     compile 'com.google.code.gson:gson:2.8.1'
     compile 'com.fenchtose:tooltip:0.1.5'
-    compile "de.halfbit:pinned-section-listview:1.0.0"
+    compile 'de.halfbit:pinned-section-listview:1.0.0'
     compile 'com.squareup.picasso:picasso:2.5.2'
     testCompile 'junit:junit:4.12'
 }
