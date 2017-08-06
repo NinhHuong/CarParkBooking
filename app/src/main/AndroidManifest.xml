@@ -94,6 +94,7 @@
         <service
             android:name=".services.NotificationIntentService"
             android:exported="false" />
+
         <service android:name=".services.MyFirebaseInstanceIDService">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
@@ -108,6 +109,10 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyAPM7L8NUuNVQPMx5xozWcYCxOzKS-T6T8" />
+
+
+
+        <activity android:name=".activity.SecurityActivity"/>
 
     </application>
 

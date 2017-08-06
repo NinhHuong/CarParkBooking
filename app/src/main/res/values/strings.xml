@@ -117,9 +117,18 @@
     <!-- Strings related to car manager -->
     <string name="not_have_car">Bạn chưa có xe</string>
     <string name="had_delete_car">Bạn vừa xóa xe</string>
+    <string name="add_new_car">Thêm xe mới</string>
+    <string name="dialog_button_add">Thêm</string>
+    <string name="log_cannt_add">Xe đã được đăng kí</string>
 
+
+    <!-- Strings related to security -->
+    <string name="dialog_button_ok">Ok</string>
+    <string name="dialog_message_car_in">Bạn có muốn cho xe này vào?</string>
+    <string name="dialog_message_car_out">Bạn có muốn cho xe này ra?</string>
 
     <string name="error_general">Có lỗi đâu đấy</string>
+    <string name="error_select_car">Hãy chọn xe</string>
     <string name="logout_successfull">Bạn đã đăng xuất</string>
     <string name="dialog_logout_message">Bạn có chắc chắn muốn đăng xuất</string>
     <string name="fire">Có</string>
@@ -129,16 +138,21 @@
     <string name="error_book_new">Có lỗi xảy ra! Vui lòng kiểm tra lại</string>
     <string name="dialog_book_message">Bạn có chắc chắn muốn đặt chỗ</string>
     <string name="dialog_book_title">Xác nhận đặt chỗ</string>
+
     <string name="map_book_detail">Xem bãi đỗ xe đã đặt</string>
+
+    <string name="dialog_delete_title">Xác nhân xóa xe</string>
+    <string name="dialog_delete_car">Bạn có chắc chắn muốn xóa xe</string>
+
     <string name="dialog_book_cancel_message">Bạn có chắc chắn muốn hủy bỏ đặt chỗ?</string>
     <string name="error_server">Có lỗi xảy ra!</string>
     <string name="book_cancel_successfull">Bạn đã hủy đặt chỗ thành công!</string>
     <string name="today">Hôm nay</string>
     <string name="book_url_map_image">https://maps.googleapis.com/maps/api/staticmap?center=%1$s&amp;zoom=%2$d&amp;size=%3$s&amp;maptype=roadmap&amp;markers=%4$s&amp;key=AIzaSyAPM7L8NUuNVQPMx5xozWcYCxOzKS-T6T8</string>
     <string name="title_activity_scrolling">ScrollingActivity</string>
-
     <string name="booking_slot_not_available">Đã hết chỗ trống!</string>
     <string name="booking_slot_available">Còn %1$d / %2$d chỗ trống.</string>
+
     <string name="dialog_add_car_message">Lưu ý! Bạn chỉ được thêm tối đa 5 biển số</string>
     <string name="dialog_btn_add">Thêm</string>
     <string name="dialog_add_car_input_hint">Nhập biển số</string>
@@ -155,4 +169,11 @@
     <string name="notify_booking_canceled_title">Chỗ của bạn đã bị hủy</string>
     <string name="notify_booking_canceled_body">Rất tiếc, đã quá thời gian đặt chỗ cho phép.</string>
 
+
+    <string name="title_car_get_in">Xe đi vào</string>
+    <string name="title_car_get_iut">Xe đi ra</string>
+    <string name="title_btn_car_get_in">Cho xe vào</string>
+    <string name="title_btn_car_get_iut">Cho xe ra</string>
+    <string name="title_car_vehicle">Biển số</string>
+    <string name="title_fill_vehicle">Biển số nhập</string>
 </resources>

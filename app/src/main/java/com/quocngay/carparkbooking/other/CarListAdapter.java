@@ -1,6 +1,9 @@
 package com.quocngay.carparkbooking.other;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -9,10 +12,14 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.quocngay.carparkbooking.R;
+import com.quocngay.carparkbooking.activity.BookingActivity;
+import com.quocngay.carparkbooking.activity.CarManagerActivity;
 import com.quocngay.carparkbooking.model.CarModel;
 import com.quocngay.carparkbooking.model.ParkingInfoHistoryModel;
 import com.quocngay.carparkbooking.model.Principal;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -22,8 +29,12 @@ import java.util.List;
 public class CarListAdapter extends BaseAdapter {
     private Context mContext;
     private List<CarModel> mCarList;
+    private AlertDialog.Builder mDeleteDialog;
+    private Activity parentActivity;
 
-    public CarListAdapter(Context mContext, List<CarModel> mCarList) {
+
+    public CarListAdapter(Activity parentActivity, Context mContext, List<CarModel> mCarList) {
+        this.parentActivity = parentActivity;
         this.mContext = mContext;
         this.mCarList = mCarList;
     }
@@ -54,9 +65,22 @@ public class CarListAdapter extends BaseAdapter {
 
         btnDelete.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                // Code here executes on main thread after user presses button
-                String accountId = new Principal(mContext).getId();
-                SocketIOClient.client.mSocket.emit(Constant.REQUEST_DELETE_CAR, mCarList.get(position).getId(),accountId);
+                mDeleteDialog = new AlertDialog.Builder(parentActivity);
+                mDeleteDialog.setTitle(R.string.dialog_delete_title);
+                mDeleteDialog.setMessage(R.string.dialog_delete_car)
+                        .setPositiveButton(R.string.fire, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                SocketIOClient.client.mSocket.emit(Constant.REQUEST_DELETE_CAR, mCarList.get(position).getId());
+                            }
+                        })
+                        .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.dismiss();
+                            }
+                        });
+                // Create the AlertDialog object and return it
+                mDeleteDialog.create().show();
+
             }
         });
         v.setTag(mCarList.get(position).getId());
