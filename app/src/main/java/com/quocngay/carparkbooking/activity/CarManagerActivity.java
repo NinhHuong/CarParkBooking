@@ -87,8 +87,8 @@ public class CarManagerActivity extends AppCompatActivity {
                             public void onClick(DialogInterface dialog,int which) {
                                 // Write your code here to execute after dialog
                                 String newVerhicleNumber = input.getText().toString();
-                                SocketIOClient.client.mSocket.emit(Constant.REQUEST_ADD_CAR,accountid, newVerhicleNumber);
-                                SocketIOClient.client.mSocket.on(Constant.RESPONSE_ADD_CAR, onAddCar);
+                                SocketIOClient.client.mSocket.emit(Constant.REQUEST_ADD_NEW_CAR,accountid, newVerhicleNumber);
+                                SocketIOClient.client.mSocket.on(Constant.RESPONSE_ADD_NEW_CAR, onAddCar);
                             }
                         });
                 // Setting Negative "NO" Button
@@ -107,7 +107,7 @@ public class CarManagerActivity extends AppCompatActivity {
         });
         SocketIOClient.client.mSocket.emit(Constant.REQUEST_FIND_CAR_BY_ACCOUNT_ID, accountid);
 
-        SocketIOClient.client.mSocket.on(Constant.RESPONSE_DELETE_CAR, onDeleteCar);
+        SocketIOClient.client.mSocket.on(Constant.RESPONSE_REMOVE_CAR_BY_ID, onDeleteCar);
         SocketIOClient.client.mSocket.on(Constant.RESPONSE_FIND_CAR_BY_ACCOUNT_ID, onGetCar);
     }
 
@@ -158,7 +158,7 @@ public class CarManagerActivity extends AppCompatActivity {
                             Toast.makeText(getApplicationContext(),R.string.log_cannt_add, Toast.LENGTH_SHORT).show();
 
 
-                        SocketIOClient.client.mSocket.off(Constant.RESPONSE_DELETE_CAR);
+                        SocketIOClient.client.mSocket.off(Constant.RESPONSE_REMOVE_CAR_BY_ID);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }

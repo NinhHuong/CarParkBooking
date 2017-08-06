@@ -70,7 +70,7 @@ public class CarListAdapter extends BaseAdapter {
                 mDeleteDialog.setMessage(R.string.dialog_delete_car)
                         .setPositiveButton(R.string.fire, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                SocketIOClient.client.mSocket.emit(Constant.REQUEST_DELETE_CAR, mCarList.get(position).getId());
+                                SocketIOClient.client.mSocket.emit(Constant.REQUEST_REMOVE_CAR_BY_ID, mCarList.get(position).getId());
                             }
                         })
                         .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
