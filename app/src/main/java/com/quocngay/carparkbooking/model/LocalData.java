@@ -9,7 +9,7 @@ import com.quocngay.carparkbooking.other.Constant;
  * Created by Quang Si on 7/21/2017.
  */
 
-public class Principal {
+public class LocalData {
 
     private String id;
     private String token;
@@ -21,7 +21,7 @@ public class Principal {
     SharedPreferences mSharedPref;
     SharedPreferences.Editor editor;
 
-    public Principal(Context context) {
+    public LocalData(Context context) {
         mSharedPref = context.getSharedPreferences(Constant.APP_PREF, Context.MODE_PRIVATE);
         editor = mSharedPref.edit();
     }

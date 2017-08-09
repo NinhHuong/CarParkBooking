@@ -14,7 +14,7 @@ import android.widget.Toast;
 
 import com.github.nkzawa.emitter.Emitter;
 import com.quocngay.carparkbooking.R;
-import com.quocngay.carparkbooking.model.Principal;
+import com.quocngay.carparkbooking.model.LocalData;
 import com.quocngay.carparkbooking.other.Constant;
 import com.quocngay.carparkbooking.other.SocketIOClient;
 
@@ -70,7 +70,7 @@ public class RegisterActivity extends AppCompatActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-        Principal p = new Principal(getApplicationContext());
+        LocalData p = new LocalData(getApplicationContext());
         roleID = p.getRole();
         isLogin = p.getIsLogin();
 
@@ -113,7 +113,7 @@ public class RegisterActivity extends AppCompatActivity {
                         break;
                     case Constant.ROLE_ADMIN_VALUE:
                         roleNewUser = Constant.ROLE_SECURITY_VALUE;
-                        String id = new Principal(getApplicationContext()).getId();
+                        String id = new LocalData(getApplicationContext()).getId();
                         SocketIOClient.client.mSocket.emit(Constant.REQUEST_CREATE_ACCOUNT_SECURITY, email, hashPassword, id);
                         SocketIOClient.client.mSocket.on(Constant.RESPONSE_CREATE_ACCOUNT_SECURITY, onNewMessageResultRegistNewAccount);
                         break;

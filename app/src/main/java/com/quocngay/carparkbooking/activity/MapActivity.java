@@ -77,7 +77,7 @@ import com.quocngay.carparkbooking.R;
 import com.quocngay.carparkbooking.model.GarageModel;
 import com.quocngay.carparkbooking.model.LocationDataModel;
 import com.quocngay.carparkbooking.model.ParkingInfoModel;
-import com.quocngay.carparkbooking.model.Principal;
+import com.quocngay.carparkbooking.model.LocalData;
 import com.quocngay.carparkbooking.other.Constant;
 import com.quocngay.carparkbooking.services.FetchAddressIntentService;
 import com.quocngay.carparkbooking.other.AddressResult;
@@ -381,7 +381,7 @@ public class MapActivity extends AppCompatActivity
         };
 
         SocketIOClient.client.mSocket.emit(Constant.REQUEST_PARKING_INFO_BY_ACCOUNT_ID,
-                new Principal(getApplicationContext()).getId());
+                new LocalData(getApplicationContext()).getId());
         SocketIOClient.client.mSocket.on(Constant.RESPONSE_PARKING_INFO_BY_ACCOUNT_ID,
                 onResponseGetStatusParkingInfo);
 
