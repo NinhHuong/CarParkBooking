@@ -65,7 +65,6 @@
                 android:value=".activity.MapActivity" />
         </activity>
         <activity android:name=".activity.CarManagerActivity" />
-
         <activity android:name=".activity.BookingDetailActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -94,7 +93,6 @@
         <service
             android:name=".services.NotificationIntentService"
             android:exported="false" />
-
         <service android:name=".services.MyFirebaseInstanceIDService">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
@@ -112,9 +110,20 @@
 
         <activity android:name=".activity.SecurityActivity" />
         <activity
+
             android:name=".activity.AdminActivity"
             android:label="@string/title_activity_admin"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+
+        <activity
+            android:name=".activity.ProfileActivity"
+            android:label="@string/title_activity_profile"
+            android:parentActivityName=".activity.MapActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.quocngay.carparkbooking.activity.MapActivity" />
+        </activity>
 
     </application>
 

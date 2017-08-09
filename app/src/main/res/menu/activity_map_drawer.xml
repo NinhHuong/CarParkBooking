@@ -1,24 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <group android:checkableBehavior="single" android:id="@+id/grpUser">
+    <group
+        android:id="@+id/grpUser">
         <item
-            android:id="@+id/nav_camera"
-            android:icon="@drawable/ic_menu_camera"
-            android:title="Import" />
+            android:id="@+id/nav_profile"
+            android:icon="@drawable/ic_menu_profile"
+            android:title="@string/action_profile" />
         <item
             android:id="@+id/nav_car_manager"
-            android:icon="@drawable/ic_directions_car_black_24dp"
-            android:title="Quản lý xe" />
+            android:icon="@drawable/ic_menu_car"
+            android:title="@string/action_car_manager" />
         <item
             android:id="@+id/nav_history"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="Lịch sử" />
+            android:icon="@drawable/ic_menu_history"
+            android:title="@string/action_history" />
     </group>
 
     <item
         android:id="@+id/nav_logout"
-        android:icon="@drawable/ic_sentiment_dissatisfied_black_24dp"
+        android:icon="@drawable/ic_menu_logout"
         android:title="@string/action_logout" />
 
     <!--<item android:title="Communicate">-->
