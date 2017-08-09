@@ -33,7 +33,7 @@ import java.security.NoSuchAlgorithmException;
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static final int REQUEST_LOGIN_REGISTER = 5;
-    SharedPreferences mSharedPref;
+    private LocalData localData;
     String serverToken;
     private EditText edtEmail, edtPass;
     private CheckBox cbRemember;
@@ -86,11 +86,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         if (result) {
                             dalInputCode.dismiss();
                             Toast.makeText(getApplicationContext(), getResources().getString(R.string.login_successfull), Toast.LENGTH_SHORT).show();
-                            SharedPreferences.Editor editor = mSharedPref.edit();
-                            editor.putString(Constant.APP_PREF_TOKEN, serverToken);
-                            editor.putString(Constant.APP_PREF_ID, userId);
-                            editor.putBoolean(Constant.APP_PREF_REMEMBER, cbRemember.isChecked());
-                            editor.apply();
+                            localData = new LocalData(getApplicationContext());
+                            localData.setId(userId);
+                            localData.setEmail(email);
+                            localData.setRole(role);
+                            localData.setToken(serverToken);
+                            localData.setRemmember(cbRemember.isChecked());
                             Intent intent = new Intent(LoginActivity.this, MapActivity.class);
                             startActivity(intent);
                             finish();
@@ -135,6 +136,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         if (isVerify.equals("1")) {
                             LocalData localData = new LocalData(getApplicationContext());
                             localData.setId(userId);
+                            localData.setEmail(email);
                             localData.setRole(role);
                             localData.setToken(serverToken);
                             localData.setRemmember(cbRemember.isChecked());
@@ -270,9 +272,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         if (SocketIOClient.client == null) {
             new SocketIOClient();
         }
-        mSharedPref = getSharedPreferences(Constant.APP_PREF, MODE_PRIVATE);
+
         LocalData localData = new LocalData(getApplicationContext());
         localData.setIsLogin(false);
+
         String accountToken = localData.getToken();
         Boolean rememberStatus = localData.getRemmember();
         if (rememberStatus && !accountToken.isEmpty()) {
@@ -315,7 +318,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btnLogin:
-                email = edtEmail.getText().toString();
+                email = edtEmail.getText().toString().trim();
                 password = edtPass.getText().toString();
                 if (email.isEmpty() || !Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
                     Toast.makeText(getApplicationContext(), getResources().getString(R.string.error_email), Toast.LENGTH_SHORT).show();
@@ -335,7 +338,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             case R.id.tvForgotPass:
                 startActivity(new Intent(LoginActivity.this, ForgetPasswordActivity.class));
                 break;
-//                resetPassord();
         }
     }
 

@@ -1,5 +1,6 @@
 package com.quocngay.carparkbooking.model;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 
@@ -12,15 +13,17 @@ import com.quocngay.carparkbooking.other.Constant;
 public class LocalData {
 
     private String id;
+    private String email;
     private String token;
     private String firebaseToken;
     private Boolean remmember;
     private String role;
     private boolean isLogin;
 
-    SharedPreferences mSharedPref;
-    SharedPreferences.Editor editor;
+    private SharedPreferences mSharedPref;
+    private SharedPreferences.Editor editor;
 
+    @SuppressLint("CommitPrefEdits")
     public LocalData(Context context) {
         mSharedPref = context.getSharedPreferences(Constant.APP_PREF, Context.MODE_PRIVATE);
         editor = mSharedPref.edit();
@@ -33,6 +36,16 @@ public class LocalData {
     public void setId(String id) {
         this.id = id;
         editor.putString(Constant.APP_PREF_ID, id);
+        editor.apply();
+    }
+
+    public String getEmail() {
+        return mSharedPref.getString(Constant.APP_PREF_EMAIL, "");
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+        editor.putString(Constant.APP_PREF_EMAIL, email);
         editor.apply();
     }
 

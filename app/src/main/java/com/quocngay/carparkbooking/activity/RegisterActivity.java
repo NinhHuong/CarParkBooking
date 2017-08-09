@@ -42,13 +42,20 @@ public class RegisterActivity extends AppCompatActivity {
                     try {
                         boolean res = data.getBoolean(Constant.RESULT);
                         if (res) {
-                            Toast.makeText(getApplicationContext(), getResources().getString(R.string.register_successfull), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(),
+                                    getResources().getString(R.string.register_successfull),
+                                    Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
                             intent.putExtra(Constant.EMAIL, email);
                             intent.putExtra(Constant.PASSWORD, password);
                             setResult(RESULT_OK, intent);
                             SocketIOClient.client.mSocket.off(Constant.RESPONSE_CREATE_ACCOUNT);
                             finish();
+                        }else if(data.getString(Constant.MESSAGE).equals("email_registered")){
+                            Toast.makeText(getApplicationContext(), getResources().
+                                    getString(R.string.error_server_email_registered),
+                                    Toast.LENGTH_SHORT).show();
+
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
