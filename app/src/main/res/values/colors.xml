@@ -11,7 +11,9 @@
     <color name="colorDark">#f1f1f1</color>
     <color name="colorBackgroundDark">#c9c9c9</color>
     <color name="colorNotAvailable">#e53935</color>
+    <color name="colorNotAvailableRipple">#bf322e</color>
     <color name="colorAvailable">#50ae01</color>
+    <color name="ripplePrimary">#5dab9f</color>
 
     <!--open booked ticket list-->
     <color name="count_time_background">#008000</color>
@@ -21,7 +23,6 @@
     <color name="text_dark_description">#919191</color>
     <color name="count_time_expired">#F44336</color>
     <color name="ripple">#74a7a7a7</color>
-    <color name="ripplePrimary">#e2b616</color>
     <color name="card_bg">#ffffff</color>
     <color name="map_direction">#e53935</color>
     <color name="fore_bg">#50000000</color>

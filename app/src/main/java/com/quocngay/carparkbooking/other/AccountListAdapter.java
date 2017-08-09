@@ -11,35 +11,36 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.quocngay.carparkbooking.R;
+import com.quocngay.carparkbooking.model.AccountModel;
 import com.quocngay.carparkbooking.model.CarModel;
 
 import java.util.List;
 
 /**
- * Created by Windows on 26-Jul-17.
+ * Created by Windows on 07-Aug-17.
  */
 
-public class CarListAdapter extends BaseAdapter {
+public class AccountListAdapter extends BaseAdapter {
     private Context mContext;
-    private List<CarModel> mCarList;
+    private List<AccountModel> mAccountList;
     private AlertDialog.Builder mDeleteDialog;
     private Activity parentActivity;
 
 
-    public CarListAdapter(Activity parentActivity, Context mContext, List<CarModel> mCarList) {
+    public AccountListAdapter(Activity parentActivity, Context mContext, List<AccountModel> mAccountList) {
         this.parentActivity = parentActivity;
         this.mContext = mContext;
-        this.mCarList = mCarList;
+        this.mAccountList = mAccountList;
     }
 
     @Override
     public int getCount() {
-        return mCarList.size();
+        return mAccountList.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return mCarList.get(position);
+        return mAccountList.get(position);
     }
 
     @Override
@@ -49,12 +50,24 @@ public class CarListAdapter extends BaseAdapter {
 
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
-        View v = View.inflate(mContext, R.layout.item_car,null);
-        TextView txtVehicleNumber;
+        View v = View.inflate(mContext, R.layout.item_account_management,null);
+        TextView txtFirstName, txtLastName, txtEmail, txtRole, txtphone, txtdob,txtAddress;
+        txtFirstName = (TextView) v.findViewById(R.id.txtFirstName);
+        txtLastName = (TextView) v.findViewById(R.id.txtLastName);
+        txtEmail = (TextView) v.findViewById(R.id.txtFirstName);
+        txtRole = (TextView) v.findViewById(R.id.txtFirstName);
+        txtphone = (TextView) v.findViewById(R.id.txtFirstName);
+        txtdob = (TextView) v.findViewById(R.id.txtFirstName);
+        txtAddress = (TextView) v.findViewById(R.id.txtFirstName);
         Button btnDelete = (Button) v.findViewById(R.id.btnDelete);
-        txtVehicleNumber = (TextView) v.findViewById(R.id.txtVehicleNumber);
 
-        txtVehicleNumber.setText(mCarList.get(position).getVehicleNumber());
+        txtFirstName.setText(mAccountList.get(position).getFirstName());
+        txtLastName.setText(mAccountList.get(position).getLastName());
+        txtEmail.setText(mAccountList.get(position).getEmail());
+        txtRole.setText(mAccountList.get(position).getRole()=="3"?"Bảo vệ":" ");
+        txtphone.setText(mAccountList.get(position).getPhone());
+        txtdob.setText(mAccountList.get(position).getDateOfBirth());
+        txtAddress.setText(mAccountList.get(position).getAddress());
 
         btnDelete.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -63,7 +76,7 @@ public class CarListAdapter extends BaseAdapter {
                 mDeleteDialog.setMessage(R.string.dialog_delete_car)
                         .setPositiveButton(R.string.fire, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                SocketIOClient.client.mSocket.emit(Constant.REQUEST_REMOVE_CAR_BY_ID, mCarList.get(position).getId());
+//                                SocketIOClient.client.mSocket.emit(Constant.REQUEST_REMOVE_CAR_BY_ID, mAccountList.get(position).getId());
                             }
                         })
                         .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -76,8 +89,11 @@ public class CarListAdapter extends BaseAdapter {
 
             }
         });
-        v.setTag(mCarList.get(position).getId());
+        v.setTag(mAccountList.get(position).getId());
 
         return v;
+
     }
+
+
 }

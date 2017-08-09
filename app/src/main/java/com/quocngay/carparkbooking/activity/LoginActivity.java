@@ -19,7 +19,7 @@ import android.widget.Toast;
 
 import com.github.nkzawa.emitter.Emitter;
 import com.quocngay.carparkbooking.R;
-import com.quocngay.carparkbooking.model.Principal;
+import com.quocngay.carparkbooking.model.LocalData;
 import com.quocngay.carparkbooking.other.Constant;
 import com.quocngay.carparkbooking.other.SocketIOClient;
 
@@ -29,12 +29,11 @@ import org.json.JSONObject;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.security.Security;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static final int REQUEST_LOGIN_REGISTER = 5;
-    SharedPreferences mSharedPref;
+    private LocalData localData;
     String serverToken;
     private EditText edtEmail, edtPass;
     private CheckBox cbRemember;
@@ -87,11 +86,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         if (result) {
                             dalInputCode.dismiss();
                             Toast.makeText(getApplicationContext(), getResources().getString(R.string.login_successfull), Toast.LENGTH_SHORT).show();
-                            SharedPreferences.Editor editor = mSharedPref.edit();
-                            editor.putString(Constant.APP_PREF_TOKEN, serverToken);
-                            editor.putString(Constant.APP_PREF_ID, userId);
-                            editor.putBoolean(Constant.APP_PREF_REMEMBER, cbRemember.isChecked());
-                            editor.apply();
+                            localData = new LocalData(getApplicationContext());
+                            localData.setId(userId);
+                            localData.setEmail(email);
+                            localData.setRole(role);
+                            localData.setToken(serverToken);
+                            localData.setRemmember(cbRemember.isChecked());
                             Intent intent = new Intent(LoginActivity.this, MapActivity.class);
                             startActivity(intent);
                             finish();
@@ -134,11 +134,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             return;
                         }
                         if (isVerify.equals("1")) {
-                            Principal principal = new Principal(getApplicationContext());
-                            principal.setId(userId);
-                            principal.setRole(role);
-                            principal.setToken(serverToken);
-                            principal.setRemmember(cbRemember.isChecked());
+                            LocalData localData = new LocalData(getApplicationContext());
+                            localData.setId(userId);
+                            localData.setEmail(email);
+                            localData.setRole(role);
+                            localData.setToken(serverToken);
+                            localData.setRemmember(cbRemember.isChecked());
                             Toast.makeText(getApplicationContext(), getResources().getString(R.string.login_successfull), Toast.LENGTH_SHORT).show();
 
                             loginSuccess(role);
@@ -271,11 +272,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         if (SocketIOClient.client == null) {
             new SocketIOClient();
         }
-        mSharedPref = getSharedPreferences(Constant.APP_PREF, MODE_PRIVATE);
-        Principal principal = new Principal(getApplicationContext());
-        principal.setIsLogin(false);
-        String accountToken = principal.getToken();
-        Boolean rememberStatus = principal.getRemmember();
+
+        LocalData localData = new LocalData(getApplicationContext());
+        localData.setIsLogin(false);
+
+        String accountToken = localData.getToken();
+        Boolean rememberStatus = localData.getRemmember();
         if (rememberStatus && !accountToken.isEmpty()) {
             SocketIOClient.client.mSocket.emit(Constant.REQUEST_CHECK_TOKEN, accountToken);
             SocketIOClient.client.mSocket.on(Constant.RESPONSE_CHECK_TOKEN, onResponseCheckToken);
@@ -316,7 +318,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btnLogin:
-                email = edtEmail.getText().toString();
+                email = edtEmail.getText().toString().trim();
                 password = edtPass.getText().toString();
                 if (email.isEmpty() || !Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
                     Toast.makeText(getApplicationContext(), getResources().getString(R.string.error_email), Toast.LENGTH_SHORT).show();
@@ -336,7 +338,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             case R.id.tvForgotPass:
                 startActivity(new Intent(LoginActivity.this, ForgetPasswordActivity.class));
                 break;
-//                resetPassord();
         }
     }
 
@@ -374,7 +375,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
 
         startActivity(intent);
-        new Principal(getApplicationContext()).setIsLogin(true);
+        new LocalData(getApplicationContext()).setIsLogin(true);
     }
 
 }

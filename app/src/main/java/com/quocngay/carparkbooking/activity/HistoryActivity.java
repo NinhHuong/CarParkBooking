@@ -8,17 +8,15 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.nkzawa.emitter.Emitter;
-import com.github.nkzawa.socketio.client.Socket;
 import com.google.gson.Gson;
 import com.quocngay.carparkbooking.R;
 import com.quocngay.carparkbooking.model.Item;
 import com.quocngay.carparkbooking.model.ListHeader;
 import com.quocngay.carparkbooking.model.ParkingInfoHistoryModel;
-import com.quocngay.carparkbooking.model.Principal;
+import com.quocngay.carparkbooking.model.LocalData;
 import com.quocngay.carparkbooking.other.Constant;
 import com.quocngay.carparkbooking.other.HistoryListAdapter;
 import com.quocngay.carparkbooking.other.SocketIOClient;
@@ -34,8 +32,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-
-import de.halfbit.pinnedsection.PinnedSectionListView;
 
 public class HistoryActivity extends AppCompatActivity {
     ListView lvHistory;
@@ -58,7 +54,7 @@ public class HistoryActivity extends AppCompatActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);
         lvHistory = (ListView) findViewById(R.id.lvHistory);
 
-        String id = new Principal(getApplicationContext()).getId();
+        String id = new LocalData(getApplicationContext()).getId();
         mProgressBar = (ProgressBar) findViewById(R.id.progress_history);
 
         SocketIOClient.client.mSocket.emit("request_booking_history_account_id", id);

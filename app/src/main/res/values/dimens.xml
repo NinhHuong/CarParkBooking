@@ -5,6 +5,8 @@
     <dimen name="nav_header_vertical_spacing">10dp</dimen>
     <dimen name="nav_header_height">160dp</dimen>
     <dimen name="fab_margin">10dp</dimen>
+    <dimen name="fab_margin_2">20dp</dimen>
     <dimen name="text_margin">10dp</dimen>
+    <dimen name="divider_margin">20dp</dimen>
     <dimen name="app_bar_height">250dp</dimen>
 </resources>

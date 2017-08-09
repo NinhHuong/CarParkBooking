@@ -39,15 +39,15 @@ public class LocalData {
         editor.apply();
     }
 
-//    public String getEmail() {
-//        return mSharedPref.getString(Constant.APP_PREF_EMAIL, "");
-//    }
-//
-//    public void setEmail(String email) {
-//        this.email = email;
-//        editor.putString(Constant.APP_PREF_EMAIL, email);
-//        editor.apply();
-//    }
+    public String getEmail() {
+        return mSharedPref.getString(Constant.APP_PREF_EMAIL, "");
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+        editor.putString(Constant.APP_PREF_EMAIL, email);
+        editor.apply();
+    }
 
     public String getToken() {
         return mSharedPref.getString(Constant.APP_PREF_TOKEN, "");

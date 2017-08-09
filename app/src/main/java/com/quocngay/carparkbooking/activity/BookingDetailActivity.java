@@ -27,7 +27,7 @@ import com.quocngay.carparkbooking.model.CarModel;
 import com.quocngay.carparkbooking.model.GarageModel;
 import com.quocngay.carparkbooking.model.LocationDataModel;
 import com.quocngay.carparkbooking.model.ParkingInfoModel;
-import com.quocngay.carparkbooking.model.Principal;
+import com.quocngay.carparkbooking.model.LocalData;
 import com.quocngay.carparkbooking.other.Constant;
 import com.quocngay.carparkbooking.other.SocketIOClient;
 import com.quocngay.carparkbooking.services.FetchAddressIntentService;
@@ -51,7 +51,7 @@ public class BookingDetailActivity extends AppCompatActivity {
     private ParkingInfoModel mParkingInfoModel;
     private CarModel mCarModel;
     private GarageModel mGaraModel;
-    private Principal principal;
+    private LocalData localData;
     private AlertDialog.Builder mBookAlertDialog;
     private TextView tvRemainSlots;
 
@@ -91,7 +91,7 @@ public class BookingDetailActivity extends AppCompatActivity {
             new SocketIOClient();
         }
         SocketIOClient.client.mSocket.emit(Constant.REQUEST_PARKING_INFO_BY_ACCOUNT_ID,
-                new Principal(getApplicationContext()).getId());
+                new LocalData(getApplicationContext()).getId());
         SocketIOClient.client.mSocket.on(Constant.RESPONSE_PARKING_INFO_BY_ACCOUNT_ID,
                 onResponseGetStatusParkingInfo);
 
@@ -179,7 +179,7 @@ public class BookingDetailActivity extends AppCompatActivity {
     }
 
     private void initBookingDetailElements() {
-        principal = new Principal(getApplicationContext());
+        localData = new LocalData(getApplicationContext());
         mMapImage = (ImageView) findViewById(R.id.iv_map);
         tvRemainSlots = (TextView) findViewById(R.id.tv_booking_detail_remain);
 

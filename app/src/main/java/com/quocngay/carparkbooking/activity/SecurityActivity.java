@@ -17,7 +17,6 @@ import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -33,7 +32,7 @@ import com.github.nkzawa.emitter.Emitter;
 import com.google.gson.Gson;
 import com.quocngay.carparkbooking.R;
 import com.quocngay.carparkbooking.model.ParkingInfoSecurityModel;
-import com.quocngay.carparkbooking.model.Principal;
+import com.quocngay.carparkbooking.model.LocalData;
 import com.quocngay.carparkbooking.other.Constant;
 import com.quocngay.carparkbooking.other.SocketIOClient;
 
@@ -66,7 +65,7 @@ public class SecurityActivity extends AppCompatActivity implements NavigationVie
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_security);
         initSecurityActivity();
-        accountId = new Principal(getApplicationContext()).getId();
+        accountId = new LocalData(getApplicationContext()).getId();
 
         spnCarIn = (Spinner) findViewById(R.id.spnCarIn);
         spnCarOut = (Spinner) findViewById(R.id.spnCarOut);

@@ -4,11 +4,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -22,8 +19,7 @@ import com.github.nkzawa.emitter.Emitter;
 import com.google.gson.Gson;
 import com.quocngay.carparkbooking.R;
 import com.quocngay.carparkbooking.model.GarageModel;
-import com.quocngay.carparkbooking.model.ParkingInfoSecurityModel;
-import com.quocngay.carparkbooking.model.Principal;
+import com.quocngay.carparkbooking.model.LocalData;
 import com.quocngay.carparkbooking.other.Constant;
 import com.quocngay.carparkbooking.other.SocketIOClient;
 
@@ -36,7 +32,7 @@ public class AdminActivity extends AppCompatActivity
 
     private String accountId;
     private GarageModel garageModel;
-    private Principal principal;
+    private LocalData localData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,8 +49,8 @@ public class AdminActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view_admin);
         navigationView.setNavigationItemSelectedListener(this);
-        principal = new Principal(getApplicationContext());
-        accountId = principal.getId();
+        localData = new LocalData(getApplicationContext());
+        accountId = localData.getId();
 
         SocketIOClient.client.mSocket.emit(Constant.REQUEST_GET_GARAGE_BY_ACCOUNT_ID, accountId);
         SocketIOClient.client.mSocket.on(Constant.RESPONSE_GET_GARAGE_BY_ACCOUNT_ID, onGetGarage);
