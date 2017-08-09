@@ -92,12 +92,11 @@
             android:layout_height="wrap_content"
             android:layout_above="@id/main_infor"
             android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
             android:layout_marginEnd="10dp"
-            android:layout_marginRight="10dp"
             android:layout_marginTop="10dp"
             android:clickable="true"
             app:backgroundTint="@android:color/white"
+            app:theme="@style/Base.Widget.AppCompat.ImageButton"
             app:fabSize="normal"
             app:srcCompat="@drawable/ic_my_location_white_24dp" />
 
@@ -107,12 +106,11 @@
             android:layout_height="wrap_content"
             android:layout_above="@id/btnMyLocation"
             android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
             android:layout_marginEnd="10dp"
-            android:layout_marginRight="10dp"
             android:clickable="true"
             android:visibility="gone"
             app:backgroundTint="@android:color/white"
+            app:theme="@style/Base.Widget.AppCompat.ImageButton"
             app:fabSize="normal"
             app:srcCompat="@drawable/ic_directions_black_24dp" />
     </RelativeLayout>

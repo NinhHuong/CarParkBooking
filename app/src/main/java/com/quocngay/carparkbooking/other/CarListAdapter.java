@@ -8,18 +8,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.quocngay.carparkbooking.R;
-import com.quocngay.carparkbooking.activity.BookingActivity;
-import com.quocngay.carparkbooking.activity.CarManagerActivity;
 import com.quocngay.carparkbooking.model.CarModel;
-import com.quocngay.carparkbooking.model.ParkingInfoHistoryModel;
-import com.quocngay.carparkbooking.model.Principal;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.List;
 
 /**

@@ -72,6 +72,21 @@ public class Constant {
     public static final String REQUEST_PARKING_INFO_BY_ACCOUNT_ID = "request_booking_account_id";
     public static final String RESPONSE_PARKING_INFO_BY_ACCOUNT_ID = "response_booking_account_id";
 
+    //region USER
+
+    public static final String REQUEST_FIND_USER_BY_ACCOUNT_ID = "request_find_user_by_account_id";
+    public static final String RESPONSE_FIND_USER_BY_ACCOUNT_ID = "response_find_user_by_account_id";
+    public static final String REQUEST_EDIT_USER_BY_ID = "request_edit_user_by_id";
+    public static final String RESPONSE_EDIT_USER_BY_ID = "response_edit_user_by_id";
+    public static final String REQUEST_ADD_NEW_USER_BY_ACCOUNT_ID =
+            "request_add_new_user_by_account_id";
+    public static final String RESPONSE_ADD_NEW_USER_BY_ACCOUNT_ID =
+            "response_add_new_user_by_account_id";
+
+
+    //endregion
+
+
     //region PARKING INFO
     public static final String REQUEST_ADD_NEW_PARKING_INFO_BY_USER =
             "request_add_new_booking_by_user";
@@ -142,7 +157,7 @@ public class Constant {
     //public static String SERVER_HOST = "http://192.168.0.110:5000";
 
 
-    public static String SERVER_HOST = "http://192.168.196.1:5000";
+    public static String SERVER_HOST = "http://192.168.1.2:5000";
 
     //    public static String SERVER_HOST = "http://52.15.194.52:5000";
     public static String APP_PREF = "AppPref";
@@ -150,6 +165,9 @@ public class Constant {
     public static String APP_PREF_REMEMBER = "remember_status";
     public static final String APP_PREF_FIREBASE_REMEMBER = "firebase_token";
     public static String APP_PREF_ROLE = "role";
+    public static final String APP_PREF_EMAIL = "email";
+
+
     public static String SERVER_RESPONSE_LOGIN_PARA_EMAIL = "email";
     public static String SERVER_RESPONSE_LOGIN_PARA_PASSWORD = "password";
     public static String SERVER_RESPONSE_LOGIN_PARA_TOKEN = "token";

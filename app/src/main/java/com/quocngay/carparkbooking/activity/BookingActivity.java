@@ -32,7 +32,7 @@ import com.quocngay.carparkbooking.R;
 import com.quocngay.carparkbooking.model.CarModel;
 import com.quocngay.carparkbooking.model.GarageModel;
 import com.quocngay.carparkbooking.model.LocationDataModel;
-import com.quocngay.carparkbooking.model.Principal;
+import com.quocngay.carparkbooking.model.LocalData;
 import com.quocngay.carparkbooking.other.Constant;
 import com.quocngay.carparkbooking.other.SocketIOClient;
 import com.quocngay.carparkbooking.tasks.GetDirectionApiData;
@@ -61,7 +61,7 @@ public class BookingActivity extends AppCompatActivity {
     private LinearLayoutManager layoutManager;
     private TextView tvGaraTitle, tvGaraDes, tvGaraDuration, tvGaraDistance;
     private GarageModel markerGara;
-    private Principal principal;
+    private LocalData localData;
     private CarModel mCurrentCar;
     private AlertDialog.Builder mBookAlertDialog;
     private TextView tvRemainSlots;
@@ -100,7 +100,7 @@ public class BookingActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_booking);
         initToolbar();
-        principal = new Principal(getApplicationContext());
+        localData = new LocalData(getApplicationContext());
         markerGara = (GarageModel) getIntent().getSerializableExtra(Constant.GARA_DETAIL);
         mMyLocation = getIntent().getParcelableExtra(Constant.MY_LOCATION);
         requestGaraDetail();
@@ -225,7 +225,7 @@ public class BookingActivity extends AppCompatActivity {
             }
         });
 
-        SocketIOClient.client.mSocket.emit(Constant.REQUEST_FIND_CAR_BY_ACCOUNT_ID, principal.getId());
+        SocketIOClient.client.mSocket.emit(Constant.REQUEST_FIND_CAR_BY_ACCOUNT_ID, localData.getId());
         SocketIOClient.client.mSocket.on(Constant.RESPONSE_FIND_CAR_BY_ACCOUNT_ID, onResponseFindCar);
     }
 
@@ -453,7 +453,7 @@ public class BookingActivity extends AppCompatActivity {
                             Toast.makeText(BookingActivity.this,
                                     getResources().getString(R.string.success_add_license),
                                     Toast.LENGTH_SHORT).show();
-                            SocketIOClient.client.mSocket.emit(Constant.REQUEST_FIND_CAR_BY_ACCOUNT_ID, principal.getId());
+                            SocketIOClient.client.mSocket.emit(Constant.REQUEST_FIND_CAR_BY_ACCOUNT_ID, localData.getId());
                             SocketIOClient.client.mSocket.on(Constant.RESPONSE_FIND_CAR_BY_ACCOUNT_ID, onResponseFindCar);
 
                         } else if (jsonObject.getString(Constant.MESSAGE).equals("car_limit")) {
@@ -484,7 +484,7 @@ public class BookingActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String licenseNumber = edtLicenseNumber.getText().toString().replaceAll(" ", "").trim();
                 SocketIOClient.client.mSocket.emit(
-                        Constant.REQUEST_ADD_NEW_CAR, principal.getId(), licenseNumber);
+                        Constant.REQUEST_ADD_NEW_CAR, localData.getId(), licenseNumber);
                 SocketIOClient.client.mSocket.on(
                         Constant.RESPONSE_ADD_NEW_CAR, onResponseAddCar);
             }

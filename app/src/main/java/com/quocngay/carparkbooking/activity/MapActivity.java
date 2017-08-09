@@ -77,7 +77,8 @@ import com.quocngay.carparkbooking.R;
 import com.quocngay.carparkbooking.model.GarageModel;
 import com.quocngay.carparkbooking.model.LocationDataModel;
 import com.quocngay.carparkbooking.model.ParkingInfoModel;
-import com.quocngay.carparkbooking.model.Principal;
+import com.quocngay.carparkbooking.model.LocalData;
+import com.quocngay.carparkbooking.model.UserModel;
 import com.quocngay.carparkbooking.other.Constant;
 import com.quocngay.carparkbooking.services.FetchAddressIntentService;
 import com.quocngay.carparkbooking.other.AddressResult;
@@ -124,17 +125,20 @@ public class MapActivity extends AppCompatActivity
     private Button btnChoose, btnFind, btnBookDetail;
     private Polyline mPolyline;
     private Toolbar toolbar;
+    private UserModel mUserModel;
     private FloatingActionButton btnGgDirection;
     private ViewGroup root;
     private Emitter.Listener onResponseGetStatusParkingInfo;
     private ParkingInfoModel mParkingInfoModel;
     private TextView tvGarageSlots;
-
+    private LocalData localData;
+    private TextView tvNavHeaderName, tvNavHeaderEmail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
+        localData = new LocalData(getApplicationContext());
         initMapActivity();
 
     }
@@ -268,19 +272,23 @@ public class MapActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_car_manager) {
-            Intent intent = new Intent(MapActivity.this, CarManagerActivity.class);
-            startActivity(intent);
-        } else if (id == R.id.nav_history) {
-            Intent intent = new Intent(MapActivity.this, HistoryActivity.class);
-            startActivity(intent);
-        } else if (id == R.id.nav_logout) {
-            logout();
+        switch (id) {
+            case R.id.nav_profile:
+                Intent profileIntent = new Intent(MapActivity.this, ProfileActivity.class);
+                startActivity(profileIntent);
+                break;
+            case R.id.nav_history:
+                Intent historyIntent = new Intent(MapActivity.this, HistoryActivity.class);
+                startActivity(historyIntent);
+                break;
+            case R.id.nav_car_manager:
+                Intent carManagerIntent = new Intent(MapActivity.this, CarManagerActivity.class);
+                startActivity(carManagerIntent);
+                break;
+            case R.id.nav_logout:
+                actionLogout();
+                break;
         }
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
@@ -335,6 +343,11 @@ public class MapActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        tvNavHeaderName = (TextView) navigationView.getHeaderView(0).findViewById(R.id.tv_nav_header_name);
+        tvNavHeaderEmail = (TextView) navigationView.getHeaderView(0).findViewById(R.id.tv_nav_header_email);
+        tvNavHeaderEmail.setText(localData.getEmail());
+
+        getUserDetail();
         MenuItem menuItem = navigationView.getMenu().findItem(R.id.nav_logout);
         SpannableString s = new SpannableString(menuItem.getTitle());
         s.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.map_direction)), 0, s.length(), 0);
@@ -381,10 +394,43 @@ public class MapActivity extends AppCompatActivity
         };
 
         SocketIOClient.client.mSocket.emit(Constant.REQUEST_PARKING_INFO_BY_ACCOUNT_ID,
-                new Principal(getApplicationContext()).getId());
+                localData.getId());
         SocketIOClient.client.mSocket.on(Constant.RESPONSE_PARKING_INFO_BY_ACCOUNT_ID,
                 onResponseGetStatusParkingInfo);
 
+    }
+
+    private void getUserDetail() {
+        Emitter.Listener onResponseFindUserByAccId = new Emitter.Listener() {
+            @Override
+            public void call(final Object... args) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        JSONObject jsonObject = (JSONObject) args[0];
+                        Gson gson = new Gson();
+                        try {
+                            if (jsonObject.getBoolean(Constant.RESULT)) {
+                                mUserModel = gson.fromJson(jsonObject.getJSONArray(Constant.DATA)
+                                        .getJSONObject(0).toString(), UserModel.class);
+                                tvNavHeaderName.setText(mUserModel.getFullName());
+                            } else {
+                                Log.w(getClass().getName(), jsonObject.getString(Constant.MESSAGE));
+                            }
+                            SocketIOClient.client.mSocket.off(
+                                    Constant.RESPONSE_FIND_USER_BY_ACCOUNT_ID);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+            }
+        };
+
+        SocketIOClient.client.mSocket.emit(Constant.REQUEST_FIND_USER_BY_ACCOUNT_ID,
+                localData.getId());
+        SocketIOClient.client.mSocket.on(Constant.RESPONSE_FIND_USER_BY_ACCOUNT_ID,
+                onResponseFindUserByAccId);
     }
 
     private void initElements() {
@@ -942,7 +988,7 @@ public class MapActivity extends AppCompatActivity
         }
     }
 
-    private void logout() {
+    private void actionLogout() {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(R.string.dialog_logout_message)

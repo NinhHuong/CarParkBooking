@@ -105,6 +105,9 @@
     <string name="verify_description">Tài khoản của bạn cần được xác nhận. Vui lòng kiểm tra email để lấy mã.</string>
     <string name="tooltip_btn_direction">Dẫn đường</string>
     <string name="action_logout">Đăng xuất</string>
+    <string name="action_history">Lịch sử</string>
+    <string name="action_car_manager">Quản lý xe</string>
+    <string name="action_profile">Thông tin cá nhân</string>
     <string name="map_gara_choose">Chọn</string>
 
     <!-- Strings related to history -->
@@ -162,6 +165,8 @@
     <string name="booking_message_add_license">Vui lòng thêm biển số xe trước khi đặt.</string>
     <string name="dialog_remove_license_item">Xóa biển số</string>
     <string name="dialog_remove_license_item_message">Bạn có chắc muốn xóa?</string>
+    <string name="dialog_save_profile_title">Lưu thông tin</string>
+    <string name="dialog_save_profile_message">Bạn có chắc muốn lưu thông tin?</string>
     <string name="notify_booking_timeout_title">Sáp hết thời gian đặt chỗ</string>
     <string name="notify_booking_timeout_body">Thời gian 15 phút sắp hết, hãy vào đặt lại chỗ!</string>
     <string name="booking_detail_refresh">Làm mới</string>
@@ -176,4 +181,12 @@
     <string name="title_btn_car_get_iut">Cho xe ra</string>
     <string name="title_car_vehicle">Biển số</string>
     <string name="title_fill_vehicle">Biển số nhập</string>
+    <string name="title_activity_profile">ProfileActivity</string>
+    <string name="firstname">Tên</string>
+    <string name="lastname">Họ</string>
+    <string name="address">Địa chỉ</string>
+    <string name="phone_number">Số điện thoại</string>
+    <string name="day_of_birth">Ngày sinh</string>
+    <string name="profile_save_success">Đã lưu thông tin thành công</string>
+    <string name="error_server_email_registered">Email này đã đăng ký</string>
 </resources>
