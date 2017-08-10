@@ -54,8 +54,6 @@ public class SecurityActivity extends AppCompatActivity implements NavigationVie
     private int carOutID = 0;
     private int carInID = 0;
 
-    //    private List<ParkingInfoSecurityModel> listCarInId;
-//    private List<ParkingInfoSecurityModel> listCarOutId;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

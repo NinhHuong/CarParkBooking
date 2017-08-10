@@ -89,7 +89,7 @@
             android:layout_height="wrap_content"
             android:ems="10"
             android:inputType="textPersonName"
-            android:hint="@string/action_search"
+            android:hint="@string/place_autocomplete_search_hint"
             android:layout_below="@+id/textView8"
             android:layout_alignStart="@+id/textView8" />
 
@@ -167,7 +167,7 @@
             android:layout_height="wrap_content"
             android:ems="10"
             android:inputType="textPersonName"
-            android:text="Name"
+            android:hint="@string/place_autocomplete_search_hint"
             android:layout_below="@+id/spnCarOut"
             android:layout_alignStart="@+id/textView11"
             android:layout_marginTop="17dp" />
