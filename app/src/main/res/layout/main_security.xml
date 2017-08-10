@@ -58,11 +58,11 @@
             android:text="@string/title_fill_vehicle"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
             android:textSize="22sp"
-            app:layout_constraintTop_toBottomOf="@+id/textView6"
+            app:layout_constraintTop_toBottomOf="@+id/edtSearchCarIn"
             tools:layout_editor_absoluteX="16dp"
-            android:layout_marginTop="26dp"
-            android:layout_below="@+id/spnCarIn"
-            android:layout_alignStart="@+id/textView8" />
+            android:layout_below="@+id/edtSearchCarIn"
+            android:layout_alignStart="@+id/edtSearchCarIn"
+            android:layout_marginTop="24dp" />
 
         <EditText
             android:id="@+id/edtCarIn"
@@ -82,6 +82,25 @@
             android:text="@string/title_btn_car_get_in"
             android:layout_below="@+id/edtCarIn"
             android:layout_centerHorizontal="true" />
+
+        <EditText
+            android:id="@+id/edtSearchCarIn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:hint="@string/action_search"
+            android:layout_below="@+id/textView8"
+            android:layout_alignStart="@+id/textView8" />
+
+        <ImageButton
+            android:id="@+id/btnDeleteSearchIn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/edtSearchCarIn"
+            android:layout_toEndOf="@+id/edtSearchCarIn"
+            app:srcCompat="@android:drawable/ic_menu_delete" />
+
     </RelativeLayout>
 
 
@@ -108,10 +127,9 @@
             android:id="@+id/btnCarGoOut"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginBottom="42dp"
-            android:text="@string/title_car_get_iut" />
+            android:text="@string/title_car_get_iut"
+            android:layout_below="@+id/edtSearchCarOut"
+            android:layout_centerHorizontal="true" />
 
         <Spinner
             android:id="@+id/spnCarOut"
@@ -142,6 +160,25 @@
             tools:layout_editor_absoluteX="16dp"
             tools:layout_editor_absoluteY="37dp"
             android:id="@+id/textView10" />
+
+        <EditText
+            android:id="@+id/edtSearchCarOut"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:text="Name"
+            android:layout_below="@+id/spnCarOut"
+            android:layout_alignStart="@+id/textView11"
+            android:layout_marginTop="17dp" />
+
+        <ImageButton
+            android:id="@+id/btnDeleteSearchOut"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/edtSearchCarOut"
+            android:layout_toEndOf="@+id/edtSearchCarOut"
+            app:srcCompat="@android:drawable/ic_input_delete" />
 
     </RelativeLayout>
 </LinearLayout>

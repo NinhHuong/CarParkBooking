@@ -31,7 +31,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CarManagerActivity extends AppCompatActivity {
-
     ListView lvCarList;
     CarListAdapter adapter;
     List<CarModel> mCarList;

@@ -7,8 +7,8 @@ package com.quocngay.carparkbooking.model;
 public class AccountModel {
     private int id;
     private String email;
-    private String role;
-    private boolean isVerify;
+    private String roleID;
+    private int isVerify;
     private String firstName;
     private String lastName;
     private String phone;
@@ -18,10 +18,10 @@ public class AccountModel {
     public AccountModel() {
     }
 
-    public AccountModel(int id, String email, String role, boolean isVerify, String firstName, String lastName, String phone, String dateOfBirth, String address) {
+    public AccountModel(int id, String email, String roleID, int isVerify, String firstName, String lastName, String phone, String dateOfBirth, String address) {
         this.id = id;
         this.email = email;
-        this.role = role;
+        this.roleID = roleID;
         this.isVerify = isVerify;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -46,19 +46,19 @@ public class AccountModel {
         this.email = email;
     }
 
-    public String getRole() {
-        return role;
+    public String getRoleID() {
+        return roleID;
     }
 
-    public void setRole(String role) {
-        this.role = role;
+    public void setRoleID(String roleID) {
+        this.roleID = roleID;
     }
 
-    public boolean isVerify() {
+    public int isVerify() {
         return isVerify;
     }
 
-    public void setVerify(boolean verify) {
+    public void setVerify(int verify) {
         isVerify = verify;
     }
 

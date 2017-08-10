@@ -15,10 +15,9 @@
         android:id="@+id/txtFirstName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/txtName"
-        android:layout_marginStart="20dp"
-        android:layout_toEndOf="@+id/txtName"
-        android:text="TextView" />
+        android:text="TextView"
+        android:layout_alignParentTop="true"
+        android:layout_toStartOf="@+id/btnDelete" />
 
     <TextView
         android:id="@+id/txtLastName"
@@ -82,21 +81,37 @@
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/textView15"
+        android:text="Số điện thoại:" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/textView17"
         android:text="Chức vụ:" />
 
     <TextView
-        android:id="@+id/txtRole"
+        android:id="@+id/txtPhone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignStart="@+id/txtEmail"
         android:layout_below="@+id/txtEmail"
         android:text="TextView" />
 
+    <TextView
+        android:id="@+id/txtRole"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/txtPhone"
+        android:layout_toStartOf="@+id/btnDelete"
+        android:text="TextView" />
+
     <Button
         android:id="@+id/btnDelete"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/txtRole"
+        android:layout_below="@+id/txtPhone"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="16dp"
         android:text="Button" />

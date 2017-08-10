@@ -130,6 +130,10 @@
     <string name="dialog_message_car_in">Bạn có muốn cho xe này vào?</string>
     <string name="dialog_message_car_out">Bạn có muốn cho xe này ra?</string>
 
+    <!-- Strings related to admin -->
+    <string name="not_have_security">Bạn chưa nhân viên nào</string>
+
+
     <string name="error_general">Có lỗi đâu đấy</string>
     <string name="error_select_car">Hãy chọn xe</string>
     <string name="logout_successfull">Bạn đã đăng xuất</string>
