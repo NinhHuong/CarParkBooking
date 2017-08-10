@@ -12,7 +12,6 @@ import android.widget.TextView;
 
 import com.quocngay.carparkbooking.R;
 import com.quocngay.carparkbooking.model.AccountModel;
-import com.quocngay.carparkbooking.model.CarModel;
 
 import java.util.List;
 
@@ -50,21 +49,21 @@ public class AccountListAdapter extends BaseAdapter {
 
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
-        View v = View.inflate(mContext, R.layout.item_account_management,null);
-        TextView txtFirstName, txtLastName, txtEmail, txtRole, txtphone, txtdob,txtAddress;
+        View v = View.inflate(mContext, R.layout.item_account_management, null);
+        TextView txtFirstName, txtLastName, txtEmail, txtRole, txtphone, txtdob, txtAddress;
         txtFirstName = (TextView) v.findViewById(R.id.txtFirstName);
         txtLastName = (TextView) v.findViewById(R.id.txtLastName);
-        txtEmail = (TextView) v.findViewById(R.id.txtFirstName);
-        txtRole = (TextView) v.findViewById(R.id.txtFirstName);
-        txtphone = (TextView) v.findViewById(R.id.txtFirstName);
-        txtdob = (TextView) v.findViewById(R.id.txtFirstName);
-        txtAddress = (TextView) v.findViewById(R.id.txtFirstName);
+        txtEmail = (TextView) v.findViewById(R.id.txtEmail);
+        txtRole = (TextView) v.findViewById(R.id.txtRole);
+        txtphone = (TextView) v.findViewById(R.id.txtPhone);
+        txtdob = (TextView) v.findViewById(R.id.txtdob);
+        txtAddress = (TextView) v.findViewById(R.id.txtAddress);
         Button btnDelete = (Button) v.findViewById(R.id.btnDelete);
 
         txtFirstName.setText(mAccountList.get(position).getFirstName());
         txtLastName.setText(mAccountList.get(position).getLastName());
         txtEmail.setText(mAccountList.get(position).getEmail());
-        txtRole.setText(mAccountList.get(position).getRole()=="3"?"Bảo vệ":" ");
+        txtRole.setText(mAccountList.get(position).getRoleID().compareTo("3") == 0 ? "Bảo vệ" : " ");
         txtphone.setText(mAccountList.get(position).getPhone());
         txtdob.setText(mAccountList.get(position).getDateOfBirth());
         txtAddress.setText(mAccountList.get(position).getAddress());

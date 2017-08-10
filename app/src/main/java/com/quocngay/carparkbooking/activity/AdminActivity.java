@@ -98,8 +98,11 @@ public class AdminActivity extends AppCompatActivity
             case R.id.nav_add_security:
                 startActivity(new Intent(AdminActivity.this, RegisterActivity.class));
                 break;
+            case R.id.nav_all_security:
+                startActivity(new Intent(AdminActivity.this, SecurityManagerActivity.class));
+                break;
             case R.id.nav_logout:
-                logout();
+                activityLogout();
                 break;
         }
 
@@ -128,6 +131,8 @@ public class AdminActivity extends AppCompatActivity
                                 garage.getJSONObject(0).toString(),
                                 GarageModel.class);
 
+                        localData.setGarageID(String.valueOf(garageModel.getId()));
+
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -136,7 +141,7 @@ public class AdminActivity extends AppCompatActivity
         }
     };
 
-    private void logout() {
+    private void activityLogout() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(R.string.dialog_logout_message)
                 .setPositiveButton(R.string.fire, new DialogInterface.OnClickListener() {

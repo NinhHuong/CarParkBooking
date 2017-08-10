@@ -110,11 +110,9 @@
 
         <activity android:name=".activity.SecurityActivity" />
         <activity
-
             android:name=".activity.AdminActivity"
             android:label="@string/title_activity_admin"
             android:theme="@style/AppTheme.NoActionBar" />
-
         <activity
             android:name=".activity.ProfileActivity"
             android:label="@string/title_activity_profile"
@@ -124,7 +122,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.quocngay.carparkbooking.activity.MapActivity" />
         </activity>
-
+        <activity android:name=".activity.SecurityManagerActivity"></activity>
     </application>
 
 </manifest>

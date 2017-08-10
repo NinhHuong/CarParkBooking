@@ -117,15 +117,15 @@ public class Constant {
 
     //region CAR
     public static final String REQUEST_CAR_CUSTOMER = "request_find_car_by_account_id";
-    public static final String RESPONSE_CAR_CUSTOMER= "response_find_car_by_account_id";
-    public static final String REQUEST_FIND_CAR_BY_ID= "request_find_car_by_id";
+    public static final String RESPONSE_CAR_CUSTOMER = "response_find_car_by_account_id";
+    public static final String REQUEST_FIND_CAR_BY_ID = "request_find_car_by_id";
     public static final String REQUEST_ADD_NEW_CAR = "request_add_new_car";
-    public static final String REQUEST_REMOVE_CAR_BY_ID= "request_remove_car_by_id";
+    public static final String REQUEST_REMOVE_CAR_BY_ID = "request_remove_car_by_id";
 
-    public static final String RESPONSE_FIND_CAR_BY_ID= "response_find_car_by_id";
+    public static final String RESPONSE_FIND_CAR_BY_ID = "response_find_car_by_id";
 
     public static final String RESPONSE_ADD_NEW_CAR = "response_add_new_car";
-    public static final String RESPONSE_REMOVE_CAR_BY_ID= "response_remove_car_by_id";
+    public static final String RESPONSE_REMOVE_CAR_BY_ID = "response_remove_car_by_id";
 
     //endregion
 
@@ -155,6 +155,9 @@ public class Constant {
 
     public static final String REQUEST_CREATE_ACCOUNT_SECURITY = "request_create_new_account_for_security";
     public static final String RESPONSE_CREATE_ACCOUNT_SECURITY = "response_create_new_account_for_security";
+
+    public static final String REQUEST_ALL_SECURITY = "request_all_security";
+    public static final String RESPONSE_ALL_SECURITY = "response_all_security";
     //endregion
 
 
@@ -182,6 +185,7 @@ public class Constant {
     public static final String APP_PREF_FIREBASE_REMEMBER = "firebase_token";
     public static String APP_PREF_ROLE = "role";
     public static String APP_PREF_IS_LOGIN = "is_login";
+    public static String APP_PREF_GARAGE_ID = "garage_id";
     public static final String APP_PREF_EMAIL = "email";
 
     public static String SERVER_RESPONSE_LOGIN_PARA_EMAIL = "email";

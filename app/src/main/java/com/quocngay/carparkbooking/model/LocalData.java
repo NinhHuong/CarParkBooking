@@ -11,7 +11,6 @@ import com.quocngay.carparkbooking.other.Constant;
  */
 
 public class LocalData {
-
     private String id;
     private String email;
     private String token;
@@ -66,6 +65,10 @@ public class LocalData {
         return mSharedPref.getBoolean(Constant.APP_PREF_IS_LOGIN, false);
     }
 
+    public String getGarageID() {
+        return mSharedPref.getString(Constant.APP_PREF_GARAGE_ID, "");
+    }
+
     public String getRole() {
         return mSharedPref.getString(Constant.APP_PREF_ROLE, "");
     }
@@ -83,6 +86,11 @@ public class LocalData {
 
     public void setIsLogin(boolean isLogin) {
         editor.putBoolean(Constant.APP_PREF_IS_LOGIN, isLogin);
+        editor.apply();
+    }
+
+    public void setGarageID(String garageID) {
+        editor.putString(Constant.APP_PREF_GARAGE_ID, garageID);
         editor.apply();
     }
 
