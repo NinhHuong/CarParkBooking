@@ -102,6 +102,8 @@ public class Constant {
             "response_edit_parking_info_id_status";
     public static final String KEY_MAIN_MAP = "google_map";
     public static final String BOOKING_MAP_SIZE = "600x300";
+    public static final String REQUEST_REFRESH_BOOKING_TIMEOUT = "request_refresh_booking_timeout";
+    public static final String RESPONSE_REFRESH_BOOKING_TIMEOUT = "response_refresh_booking_timeout";
 
     //endregion
 
