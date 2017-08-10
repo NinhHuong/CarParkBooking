@@ -151,6 +151,7 @@
     <string name="dialog_delete_car">Bạn có chắc chắn muốn xóa xe</string>
 
     <string name="dialog_book_cancel_message">Bạn có chắc chắn muốn hủy bỏ đặt chỗ?</string>
+    <string name="dialog_book_refresh_message">Bạn có chắc chắn đặt lại?</string>
     <string name="error_server">Có lỗi xảy ra!</string>
     <string name="book_cancel_successfull">Bạn đã hủy đặt chỗ thành công!</string>
     <string name="today">Hôm nay</string>
@@ -193,4 +194,5 @@
     <string name="day_of_birth">Ngày sinh</string>
     <string name="profile_save_success">Đã lưu thông tin thành công</string>
     <string name="error_server_email_registered">Email này đã đăng ký</string>
+    <string name="booking_detail_refresh_success">Đặt lại thành công</string>
 </resources>

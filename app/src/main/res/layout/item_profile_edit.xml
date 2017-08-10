@@ -28,8 +28,8 @@
             android:layout_marginEnd="@dimen/text_margin"
             android:layout_marginTop="@dimen/text_margin"
             android:textSize="16sp" />
-    </LinearLayout>
 
+    </LinearLayout>
 
     <View
         style="@style/Divider"

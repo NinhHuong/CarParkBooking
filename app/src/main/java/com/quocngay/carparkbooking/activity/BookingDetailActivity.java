@@ -21,6 +21,8 @@ import android.widget.Toast;
 
 import com.github.nkzawa.emitter.Emitter;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.FirebaseInstanceIdService;
 import com.google.gson.Gson;
 import com.quocngay.carparkbooking.R;
 import com.quocngay.carparkbooking.model.CarModel;
@@ -55,31 +57,7 @@ public class BookingDetailActivity extends AppCompatActivity {
     private AlertDialog.Builder mBookAlertDialog;
     private TextView tvRemainSlots;
 
-    private Emitter.Listener onResponseGetGaraById = new Emitter.Listener() {
-        @Override
-        public void call(final Object... args) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    JSONObject jsonObject = (JSONObject) args[0];
-                    Gson gson = new Gson();
-                    try {
-                        if (jsonObject.getBoolean(Constant.RESULT)) {
-                            mGaraModel = gson.fromJson(
-                                    jsonObject.getJSONArray(Constant.DATA).getJSONObject(0).toString(),
-                                    GarageModel.class);
-                            initBookingDetailContent();
-                        } else {
-                            Log.e("Server error", jsonObject.getString(Constant.MESSAGE));
-                        }
-                        SocketIOClient.client.mSocket.off(Constant.RESPONSE_GET_GARAGE_BY_ID);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
-        }
-    };
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,7 +65,7 @@ public class BookingDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_booking_detail);
         initToolbar();
         initBookingDetailElements();
-        if(SocketIOClient.client == null){
+        if (SocketIOClient.client == null) {
             new SocketIOClient();
         }
         SocketIOClient.client.mSocket.emit(Constant.REQUEST_PARKING_INFO_BY_ACCOUNT_ID,
@@ -130,40 +108,66 @@ public class BookingDetailActivity extends AppCompatActivity {
         }
     };
 
-    private Emitter.Listener onResponseGetCarById = new Emitter.Listener() {
-        @Override
-        public void call(final Object... args) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    JSONObject jsonObject = (JSONObject) args[0];
-                    Gson gson = new Gson();
-                    try {
-                        if (jsonObject.getBoolean(Constant.RESULT)) {
-                            mCarModel = gson.fromJson(
-                                    jsonObject.getJSONArray(Constant.DATA).getJSONObject(0).toString(),
-                                    CarModel.class);
-                            tvBookingDetailLicense.setText(mCarModel.getVehicleNumber());
-
-                        } else {
-                            Log.e("Server", jsonObject.getString(Constant.MESSAGE));
-                        }
-                        SocketIOClient.client.mSocket.off(Constant.RESPONSE_FIND_CAR_BY_ID);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
-
-        }
-    };
-
     private void requestGaraDetail(int garaID) {
+        Emitter.Listener onResponseGetGaraById = new Emitter.Listener() {
+            @Override
+            public void call(final Object... args) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        JSONObject jsonObject = (JSONObject) args[0];
+                        Gson gson = new Gson();
+                        try {
+                            if (jsonObject.getBoolean(Constant.RESULT)) {
+                                mGaraModel = gson.fromJson(
+                                        jsonObject.getJSONArray(Constant.DATA).getJSONObject(0).toString(),
+                                        GarageModel.class);
+                                initBookingDetailContent();
+                            } else {
+                                Log.e("Server error", jsonObject.getString(Constant.MESSAGE));
+                            }
+                            SocketIOClient.client.mSocket.off(Constant.RESPONSE_GET_GARAGE_BY_ID);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+            }
+        };
+
         SocketIOClient.client.mSocket.emit(Constant.REQUEST_GET_GARAGE_BY_ID, garaID);
         SocketIOClient.client.mSocket.on(Constant.RESPONSE_GET_GARAGE_BY_ID, onResponseGetGaraById);
     }
 
     private void requestCarDetail(int carId) {
+        Emitter.Listener onResponseGetCarById = new Emitter.Listener() {
+            @Override
+            public void call(final Object... args) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        JSONObject jsonObject = (JSONObject) args[0];
+                        Gson gson = new Gson();
+                        try {
+                            if (jsonObject.getBoolean(Constant.RESULT)) {
+                                mCarModel = gson.fromJson(
+                                        jsonObject.getJSONArray(Constant.DATA).getJSONObject(0).toString(),
+                                        CarModel.class);
+                                tvBookingDetailLicense.setText(mCarModel.getVehicleNumber());
+
+                            } else {
+                                Log.e("Server", jsonObject.getString(Constant.MESSAGE));
+                            }
+                            SocketIOClient.client.mSocket.off(Constant.RESPONSE_FIND_CAR_BY_ID);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+
+            }
+        };
+
         SocketIOClient.client.mSocket.emit(Constant.REQUEST_FIND_CAR_BY_ID, carId);
         SocketIOClient.client.mSocket.on(Constant.RESPONSE_FIND_CAR_BY_ID, onResponseGetCarById);
     }
@@ -191,6 +195,12 @@ public class BookingDetailActivity extends AppCompatActivity {
             }
         });
         btnBookRefresh = (Button) findViewById(R.id.btn_book_refresh);
+        btnBookRefresh.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                refreshBooking();
+            }
+        });
 
         tvBookingDetailTitle = (TextView) findViewById(R.id.tv_booking_detail_title);
         tvBookingDetailDes = (TextView) findViewById(R.id.tv_booking_detail_des);
@@ -304,38 +314,92 @@ public class BookingDetailActivity extends AppCompatActivity {
         }
     }
 
-
-    private Emitter.Listener onResponseCancelBooking = new Emitter.Listener() {
-        @Override
-        public void call(final Object... args) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    JSONObject jsonObject = (JSONObject) args[0];
-                    try {
-                        if (jsonObject.getBoolean(Constant.RESULT)) {
-                            Toast.makeText(BookingDetailActivity.this,
-                                    getResources().getString(R.string.book_cancel_successfull),
-                                    Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent(BookingDetailActivity.this, MapActivity.class);
-                            intent.putExtra(Constant.BOOKING_DETAIL_STATUS,
-                                    Constant.BOOKING_DETAIL_STATUS_CANCEL);
-                            setResult(RESULT_OK, intent);
-                            finish();
-                        } else {
-                            Log.d("Cancel book", jsonObject.getString(Constant.MESSAGE));
+    private void refreshBooking() {
+        final Emitter.Listener onResponseRefreshBooking = new Emitter.Listener() {
+            @Override
+            public void call(final Object... args) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        JSONObject jsonObject = (JSONObject) args[0];
+                        try {
+                            if (jsonObject.getBoolean(Constant.RESULT)) {
+                                Toast.makeText(BookingDetailActivity.this,
+                                        getResources()
+                                                .getString(R.string.booking_detail_refresh_success),
+                                        Toast.LENGTH_SHORT).show();
+                            } else if(jsonObject.getString(Constant.MESSAGE).equals("refresh_failed")){
+                                Toast.makeText(BookingDetailActivity.this,
+                                        getResources().getString(R.string.error_server),
+                                        Toast.LENGTH_SHORT).show();
+                                finish();
+                                Log.w(getClass().getName(),
+                                        "Error: " + jsonObject.getString(Constant.MESSAGE));
+                            }
+                            SocketIOClient.client.mSocket.off(
+                                    Constant.RESPONSE_REFRESH_BOOKING_TIMEOUT);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
                         }
-                        SocketIOClient.client.mSocket.off(Constant.RESPONSE_EDIT_PARKING_INFO_BY_ID_STATUS);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
                     }
-                }
-            });
+                });
+            }
+        };
 
-        }
-    };
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(R.string.dialog_book_refresh_message)
+                .setPositiveButton(R.string.fire, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+
+                        SocketIOClient.client.mSocket.emit(
+                                Constant.REQUEST_REFRESH_BOOKING_TIMEOUT,
+                                mParkingInfoModel.getId(),
+                                FirebaseInstanceId.getInstance().getToken());
+                        SocketIOClient.client.mSocket.on(
+                                Constant.RESPONSE_REFRESH_BOOKING_TIMEOUT,
+                                onResponseRefreshBooking);
+                    }
+                })
+                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.dismiss();
+                    }
+                });
+        // Create the AlertDialog object and return it
+        builder.create().show();
+    }
 
     private void cancelBooking() {
+        final Emitter.Listener onResponseCancelBooking = new Emitter.Listener() {
+            @Override
+            public void call(final Object... args) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        JSONObject jsonObject = (JSONObject) args[0];
+                        try {
+                            if (jsonObject.getBoolean(Constant.RESULT)) {
+                                Toast.makeText(BookingDetailActivity.this,
+                                        getResources().getString(R.string.book_cancel_successfull),
+                                        Toast.LENGTH_SHORT).show();
+                                Intent intent = new Intent(BookingDetailActivity.this, MapActivity.class);
+                                intent.putExtra(Constant.BOOKING_DETAIL_STATUS,
+                                        Constant.BOOKING_DETAIL_STATUS_CANCEL);
+                                setResult(RESULT_OK, intent);
+                                finish();
+                            } else {
+                                Log.d("Cancel book", jsonObject.getString(Constant.MESSAGE));
+                            }
+                            SocketIOClient.client.mSocket.off(Constant.RESPONSE_EDIT_PARKING_INFO_BY_ID_STATUS);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+
+            }
+        };
+
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(R.string.dialog_book_cancel_message)
                 .setPositiveButton(R.string.fire, new DialogInterface.OnClickListener() {

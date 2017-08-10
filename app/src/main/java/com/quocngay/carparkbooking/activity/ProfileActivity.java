@@ -1,9 +1,11 @@
 package com.quocngay.carparkbooking.activity;
 
+import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -13,6 +15,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -23,6 +26,7 @@ import android.widget.ViewSwitcher;
 import com.github.nkzawa.emitter.Emitter;
 import com.google.gson.Gson;
 import com.quocngay.carparkbooking.R;
+import com.quocngay.carparkbooking.fragment.DatePickerFragment;
 import com.quocngay.carparkbooking.model.LocalData;
 import com.quocngay.carparkbooking.model.UserModel;
 import com.quocngay.carparkbooking.other.Constant;
@@ -30,6 +34,12 @@ import com.quocngay.carparkbooking.other.SocketIOClient;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
 public class ProfileActivity extends AppCompatActivity {
 
@@ -266,7 +276,58 @@ public class ProfileActivity extends AppCompatActivity {
         edtDob = addToProfileEditContainer(containerProfileContentEdit,
                 R.drawable.ic_today_black_24dp, InputType.TYPE_CLASS_DATETIME, getResources().getString(R.string.day_of_birth),
                 mUserModel.getDateOfBirth());
+        showDatePickerDialog(edtDob);
 
+    }
+
+    public void showDatePickerDialog(final EditText editText) {
+        final Calendar calendar = Calendar.getInstance();
+        if(!editText.getText().toString().isEmpty()){
+            try {
+                calendar.setTime(new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+                        .parse(editText.getText().toString()));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+        final DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
+
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear,
+                                  int dayOfMonth) {
+                calendar.set(Calendar.YEAR, year);
+                calendar.set(Calendar.MONTH, monthOfYear);
+                calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+
+                editText.setText(sdf.format(calendar.getTime()));
+            }
+
+        };
+
+        editText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DatePickerDialog dialog = new DatePickerDialog(ProfileActivity.this, date, calendar
+                        .get(Calendar.YEAR), calendar.get(Calendar.MONTH),
+                        calendar.get(Calendar.DAY_OF_MONTH));
+                dialog.getDatePicker().setMaxDate(Calendar.getInstance().getTimeInMillis());
+                dialog.show();
+            }
+        });
+
+        editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    DatePickerDialog dialog = new DatePickerDialog(ProfileActivity.this, date, calendar
+                            .get(Calendar.YEAR), calendar.get(Calendar.MONTH),
+                            calendar.get(Calendar.DAY_OF_MONTH));
+                    dialog.getDatePicker().setMaxDate(Calendar.getInstance().getTimeInMillis());
+                    dialog.show();
+                }
+            }
+        });
     }
 
     private void initToolbar() {
