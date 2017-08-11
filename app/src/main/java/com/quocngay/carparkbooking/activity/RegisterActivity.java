@@ -106,7 +106,7 @@ public class RegisterActivity extends AppCompatActivity {
         hashPassword = sha512Password(password);
 
 
-        SocketIOClient.client.mSocket.emit(Constant.REQUEST_CREATE_ACCOUNT, email, hashPassword, 4);
+        SocketIOClient.client.mSocket.emit(Constant.REQUEST_CREATE_ACCOUNT, email, hashPassword, Constant.ROLE_USER_VALUE);
         SocketIOClient.client.mSocket.on(Constant.RESPONSE_CREATE_ACCOUNT, onNewMessageResultRegistNewAccount);
 
     }
