@@ -28,8 +28,6 @@ import java.security.NoSuchAlgorithmException;
 public class RegisterActivity extends AppCompatActivity {
 
     String email, password, hashPassword;
-    private String roleID;
-    private Boolean isLogin;
     private EditText edtEmail, edtPass, edtRetypePass;
     private Emitter.Listener onNewMessageResultRegistNewAccount = new Emitter.Listener() {
         @Override
@@ -51,9 +49,9 @@ public class RegisterActivity extends AppCompatActivity {
                             setResult(RESULT_OK, intent);
                             SocketIOClient.client.mSocket.off(Constant.RESPONSE_CREATE_ACCOUNT);
                             finish();
-                        }else if(data.getString(Constant.MESSAGE).equals("email_registered")){
+                        } else if (data.getString(Constant.MESSAGE).equals("email_registered")) {
                             Toast.makeText(getApplicationContext(), getResources().
-                                    getString(R.string.error_server_email_registered),
+                                            getString(R.string.error_server_email_registered),
                                     Toast.LENGTH_SHORT).show();
 
                         }
@@ -78,9 +76,6 @@ public class RegisterActivity extends AppCompatActivity {
         }
 
         LocalData p = new LocalData(getApplicationContext());
-        roleID = p.getRole();
-        isLogin = p.getIsLogin();
-
         edtEmail = (EditText) findViewById(R.id.edtEmailRegist);
         edtPass = (EditText) findViewById(R.id.edtPassRegist);
         edtRetypePass = (EditText) findViewById(R.id.edtRePassRegist);
@@ -110,27 +105,10 @@ public class RegisterActivity extends AppCompatActivity {
         }
         hashPassword = sha512Password(password);
 
-        if (roleID.matches("\\d+")) {
-            int currentUser = Integer.parseInt(roleID);
-            int roleNewUser = Constant.ROLE_USER_VALUE;
-            if (isLogin)
-                switch (currentUser) {
-                    case Constant.ROLE_SUPER_ADMIN_VALUE:
-                        roleNewUser = Constant.ROLE_ADMIN_VALUE;
-                        break;
-                    case Constant.ROLE_ADMIN_VALUE:
-                        roleNewUser = Constant.ROLE_SECURITY_VALUE;
-                        String id = new LocalData(getApplicationContext()).getId();
-                        SocketIOClient.client.mSocket.emit(Constant.REQUEST_CREATE_ACCOUNT_SECURITY, email, hashPassword, id);
-                        SocketIOClient.client.mSocket.on(Constant.RESPONSE_CREATE_ACCOUNT_SECURITY, onNewMessageResultRegistNewAccount);
-                        break;
-                    default:
-                        roleNewUser = Constant.ROLE_USER_VALUE;
-                        SocketIOClient.client.mSocket.emit(Constant.REQUEST_CREATE_ACCOUNT, email, hashPassword, roleNewUser);
-                        SocketIOClient.client.mSocket.on(Constant.RESPONSE_CREATE_ACCOUNT, onNewMessageResultRegistNewAccount);
-                        break;
-                }
-        }
+
+        SocketIOClient.client.mSocket.emit(Constant.REQUEST_CREATE_ACCOUNT, email, hashPassword, 4);
+        SocketIOClient.client.mSocket.on(Constant.RESPONSE_CREATE_ACCOUNT, onNewMessageResultRegistNewAccount);
+
     }
 
     //create hash pass from salt code and original pass
