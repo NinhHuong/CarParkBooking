@@ -160,6 +160,9 @@ public class Constant {
 
     public static final String REQUEST_ALL_SECURITY = "request_all_security";
     public static final String RESPONSE_ALL_SECURITY = "response_all_security";
+
+    public static final String REQUEST_HISTORY = "request_history";
+    public static final String RESPONSE_HISTORY = "response_history";
     //endregion
 
 
