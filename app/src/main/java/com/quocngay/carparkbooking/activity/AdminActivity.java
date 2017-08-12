@@ -20,6 +20,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.ImageButton;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.github.nkzawa.emitter.Emitter;
@@ -29,6 +30,7 @@ import com.quocngay.carparkbooking.fragment.DatePickerFragment;
 import com.quocngay.carparkbooking.model.GarageModel;
 import com.quocngay.carparkbooking.model.LocalData;
 import com.quocngay.carparkbooking.model.ParkingInfoSecurityModel;
+import com.quocngay.carparkbooking.other.AdminHistoryListAdapter;
 import com.quocngay.carparkbooking.other.Constant;
 import com.quocngay.carparkbooking.other.SocketIOClient;
 
@@ -36,17 +38,28 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
 public class AdminActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, DatePickerDialog.OnDateSetListener {
 
     private ImageButton btnDate;
     private TextView txtDate;
+    private TextView txtNotCar;
+    private ListView lvHistory;
+    DatePickerDialog datePickerDialog;
+
+    private AdminHistoryListAdapter adapter;
+
+    int year;
+    int month;
+    int day;
 
     private String accountId;
     private GarageModel garageModel;
@@ -61,8 +74,10 @@ public class AdminActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin);
 
-        btnDate=(ImageButton)findViewById(R.id.btnCalendar) ;
-        txtDate=(TextView) findViewById(R.id.txtTime) ;
+        btnDate = (ImageButton) findViewById(R.id.btnCalendar);
+        txtDate = (TextView) findViewById(R.id.txtTime);
+        txtNotCar = (TextView) findViewById(R.id.txtNotCar);
+        lvHistory = (ListView) findViewById(R.id.lvHistory);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -78,39 +93,23 @@ public class AdminActivity extends AppCompatActivity
         localData = new LocalData(getApplicationContext());
         accountId = localData.getId();
 
-        final DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
+        myCalendar = Calendar.getInstance();
+        year = myCalendar.get(Calendar.YEAR);
+        month = myCalendar.get(Calendar.MONTH);
+        day = myCalendar.get(Calendar.DAY_OF_MONTH);
 
-            @Override
-            public void onDateSet(DatePicker view, int year, int monthOfYear,
-                                  int dayOfMonth) {
-                // TODO Auto-generated method stub
-                myCalendar.set(Calendar.YEAR, year);
-                myCalendar.set(Calendar.MONTH, monthOfYear+1);
-                myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                updateLabel();
-            }
-
-        };
-
+        datePickerDialog = new DatePickerDialog(
+                this, AdminActivity.this, year, month, day);
         btnDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new DatePickerDialog(AdminActivity.this, date, myCalendar
-                        .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
-                        myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+                if (datePickerDialog != null)
+                    datePickerDialog.show();
             }
         });
 
         SocketIOClient.client.mSocket.emit(Constant.REQUEST_GET_GARAGE_BY_ACCOUNT_ID, accountId);
         SocketIOClient.client.mSocket.on(Constant.RESPONSE_GET_GARAGE_BY_ACCOUNT_ID, onGetGarage);
-    }
-
-    private void updateLabel() {
-
-        String myFormat = "dd/mm/yyyy"; //In which you need put here
-        SimpleDateFormat sdf = new SimpleDateFormat(myFormat);
-
-        txtDate.setText(sdf.format(myCalendar.getTime()));
     }
 
     @Override
@@ -241,11 +240,13 @@ public class AdminActivity extends AppCompatActivity
                         Gson gson = new Gson();
 
                         JSONArray garage = data.getJSONArray(Constant.DATA);
-                        for(int i = 0; i <garage.length();i++){
+                        for (int i = 0; i < garage.length(); i++) {
                             allList.add(gson.fromJson(
                                     garage.getJSONObject(i).toString(),
                                     ParkingInfoSecurityModel.class));
                         }
+
+                        searchCarParking(year, month, day);
 
                         SocketIOClient.client.mSocket.off(Constant.RESPONSE_HISTORY);
 
@@ -256,5 +257,39 @@ public class AdminActivity extends AppCompatActivity
             });
         }
     };
+
+    @Override
+    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+        searchCarParking(year, month, dayOfMonth);
+    }
+
+    private void searchCarParking(int year, int month, int dayOfMonth) {
+        txtDate.setText(dayOfMonth + "/" + (month + 1) + "/" + year);
+
+        listShow = new ArrayList<>();
+        String selectDate = dayOfMonth + "-" + (month + 1) + "-" + year;
+        SimpleDateFormat inputFormat =
+                new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault());
+        SimpleDateFormat dateFormat =
+                new SimpleDateFormat("d-M-yyyy", Locale.getDefault());
+
+        for (int i = 0; i < allList.size(); i++) {
+            try {
+                Date date = inputFormat.parse(allList.get(i).getTimeGoIn());
+                String d = dateFormat.format(date);
+                if (d.compareTo(selectDate) == 0) {
+                    listShow.add(allList.get(i));
+                }
+
+                adapter = new AdminHistoryListAdapter(getBaseContext(), listShow, this);
+                lvHistory.setAdapter(adapter);
+
+                txtNotCar.setVisibility(listShow.size() == 0?View.VISIBLE:View.INVISIBLE);
+            } catch (ParseException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+    }
     //endregion
 }
