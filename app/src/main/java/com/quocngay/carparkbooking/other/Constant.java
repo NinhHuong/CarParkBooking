@@ -61,6 +61,8 @@ public class Constant {
     public static final String RESPONSE_CHECK_TOKEN = "response_check_token";
     public static final String REQUEST_GET_ALL_GARAGES = "request_all_garages";
     public static final String RESPONSE_GET_ALL_GARAGES = "response_all_garages";
+    public static final String RESPONSE_GARAGE_UPDATED = "response_garage_updated";
+
     public static final String SERVER_GARAGES_RESULT = "Garages";
     public static final String SERVER_PARKING_INFO_RESULT = "ParkingInfo";
     public static final String MY_LOCATION = "my_location";
@@ -109,6 +111,8 @@ public class Constant {
     public static final String BOOKING_MAP_SIZE = "600x300";
     public static final String REQUEST_REFRESH_BOOKING_TIMEOUT = "request_refresh_booking_timeout";
     public static final String RESPONSE_REFRESH_BOOKING_TIMEOUT = "response_refresh_booking_timeout";
+
+    public static final String RESPONSE_BOOKING_CANCELED = "response_booking_canceled";
 
     //endregion
 
@@ -181,7 +185,7 @@ public class Constant {
     //public static String SERVER_HOST = "http://192.168.0.110:5000";
 
 
-    public static String SERVER_HOST = "http://192.168.1.13:5000";
+    public static String SERVER_HOST = "http://192.168.1.2:5000";
 
     //    public static String SERVER_HOST = "http://52.15.194.52:5000";
     public static String APP_PREF = "AppPref";

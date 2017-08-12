@@ -133,6 +133,7 @@ public class MapActivity extends AppCompatActivity
     private TextView tvGarageSlots;
     private LocalData localData;
     private TextView tvNavHeaderName, tvNavHeaderEmail;
+    private List<Marker> garaMarkerList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -149,9 +150,81 @@ public class MapActivity extends AppCompatActivity
         initMap();
         updateLocationUI();
         getDeviceLocation();
+        getAllGarages();
+        initMapCheckBooking();
+    }
+
+    private void getAllGarages() {
+        Emitter.Listener onResponseGetAllGarages = new Emitter.Listener() {
+            @Override
+            public void call(final Object... args) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        JSONObject jsonObject = (JSONObject) args[0];
+                        Log.d("Garas", jsonObject.toString());
+                        Gson gson = new Gson();
+                        try {
+                            JSONArray listJsonGaras = jsonObject.getJSONArray(Constant.SERVER_GARAGES_RESULT);
+                            garageModelList = new ArrayList<GarageModel>();
+                            garaMarkerList = new ArrayList<Marker>();
+
+                            for (int i = 0; i < listJsonGaras.length(); i++) {
+                                GarageModel garageModel =
+                                        gson.fromJson(listJsonGaras.getJSONObject(i).toString(),
+                                                GarageModel.class);
+                                garageModelList.add(garageModel);
+                                garaMarkerList.add(addCustomGaraMarker(garageModel));
+                            }
+                            SocketIOClient.client.mSocket.off(Constant.RESPONSE_GET_ALL_GARAGES);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+            }
+        };
+
+        Emitter.Listener onResponseGarageUpdated = new Emitter.Listener() {
+            @Override
+            public void call(final Object... args) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        JSONObject jsonObject = (JSONObject) args[0];
+                        Log.d("Garas", jsonObject.toString());
+                        Gson gson = new Gson();
+                        try {
+                            if (jsonObject.getBoolean(Constant.RESULT)
+                                    && garaMarkerList.size() > 0) {
+                                GarageModel resultGara = gson.fromJson(
+                                        jsonObject
+                                                .getJSONArray(Constant.DATA)
+                                                .getJSONObject(0).toString(),
+                                        GarageModel.class);
+                                for (Marker marker : garaMarkerList) {
+                                    GarageModel garageModel = (GarageModel) marker.getTag();
+                                    assert garageModel != null;
+                                    if (resultGara.getId() == garageModel.getId()) {
+                                        marker = addCustomGaraMarker(resultGara);
+                                        Log.d(getClass().getName(),
+                                                "Updated marker: " + marker.getTag());
+                                    }
+                                }
+
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+            }
+        };
+
         SocketIOClient.client.mSocket.emit(Constant.REQUEST_GET_ALL_GARAGES);
         SocketIOClient.client.mSocket.on(Constant.RESPONSE_GET_ALL_GARAGES, onResponseGetAllGarages);
-        initMapCheckBooking();
+        SocketIOClient.client.mSocket.off(Constant.RESPONSE_GARAGE_UPDATED);
+        SocketIOClient.client.mSocket.on(Constant.RESPONSE_GARAGE_UPDATED, onResponseGarageUpdated);
     }
 
     @Override
@@ -294,34 +367,6 @@ public class MapActivity extends AppCompatActivity
         return true;
     }
 
-    private Emitter.Listener onResponseGetAllGarages = new Emitter.Listener() {
-        @Override
-        public void call(final Object... args) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    JSONObject jsonObject = (JSONObject) args[0];
-                    Log.d("Garas", jsonObject.toString());
-                    Gson gson = new Gson();
-                    try {
-                        JSONArray listJsonGaras = jsonObject.getJSONArray(Constant.SERVER_GARAGES_RESULT);
-                        garageModelList = new ArrayList<GarageModel>();
-                        for (int i = 0; i < listJsonGaras.length(); i++) {
-                            GarageModel garageModel =
-                                    gson.fromJson(listJsonGaras.getJSONObject(i).toString(),
-                                            GarageModel.class);
-                            garageModelList.add(garageModel);
-                            addCustomGaraMarker(garageModel);
-                        }
-                        SocketIOClient.client.mSocket.off(Constant.RESPONSE_GET_ALL_GARAGES);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
-        }
-    };
-
     private void initToolbar() {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         root = (ViewGroup) findViewById(R.id.map_view);
@@ -357,6 +402,37 @@ public class MapActivity extends AppCompatActivity
         initElements();
     }
 
+    private Emitter.Listener onResponseBookingCanceled = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    JSONObject jsonObject = (JSONObject) args[0];
+                    try {
+                        if (jsonObject.getBoolean(Constant.RESULT)) {
+                            AlertDialog.Builder builder = new AlertDialog.Builder(MapActivity.this);
+                            builder.setTitle(R.string.dialog_booking_canceled_title)
+                                    .setMessage(R.string.dialog_booking_canceled_message)
+                                    .setPositiveButton(R.string.dialog_button_ok, new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
+                                            dialog.dismiss();
+                                        }
+                                    });
+                            builder.create().show();
+                            initMapGeneralStatus();
+                        } else {
+                            initMapBookedStatus();
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+
+        }
+    };
+
     private void initMapCheckBooking() {
         onResponseGetStatusParkingInfo = new Emitter.Listener() {
             @Override
@@ -371,19 +447,19 @@ public class MapActivity extends AppCompatActivity
                                 mParkingInfoModel = gson.fromJson(
                                         jsonObject.getJSONObject(Constant.DATA).toString(),
                                         ParkingInfoModel.class);
-//                                if (mParkingInfoModel.getParkingStatus() == Constant.PARKING_INFO_STATUS_BOOKED) {
-//                                    btnMapStatus(BTN_STATUS_BOOK_DETAIL);
-//                                }
+
                             } else {
                                 Log.e("Server", jsonObject.getString(Constant.MESSAGE));
                             }
                             if (mParkingInfoModel != null &&
-                                    mParkingInfoModel.getParkingStatus() == Constant.PARKING_INFO_STATUS_BOOKED) {
+                                    mParkingInfoModel.getParkingStatus() ==
+                                            Constant.PARKING_INFO_STATUS_BOOKED) {
                                 initMapBookedStatus();
                             } else {
                                 initMapGeneralStatus();
                             }
-                            SocketIOClient.client.mSocket.off(Constant.RESPONSE_PARKING_INFO_BY_ACCOUNT_ID);
+                            SocketIOClient.client.mSocket.off(
+                                    Constant.RESPONSE_PARKING_INFO_BY_ACCOUNT_ID);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -393,10 +469,14 @@ public class MapActivity extends AppCompatActivity
             }
         };
 
+
         SocketIOClient.client.mSocket.emit(Constant.REQUEST_PARKING_INFO_BY_ACCOUNT_ID,
                 localData.getId());
         SocketIOClient.client.mSocket.on(Constant.RESPONSE_PARKING_INFO_BY_ACCOUNT_ID,
                 onResponseGetStatusParkingInfo);
+        SocketIOClient.client.mSocket.off(Constant.RESPONSE_BOOKING_CANCELED);
+        SocketIOClient.client.mSocket.on(Constant.RESPONSE_BOOKING_CANCELED,
+                onResponseBookingCanceled);
 
     }
 
@@ -629,6 +709,13 @@ public class MapActivity extends AppCompatActivity
             tvAddressDistance.setText("");
             tvGarageSlots.setText("");
         } else {
+            GarageModel garageModel = (GarageModel) marker.getTag();
+            tvGarageSlots.setText(garageModel.getRemainSlot() + " / " + garageModel.getTotalSlot());
+            if (garageModel.getRemainSlot() <= 0) {
+                tvGarageSlots.setTextColor(getResources().getColor(R.color.colorNotAvailable));
+            } else {
+                tvGarageSlots.setTextColor(getResources().getColor(R.color.colorAvailable));
+            }
             new GetDirectionApiData((GarageModel) marker.getTag()) {
                 @Override
                 protected void onPostExecute(String result) {
@@ -640,16 +727,6 @@ public class MapActivity extends AppCompatActivity
                         protected void onPostExecute(LocationDataModel result) {
                             tvAddressDuration.setText(result.getDuration());
                             tvAddressDistance.setText(result.getDistance());
-                            int remainSlots = result.getGarageModel().getRemainSlot();
-                            tvGarageSlots.setText(remainSlots + " / " + result
-                                    .getGarageModel()
-                                    .getTotalSlot());
-                            if (remainSlots <= 0) {
-                                tvGarageSlots.setTextColor(getResources().getColor(R.color.colorNotAvailable));
-                            } else {
-                                tvGarageSlots.setTextColor(getResources().getColor(R.color.colorAvailable));
-                            }
-
                         }
                     }.execute(result);
 
@@ -702,13 +779,14 @@ public class MapActivity extends AppCompatActivity
     }
 
 
-    private void addCustomGaraMarker(GarageModel garageModel) {
+    private Marker addCustomGaraMarker(GarageModel garageModel) {
         getLocationAddressForMarker(garageModel);
         Marker marker = googleMap.addMarker(new MarkerOptions()
                 .position(garageModel.getPosition())
                 .icon(BitmapDescriptorFactory.fromBitmap(
                         getMarkerBitmapFromView(garageModel.getRemainSlot()))));
         marker.setTag(garageModel);
+        return marker;
     }
 
     private Bitmap getMarkerBitmapFromView(int slotNumber) {
