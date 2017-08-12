@@ -91,8 +91,10 @@ public class SecurityActivity extends AppCompatActivity implements NavigationVie
         SocketIOClient.client.mSocket.on(Constant.RESPONSE_CAR_WILL_IN, onCarIn);
         SocketIOClient.client.mSocket.on(Constant.RESPONSE_CAR_WILL_OUT, onCarOut);
 
-        SocketIOClient.client.mSocket.on(Constant.RESPONSE_ONE_CAR_IN, onCarIn);
-        SocketIOClient.client.mSocket.on(Constant.RESPONSE_ONE_CAR_OUT, onCarOut);
+//        SocketIOClient.client.mSocket.on(Constant.RESPONSE_ONE_CAR_IN, onCarIn);
+//        SocketIOClient.client.mSocket.on(Constant.RESPONSE_ONE_CAR_OUT, onCarOut);
+
+        SocketIOClient.client.mSocket.on(Constant.REQUEST_REFRESH_SECURITY_PARKING_LIST, onRequestResetList);
 
         spnCarIn.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -262,9 +264,6 @@ public class SecurityActivity extends AppCompatActivity implements NavigationVie
                             listCarIn.add(p);
                         }
 
-                        if (garageId.compareTo(String.valueOf(p.getGarageID())) != 0)
-                            return;
-
                         onSearchCarIn(false);
 
                         ArrayAdapter<ParkingInfoSecurityModel> adapter =
@@ -305,9 +304,6 @@ public class SecurityActivity extends AppCompatActivity implements NavigationVie
                             listCarOut.add(p);
                         }
 
-                        if (garageId.compareTo(String.valueOf(p.getGarageID())) != 0)
-                            return;
-
                         onSearchCarOut(false);
 
                         ArrayAdapter<ParkingInfoSecurityModel> adapter =
@@ -316,6 +312,36 @@ public class SecurityActivity extends AppCompatActivity implements NavigationVie
 
                         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                         spnCarOut.setAdapter(adapter);
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
+    };
+
+    private Emitter.Listener onRequestResetList = new Emitter.Listener() {
+
+        @Override
+        public void call(final Object... args) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    JSONObject data = (JSONObject) args[0];
+                    try {
+                        Log.i("request reset all list", data.toString());
+                        Boolean result = data.getBoolean(Constant.RESULT);
+
+                        String requestGarageID = data.
+                                getJSONObject(Constant.DATA).
+                                getString("garageID");
+
+                        if (!result || requestGarageID.compareTo(garageId) != 0)
+                            return;
+
+                        SocketIOClient.client.mSocket.emit(Constant.REQUEST_CAR_WILL_IN, garageId);
+                        SocketIOClient.client.mSocket.emit(Constant.REQUEST_CAR_WILL_OUT, garageId);
 
                     } catch (JSONException e) {
                         e.printStackTrace();
