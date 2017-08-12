@@ -36,6 +36,11 @@ public class Constant {
     public static final int PASSWORD_LENGTH = 6;
     public static final String BOOKING_STATUS = "book_status";
     public static final int ROLE_USER_VALUE = 4;
+    public static final int ROLE_SUPER_ADMIN_VALUE = 1;
+    public static final int ROLE_ADMIN_VALUE = 2;
+    public static final int ROLE_SECURITY_VALUE = 3;
+    public static final int STATUS_GARAGE_OPEN = 1;
+    public static final int STATUS_GARAGE_CLOSE = 0;
     public static final String ROLE_ID = "roleID";
     public static final String EMAIL = "email";
     public static final String PASSWORD = "password";
@@ -96,7 +101,7 @@ public class Constant {
             "response_add_new_booking_by_user";
 
     public static final String REQUEST_BOOK_HISTORY = "request_booking_history_account_id";
-    public static final String RESPONSE_BOOK_HISTORY= "response_booking_history_account_id";
+    public static final String RESPONSE_BOOK_HISTORY = "response_booking_history_account_id";
 
     public static final String REQUEST_EDIT_PARKING_INFO_BY_ID_STATUS =
             "request_edit_parking_info_id_status";
@@ -113,20 +118,20 @@ public class Constant {
 
     //region HISTORY
     public static final String REQUEST_BOOKING_HISTORY_ACCOUNT_ID = "request_booking_history_account_id";
-    public static final String RESPONSE_BOOKING_HISTORY_ACCOUNT_ID= "response_booking_history_account_id";
+    public static final String RESPONSE_BOOKING_HISTORY_ACCOUNT_ID = "response_booking_history_account_id";
     //endregion
 
     //region CAR
     public static final String REQUEST_CAR_CUSTOMER = "request_find_car_by_account_id";
-    public static final String RESPONSE_CAR_CUSTOMER= "response_find_car_by_account_id";
-    public static final String REQUEST_FIND_CAR_BY_ID= "request_find_car_by_id";
+    public static final String RESPONSE_CAR_CUSTOMER = "response_find_car_by_account_id";
+    public static final String REQUEST_FIND_CAR_BY_ID = "request_find_car_by_id";
     public static final String REQUEST_ADD_NEW_CAR = "request_add_new_car";
-    public static final String REQUEST_REMOVE_CAR_BY_ID= "request_remove_car_by_id";
+    public static final String REQUEST_REMOVE_CAR_BY_ID = "request_remove_car_by_id";
 
-    public static final String RESPONSE_FIND_CAR_BY_ID= "response_find_car_by_id";
+    public static final String RESPONSE_FIND_CAR_BY_ID = "response_find_car_by_id";
 
     public static final String RESPONSE_ADD_NEW_CAR = "response_add_new_car";
-    public static final String RESPONSE_REMOVE_CAR_BY_ID= "response_remove_car_by_id";
+    public static final String RESPONSE_REMOVE_CAR_BY_ID = "response_remove_car_by_id";
 
     //endregion
 
@@ -147,6 +152,24 @@ public class Constant {
     public static final String REQUEST_GET_GARAGE_ID = "request_find_security_by_account_id";
     public static final String RESPONSE_GET_GARAGE_ID = "response_find_security_by_account_id";
 
+    public static final String REQUEST_EDIT_GARAGE_STATUS = "request_edit_status_garage_by_id";
+    //endregion
+
+    //region ADMIN
+    public static final String REQUEST_GET_GARAGE_BY_ACCOUNT_ID = "request_get_garage_by_account_id";
+    public static final String RESPONSE_GET_GARAGE_BY_ACCOUNT_ID = "response_get_garage_by_account_id";
+
+    public static final String REQUEST_CREATE_ACCOUNT_SECURITY = "request_create_new_account_for_security";
+    public static final String RESPONSE_CREATE_ACCOUNT_SECURITY = "response_create_new_account_for_security";
+
+    public static final String REQUEST_ALL_SECURITY = "request_all_security";
+    public static final String RESPONSE_ALL_SECURITY = "response_all_security";
+
+    public static final String REQUEST_HISTORY = "request_history";
+    public static final String RESPONSE_HISTORY = "response_history";
+    //endregion
+
+
     //endregion
 
     public static final String REQUEST_GET_GARAGE_BY_ID = "request_get_garage_by_id";
@@ -159,7 +182,6 @@ public class Constant {
     public static int PREF_MODE = 1;
     //        public static String SERVER_HOST = "http://54.255.178.120:5000";
 
-
     //public static String SERVER_HOST = "http://192.168.0.110:5000";
 
 
@@ -171,8 +193,9 @@ public class Constant {
     public static String APP_PREF_REMEMBER = "remember_status";
     public static final String APP_PREF_FIREBASE_REMEMBER = "firebase_token";
     public static String APP_PREF_ROLE = "role";
+    public static String APP_PREF_IS_LOGIN = "is_login";
+    public static String APP_PREF_GARAGE_ID = "garage_id";
     public static final String APP_PREF_EMAIL = "email";
-
 
     public static String SERVER_RESPONSE_LOGIN_PARA_EMAIL = "email";
     public static String SERVER_RESPONSE_LOGIN_PARA_PASSWORD = "password";
