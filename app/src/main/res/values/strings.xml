@@ -199,4 +199,6 @@
     <string name="profile_save_success">Đã lưu thông tin thành công</string>
     <string name="error_server_email_registered">Email này đã đăng ký</string>
     <string name="booking_detail_refresh_success">Đặt lại thành công</string>
+    <string name="dialog_booking_canceled_message">Chỗ của bạn đã bị hủy do quá thời gian cho phép. Thời gian tối đa là 15 phút</string>
+    <string name="dialog_booking_canceled_title">Hủy đặt chỗ</string>
 </resources>
