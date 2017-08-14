@@ -145,16 +145,18 @@ public class Constant {
     public static final String REQUEST_ONE_CAR_IN_ID = "request_one_car_in_by_id";
     public static final String RESPONSE_ONE_CAR_IN_ID = "request_one_car_in_by_id";
     public static final String REQUEST_ONE_CAR_IN_NUMBER = "request_one_car_in_by_vehicle_number";
+
     public static final String RESPONSE_ONE_CAR_IN_NUMBER = "response_one_car_in_by_vehicle_number";
     public static final String RESPONSE_ONE_CAR_IN = "response_one_car_in";
 
     public static final String REQUEST_ONE_CAR_OUT = "request_one_car_out";
-    public static final String RESPONSE_ONE_CAR_OUT = "response_one_car_out";
+//    public static final String RESPONSE_ONE_CAR_OUT = "response_one_car_out";
 
     public static final String REQUEST_GET_GARAGE_ID = "request_find_security_by_account_id";
     public static final String RESPONSE_GET_GARAGE_ID = "response_find_security_by_account_id";
 
     public static final String REQUEST_EDIT_GARAGE_STATUS = "request_edit_status_garage_by_id";
+    public static final String REQUEST_REFRESH_SECURITY_PARKING_LIST = "request_refresh_security_parking_list";
     //endregion
 
     //region ADMIN
@@ -187,7 +189,7 @@ public class Constant {
     //public static String SERVER_HOST = "http://192.168.0.110:5000";
 
 
-    public static String SERVER_HOST = "http://192.168.1.2:5000";
+    public static String SERVER_HOST = "http://192.168.1.13:5000";
 
     //    public static String SERVER_HOST = "http://52.15.194.52:5000";
     public static String APP_PREF = "AppPref";
