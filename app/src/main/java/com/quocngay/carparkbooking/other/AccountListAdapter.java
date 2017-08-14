@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.quocngay.carparkbooking.R;
 import com.quocngay.carparkbooking.model.AccountModel;
+import com.quocngay.carparkbooking.model.LocalData;
 
 import java.util.List;
 
@@ -71,11 +72,11 @@ public class AccountListAdapter extends BaseAdapter {
         btnDelete.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 mDeleteDialog = new AlertDialog.Builder(parentActivity);
-                mDeleteDialog.setTitle(R.string.dialog_delete_title);
-                mDeleteDialog.setMessage(R.string.dialog_delete_car)
+                mDeleteDialog.setTitle(R.string.dialog_delete_sec_title);
+                mDeleteDialog.setMessage(R.string.dialog_delete_sec_mess)
                         .setPositiveButton(R.string.fire, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-//                                SocketIOClient.client.mSocket.emit(Constant.REQUEST_REMOVE_CAR_BY_ID, mAccountList.get(position).getId());
+//                                SocketIOClient.client.mSocket.emit(Constant.REQUEST_REMOVE_SECURITY, mAccountList.get(position).getId());
                             }
                         })
                         .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -91,8 +92,5 @@ public class AccountListAdapter extends BaseAdapter {
         v.setTag(mAccountList.get(position).getId());
 
         return v;
-
     }
-
-
 }

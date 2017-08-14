@@ -152,7 +152,7 @@ public class AdminActivity extends AppCompatActivity
 
         switch (id) {
             case R.id.nav_add_security:
-                startActivity(new Intent(AdminActivity.this, RegisterActivity.class));
+                startActivity(new Intent(AdminActivity.this, RegisterForSecurityActivity.class));
                 break;
             case R.id.nav_all_security:
                 startActivity(new Intent(AdminActivity.this, SecurityManagerActivity.class));

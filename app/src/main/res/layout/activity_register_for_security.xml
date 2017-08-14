@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.quocngay.carparkbooking.activity.RegisterForSecurityActivity">
+
+
+    <RelativeLayout
+        android:id="@+id/form_register"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_margin="20dp"
+        android:animateLayoutChanges="true"
+        android:background="@color/colorLoginBg">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar_regist"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/colorLoginBg" />
+
+        <RelativeLayout
+            android:id="@+id/form_login"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/toolbar_regist"
+            android:paddingBottom="30dp"
+            android:paddingLeft="30dp"
+            android:paddingRight="30dp">
+
+            <EditText
+                android:id="@+id/edtAdminEmailRegist"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:hint="@string/register_email"
+                android:inputType="textEmailAddress" />
+
+            <EditText
+                android:id="@+id/edtAdminPassRegist"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/edtAdminEmailRegist"
+                android:layout_marginTop="10dp"
+                android:ems="10"
+                android:hint="@string/register_pass"
+                android:inputType="textPassword" />
+
+            <EditText
+                android:id="@+id/edtAdminRePassRegist"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/edtAdminPassRegist"
+                android:layout_marginTop="10dp"
+                android:ems="10"
+                android:hint="@string/register_repass"
+                android:inputType="textPassword" />
+
+            <Button
+                android:id="@+id/btnAdminRegist"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/edtAdminRePassRegist"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/custom_button_bg"
+                android:text="@string/register_button" />
+        </RelativeLayout>
+    </RelativeLayout>
+</RelativeLayout>

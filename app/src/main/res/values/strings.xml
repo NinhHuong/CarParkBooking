@@ -154,6 +154,10 @@
     <string name="dialog_delete_title">Xác nhân xóa xe</string>
     <string name="dialog_delete_car">Bạn có chắc chắn muốn xóa xe</string>
 
+    <string name="dialog_delete_sec_title">Xác nhân xóa xe</string>
+    <string name="dialog_delete_sec_mess">Bạn có chắc chắn muốn xóa xe</string>
+
+
     <string name="dialog_book_cancel_message">Bạn có chắc chắn muốn hủy bỏ đặt chỗ?</string>
     <string name="dialog_book_refresh_message">Bạn có chắc chắn đặt lại?</string>
     <string name="error_server">Có lỗi xảy ra!</string>

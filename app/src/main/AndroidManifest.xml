@@ -122,7 +122,8 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.quocngay.carparkbooking.activity.MapActivity" />
         </activity>
-        <activity android:name=".activity.SecurityManagerActivity"></activity>
+        <activity android:name=".activity.SecurityManagerActivity" />
+        <activity android:name=".activity.RegisterForSecurityActivity"></activity>
     </application>
 
 </manifest>
