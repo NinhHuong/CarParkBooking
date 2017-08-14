@@ -363,7 +363,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     intent = new Intent(LoginActivity.this, AdminActivity.class);
                     break;
                 case Constant.ROLE_SECURITY_VALUE:
-                    intent = new Intent(LoginActivity.this, SecurityActivity.class);
+                    intent = new Intent(LoginActivity.this, SecurityHomeActivity.class);
                     break;
                 case Constant.ROLE_USER_VALUE:
                     intent = new Intent(LoginActivity.this, MapActivity.class);

@@ -15,10 +15,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:maxLines="1"
-            android:text="GARA NAME qwe sda sdf sdf sdf sdfs "
             android:textAlignment="textStart"
-            android:textColor="#00a7f5"
-            android:textSize="18dp" />
+            android:textSize="18sp" />
 
         <LinearLayout
             android:id="@+id/container_time_title"

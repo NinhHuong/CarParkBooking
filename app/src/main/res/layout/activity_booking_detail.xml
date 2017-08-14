@@ -32,7 +32,7 @@
         android:layout_margin="10dp"
         android:background="@drawable/custom_button_bg_cancel"
         android:text="@string/booking_detail_cancel"
-        android:textColor="@color/text_light_title"
+        android:textColor="@color/colorTextLight"
         android:layout_weight="1" />
     <Button
         android:id="@+id/btn_book_refresh"
@@ -41,7 +41,7 @@
         android:layout_margin="10dp"
         android:background="@drawable/custom_button_bg"
         android:text="@string/booking_detail_refresh"
-        android:textColor="@color/text_light_title"
+        android:textColor="@color/colorTextLight"
         android:layout_weight="1" />
 
 </LinearLayout>

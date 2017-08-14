@@ -10,25 +10,6 @@
         android:id="@+id/dialog_title_container"
         layout="@layout/app_bar" />
 
-    <!--<RelativeLayout-->
-    <!--android:id="@+id/dialog_title_container"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="?attr/actionBarSize"-->
-    <!--android:background="@color/colorPrimaryLight">-->
-
-    <!--<TextView-->
-    <!--android:id="@+id/dl_license_list_title"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="match_parent"-->
-    <!--android:layout_alignParentStart="true"-->
-    <!--android:layout_marginStart="10dp"-->
-    <!--android:paddingBottom="15dp"-->
-    <!--android:paddingTop="15dp"-->
-    <!--android:text="@string/title_licence_picker"-->
-    <!--android:textSize="18sp" />-->
-
-    <!--</RelativeLayout>-->
-
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

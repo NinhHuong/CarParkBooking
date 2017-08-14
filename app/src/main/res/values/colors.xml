@@ -1,19 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#79D1C3</color>
-    <color name="colorPrimaryLight">#72c6b8</color>
-    <color name="colorPrimaryDark">#5fb6a8</color>
+
+    <color name="colorPrimary">#455D7A</color>
+    <color name="colorPrimaryLight">#E3E3E3</color>
+    <color name="colorPrimaryDark">#233142</color>
     <color name="colorLoginBg">#ffffff</color>
-    <color name="colorAccent">#79D1C3</color>
+    <color name="colorAccent">#F95959</color>
+
+    <!--<color name="colorPrimary">#79D1C3</color>-->
+    <!--<color name="colorPrimaryLight">#72c6b8</color>-->
+    <!--<color name="colorPrimaryDark">#5fb6a8</color>-->
+    <!--<color name="colorLoginBg">#ffffff</color>-->
+    <!--<color name="colorAccent">#79D1C3</color>-->
     <color name="colorText">#3e3e3e</color>
-    <color name="colorTextSecondary">#3e3e3e</color>
+    <color name="colorTextLight">#ffffff</color>
+    <color name="colorTextSecondary">#919191</color>
     <color name="colorTextHint">#c7c7c7</color>
     <color name="colorDark">#f1f1f1</color>
     <color name="colorBackgroundDark">#c9c9c9</color>
     <color name="colorNotAvailable">#e53935</color>
     <color name="colorNotAvailableRipple">#bf322e</color>
     <color name="colorAvailable">#50ae01</color>
-    <color name="ripplePrimary">#5dab9f</color>
+    <color name="ripplePrimary">#69bcb0</color>
+    <color name="rippleCancel">#ce312e</color>
 
     <!--open booked ticket list-->
     <color name="count_time_background">#008000</color>

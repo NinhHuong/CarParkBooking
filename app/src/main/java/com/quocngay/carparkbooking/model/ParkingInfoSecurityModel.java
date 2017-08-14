@@ -1,10 +1,12 @@
 package com.quocngay.carparkbooking.model;
 
+import java.io.Serializable;
+
 /**
  * Created by Windows on 30-Jul-17.
  */
 
-public class ParkingInfoSecurityModel {
+public class ParkingInfoSecurityModel implements Serializable{
     public int id;
     public int carID;
     public int garageID;

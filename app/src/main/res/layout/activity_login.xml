@@ -45,7 +45,7 @@
             android:id="@+id/cbRemember"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignLeft="@id/edtPassword"
+            android:layout_alignStart="@id/edtPassword"
             android:layout_below="@id/edtPassword"
             android:text="@string/login_remember" />
 
@@ -55,6 +55,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/cbRemember"
             android:layout_centerHorizontal="true"
+            android:textColor="@color/colorTextLight"
             android:layout_marginTop="10dp"
             android:background="@drawable/custom_button_bg"
             android:text="@string/login_btn_login" />
@@ -66,7 +67,6 @@
             android:layout_alignBaseline="@+id/cbRemember"
             android:layout_alignBottom="@+id/cbRemember"
             android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
             android:text="@string/login_forgot" />
 
         <TextView

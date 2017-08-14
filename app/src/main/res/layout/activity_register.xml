@@ -66,6 +66,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/edtRePassRegist"
+                android:textColor="@color/colorTextLight"
                 android:layout_marginTop="10dp"
                 android:background="@drawable/custom_button_bg"
                 android:text="@string/register_button" />

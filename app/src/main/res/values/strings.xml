@@ -1,20 +1,12 @@
 <resources>
     <string name="app_name">Car-Park Booking</string>
 
-    <string name="home_open_ticket">Open tickets</string>
     <string name="home_map">Map</string>
     <string name="home_history">History</string>
     <string name="home_profile">Profile</string>
     <string name="car_number">Biển số xe:</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-
-    <!--login-->
-    <string name="edt_email_hint">Email</string>
-    <string name="edt_password_hint">Password</string>
-    <string name="btn_login">Login</string>
-    <string name="btn_signup">Dont have account \n sign now</string>
-    <string name="btn_forgot_password">Forgot password</string>
 
     <!--booked ticket list-->
     <string name="gara_total">Total:</string>
@@ -33,10 +25,6 @@
     <string name="hint_password">Password</string>
     <string name="hint_reset_code">Reset code</string>
     <string name="hint_email">Email</string>
-    <string name="title_activity_google_map">Map</string>
-    <string name="permission_rationale">Contacts permissions are needed for providing email
-        completions.
-    </string>
     <string name="error_invalid_password">This password is too short</string>
     <string name="error_field_required">This field is required</string>
 
@@ -47,28 +35,38 @@
     <string name="login_forgot"><u>Quên mật khẩu</u></string>
     <string name="login_btn_login">Đăng nhập</string>
     <string name="login_btn_reset">Lấy lại mật khẩu</string>
-    <string name="title_activity_map">MapActivity</string>
+    <string name="title_activity_map">Vị trí bãi đỗ</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_activity_register">Register</string>
+    <string name="title_activity_login">Log in</string>
+    <string name="title_activity_history_2">Lịch sử</string>
+    <string name="title_car_get_in">Xe đi vào</string>
+    <string name="title_car_get_iut">Xe đi ra</string>
+    <string name="title_btn_car_get_in">Cho xe vào</string>
+    <string name="title_btn_car_get_iut">Cho xe ra</string>
+    <string name="title_car_vehicle">Biển số</string>
+    <string name="title_activity_admin">Quản trị</string>
+    <string name="title_activity_profile">Thông tin cá nhân</string>
+
+    <string name="title_fill_vehicle">Biển số nhập</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_settings">Settings</string>
     <string name="action_search">Searching for car park</string>
-    <string name="title_activity_maps">Map</string>
 
-    <string name="map_positionsearch_textview">Position</string>
-    <string name="map_positionsearch_button">Search</string>
-    <string name="map_gps_dialog_title">GPS is not enabled</string>
-    <string name="map_gps_dialog_message">Application need GPS. Do you want to go to settings menu?</string>
-    <string name="map_mylocation_button">Turn on GPS or network to get your location</string>
+    <string name="map_gps_dialog_title">GPS chưa bật</string>
+    <string name="map_gps_dialog_message">Ứng dụng cần GPS. Bạn có muốn chuyển đến cài đặt?</string>
+    <string name="map_mylocation_button">Bật GPS để xem vị trí của bạn</string>
     <string name="pick_place">Please choose a place</string>
-    <string name="address_found">Address was found</string>
+    <string name="address_found">Không tìm thấy địa chỉ</string>
     <string name="no_address_found">No address was found</string>
     <string name="service_not_available">Service is not available</string>
     <string name="invalid_lat_long_used">Invalid latlng used</string>
-    <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
+
 
     <string name="map_gara_find">Tìm bãi đỗ gần nhất</string>
     <string name="google_direction_api">https://maps.googleapis.com/maps/api/directions/%1$s?%2$s</string>
@@ -85,17 +83,13 @@
     <string name="login_successfull">Đăng nhập thành công!</string>
     <string name="error_repassword">Mật khẩu nhập lại và mật khẩu không giống nhau</string>
 
-    <string name="btn_register">Register</string>
-    <string name="title_activity_register">Register</string>
-    <string name="title_activity_login">Log in</string>
-
     <!-- Strings related to register -->
-    <string name="prompt_email">Email</string>
-    <string name="prompt_password">Password</string>
-    <string name="action_sign_in">Register</string>
-    <string name="action_sign_in_short">Register</string>
-    <string name="error_invalid_email">This email address is invalid</string>
-    <string name="error_incorrect_password">This password is incorrect</string>
+    <!--<string name="prompt_email">Email</string>-->
+    <!--<string name="prompt_password">Password</string>-->
+    <!--<string name="action_sign_in">Register</string>-->
+    <!--<string name="action_sign_in_short">Register</string>-->
+    <!--<string name="error_invalid_email">This email address is invalid</string>-->
+    <!--<string name="error_incorrect_password">This password is incorrect</string>-->
     <string name="error_incorrect_number_slot">Số chỗ bận phải bé hơn tổng số chỗ</string>
     <string name="error_mismatch_password">Your confirmation password is mismatch</string>
     <string name="forget_reset_success">Lấy lại mật khẩu thành công!</string>
@@ -116,7 +110,7 @@
     <string name="time_go_in">Thời gian đến</string>
     <string name="time_go_out">Thời gian đi</string>
     <string name="not_have_recort">Bạn chưa có đậu xe</string>
-    <string name="title_activity_history_2">History_Activity2</string>
+
 
     <!-- Strings related to car manager -->
     <string name="not_have_car">Bạn chưa có xe</string>
@@ -127,7 +121,7 @@
 
 
     <!-- Strings related to security -->
-    <string name="dialog_button_ok">Ok</string>
+    <string name="dialog_button_ok">Đồng ý</string>
     <string name="dialog_message_car_in">Bạn có muốn cho xe này vào?</string>
     <string name="dialog_message_car_out">Bạn có muốn cho xe này ra?</string>
     <string name="dialog_title_open_garage">Mở cửa garage</string>
@@ -135,11 +129,6 @@
 
     <!-- Strings related to admin -->
     <string name="not_have_security">Bạn chưa nhân viên nào</string>
-
-
-    <!-- Strings related to admin -->
-    <string name="not_have_security">Bạn chưa nhân viên nào</string>
-
 
     <string name="error_general">Có lỗi đâu đấy</string>
     <string name="error_select_car">Hãy chọn xe</string>
@@ -164,7 +153,6 @@
     <string name="book_cancel_successfull">Bạn đã hủy đặt chỗ thành công!</string>
     <string name="today">Hôm nay</string>
     <string name="book_url_map_image">https://maps.googleapis.com/maps/api/staticmap?center=%1$s&amp;zoom=%2$d&amp;size=%3$s&amp;maptype=roadmap&amp;markers=%4$s&amp;key=AIzaSyAPM7L8NUuNVQPMx5xozWcYCxOzKS-T6T8</string>
-    <string name="title_activity_scrolling">ScrollingActivity</string>
     <string name="booking_slot_not_available">Đã hết chỗ trống!</string>
     <string name="booking_slot_available">Còn %1$d / %2$d chỗ trống.</string>
 
@@ -187,14 +175,6 @@
     <string name="notify_booking_canceled_body">Rất tiếc, đã quá thời gian đặt chỗ cho phép.</string>
 
 
-    <string name="title_car_get_in">Xe đi vào</string>
-    <string name="title_car_get_iut">Xe đi ra</string>
-    <string name="title_btn_car_get_in">Cho xe vào</string>
-    <string name="title_btn_car_get_iut">Cho xe ra</string>
-    <string name="title_car_vehicle">Biển số</string>
-    <string name="title_fill_vehicle">Biển số nhập</string>
-    <string name="title_activity_admin">AdminActivity</string>
-    <string name="title_activity_profile">ProfileActivity</string>
     <string name="firstname">Tên</string>
     <string name="lastname">Họ</string>
     <string name="address">Địa chỉ</string>
@@ -205,4 +185,18 @@
     <string name="booking_detail_refresh_success">Đặt lại thành công</string>
     <string name="dialog_booking_canceled_message">Chỗ của bạn đã bị hủy do quá thời gian cho phép. Thời gian tối đa là 15 phút</string>
     <string name="dialog_booking_canceled_title">Hủy đặt chỗ</string>
+    <string name="dialog_car_empty_message">Hãy nhập biển số xe của bạn</string>
+    <string name="search_license_hint">Nhập biển số xe</string>
+    <string name="action_reload">Làm mới</string>
+    <string name="security_checkin_success">Đã xong! Hãy cho xe vào</string>
+    <string name="dialog_security_checkin">Cho xe vào</string>
+    <string name="dialog_security_checkin_message">Bạn có chắc muốn cho xe vào?</string>
+    <string name="title_activity_booking">Đặt chỗ</string>
+    <string name="title_activity_nearest">Bãi đỗ xe gần nhất</string>
+    <string name="title_activity_car_manager">Quản lý xe</string>
+    <string name="title_activity_booking_detail">Thông tin đặt chỗ</string>
+    <string name="title_activity_security">Thông tin cho bảo vệ</string>
+    <string name="title_activity_security_manager">Quản lý bảo vệ</string>
+    <string name="title_activity_checkin">Cho xe vào</string>
+    <string name="title_activity_checkout">Cho xe ra</string>
 </resources>
