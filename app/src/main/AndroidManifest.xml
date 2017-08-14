@@ -29,12 +29,16 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.RegisterActivity">
+        <activity
+            android:label="@string/title_activity_register"
+            android:name=".activity.RegisterActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activity.LoginActivity" />
         </activity>
-        <activity android:name=".activity.BookingActivity">
+        <activity
+            android:label="@string/title_activity_booking"
+            android:name=".activity.BookingActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activity.MapActivity" />
@@ -54,18 +58,26 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activity.LoginActivity" />
         </activity>
-        <activity android:name=".activity.NearestGaraActivity">
+        <activity
+            android:label="@string/title_activity_nearest"
+            android:name=".activity.NearestGaraActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activity.MapActivity" />
         </activity>
-        <activity android:name=".activity.HistoryActivity">
+        <activity
+            android:label="@string/title_activity_history_2"
+            android:name=".activity.HistoryActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activity.MapActivity" />
         </activity>
-        <activity android:name=".activity.CarManagerActivity" />
-        <activity android:name=".activity.BookingDetailActivity">
+        <activity
+            android:label="@string/title_activity_car_manager"
+            android:name=".activity.CarManagerActivity" />
+        <activity
+            android:label="@string/title_activity_booking_detail"
+            android:name=".activity.BookingDetailActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activity.MapActivity" />
@@ -110,6 +122,10 @@
 
         <activity android:name=".activity.SecurityActivity" />
         <activity
+            android:label="@string/title_activity_security"
+            android:name=".activity.SecurityHomeActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
             android:name=".activity.AdminActivity"
             android:label="@string/title_activity_admin"
             android:theme="@style/AppTheme.NoActionBar" />
@@ -122,8 +138,23 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.quocngay.carparkbooking.activity.MapActivity" />
         </activity>
-        <activity android:name=".activity.SecurityManagerActivity" />
-        <activity android:name=".activity.RegisterForSecurityActivity"></activity>
+        <activity
+            android:label="@string/title_activity_security_manager"
+            android:name=".activity.SecurityManagerActivity" />
+        <activity
+            android:label="@string/title_activity_checkin"
+            android:name=".activity.CheckInActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activity.SecurityHomeActivity" />
+        </activity>
+        <activity
+            android:label="@string/title_activity_checkout"
+            android:name=".activity.CheckOutActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activity.SecurityHomeActivity" />
+        </activity>
     </application>
 
 </manifest>

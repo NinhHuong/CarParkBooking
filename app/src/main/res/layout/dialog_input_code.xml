@@ -64,6 +64,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/form_code"
         android:layout_marginTop="30dp"
+        android:textColor="@color/colorTextLight"
         android:background="@drawable/custom_button_bg"
         android:text="@string/dialog_btn_continue"
         android:textAlignment="center" />

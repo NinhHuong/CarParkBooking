@@ -652,6 +652,7 @@ public class MapActivity extends AppCompatActivity
     }
 
     private void initMapGeneralStatus() {
+        btnGgDirection.setVisibility(View.GONE);
         mParkingInfoModel = null;
         if (mPolyline != null) {
             mPolyline.remove();
@@ -1071,11 +1072,7 @@ public class MapActivity extends AppCompatActivity
         builder.setMessage(R.string.dialog_logout_message)
                 .setPositiveButton(R.string.fire, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        SharedPreferences mSharedPref = getSharedPreferences(Constant.APP_PREF, MODE_PRIVATE);
-                        SharedPreferences.Editor editor = mSharedPref.edit();
-                        editor.remove(Constant.APP_PREF_TOKEN);
-                        editor.remove(Constant.APP_PREF_REMEMBER);
-                        editor.apply();
+                        localData.clearData();
                         Intent intent = new Intent(MapActivity.this, LoginActivity.class);
                         startActivity(intent);
                         finish();

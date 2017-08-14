@@ -4,10 +4,13 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.AppCompatImageView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.quocngay.carparkbooking.R;
@@ -51,7 +54,7 @@ public class CarListAdapter extends BaseAdapter {
     public View getView(final int position, View convertView, ViewGroup parent) {
         View v = View.inflate(mContext, R.layout.item_car,null);
         TextView txtVehicleNumber;
-        Button btnDelete = (Button) v.findViewById(R.id.btnDelete);
+        ImageView btnDelete = (ImageView) v.findViewById(R.id.btn_delete);
         txtVehicleNumber = (TextView) v.findViewById(R.id.txtVehicleNumber);
 
         txtVehicleNumber.setText(mCarList.get(position).getVehicleNumber());

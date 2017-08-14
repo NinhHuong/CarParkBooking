@@ -143,8 +143,11 @@ public class Constant {
     public static final String RESPONSE_CAR_WILL_OUT = "response_car_go_out";
 
     public static final String REQUEST_ONE_CAR_IN_ID = "request_one_car_in_by_id";
+    public static final String RESPONSE_ONE_CAR_IN_ID = "request_one_car_in_by_id";
     public static final String REQUEST_ONE_CAR_IN_NUMBER = "request_one_car_in_by_vehicle_number";
-//    public static final String RESPONSE_ONE_CAR_IN = "response_one_car_in";
+
+    public static final String RESPONSE_ONE_CAR_IN_NUMBER = "response_one_car_in_by_vehicle_number";
+    public static final String RESPONSE_ONE_CAR_IN = "response_one_car_in";
 
     public static final String REQUEST_ONE_CAR_OUT = "request_one_car_out";
 //    public static final String RESPONSE_ONE_CAR_OUT = "response_one_car_out";

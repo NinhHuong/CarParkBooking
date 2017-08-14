@@ -18,6 +18,7 @@ public class LocalData {
     private Boolean remmember;
     private String role;
     private boolean isLogin;
+    private String garageId;
 
     private SharedPreferences mSharedPref;
     private SharedPreferences.Editor editor;
@@ -26,6 +27,16 @@ public class LocalData {
     public LocalData(Context context) {
         mSharedPref = context.getSharedPreferences(Constant.APP_PREF, Context.MODE_PRIVATE);
         editor = mSharedPref.edit();
+    }
+
+    public void clearData() {
+        setId("");
+        setGarageID("");
+        setEmail("");
+        setRemmember(false);
+        setIsLogin(false);
+        setRole("");
+        setToken("");
     }
 
     public String getId() {

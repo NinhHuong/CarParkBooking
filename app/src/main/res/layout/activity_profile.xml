@@ -7,9 +7,9 @@
     tools:context="com.quocngay.carparkbooking.activity.ProfileActivity">
 
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
         <include layout="@layout/app_bar" />
 
@@ -24,6 +24,9 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
         android:layout_margin="@dimen/fab_margin"
+        android:clickable="true"
+        app:backgroundTint="@android:color/white"
+        app:theme="@style/Base.Widget.AppCompat.ImageButton"
         app:fabSize="normal"
         app:srcCompat="@drawable/ic_mode_edit_white" />
 
@@ -34,9 +37,9 @@
         android:layout_alignParentBottom="true"
         android:layout_margin="@dimen/fab_margin"
         android:layout_toStartOf="@id/fab"
-        app:backgroundTint="@color/colorNotAvailable"
-        app:theme="@style/Base.Widget.AppCompat.ImageButton"
+        app:backgroundTint="@android:color/white"
         app:fabSize="normal"
-        app:srcCompat="@drawable/ic_close_white" />
+        app:srcCompat="@drawable/ic_close_white"
+        app:theme="@style/Base.Widget.AppCompat.ImageButton" />
 
 </RelativeLayout>

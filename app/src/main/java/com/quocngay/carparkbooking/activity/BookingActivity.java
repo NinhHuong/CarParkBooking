@@ -453,6 +453,7 @@ public class BookingActivity extends AppCompatActivity {
                             Toast.makeText(BookingActivity.this,
                                     getResources().getString(R.string.success_add_license),
                                     Toast.LENGTH_SHORT).show();
+                            dalAddLinense.dismiss();
                             SocketIOClient.client.mSocket.emit(Constant.REQUEST_FIND_CAR_BY_ACCOUNT_ID, localData.getId());
                             SocketIOClient.client.mSocket.on(Constant.RESPONSE_FIND_CAR_BY_ACCOUNT_ID, onResponseFindCar);
 
@@ -483,10 +484,16 @@ public class BookingActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String licenseNumber = edtLicenseNumber.getText().toString().replaceAll(" ", "").trim();
-                SocketIOClient.client.mSocket.emit(
-                        Constant.REQUEST_ADD_NEW_CAR, localData.getId(), licenseNumber);
-                SocketIOClient.client.mSocket.on(
-                        Constant.RESPONSE_ADD_NEW_CAR, onResponseAddCar);
+                if(licenseNumber.isEmpty()){
+                    Toast.makeText(getApplicationContext(),
+                            R.string.dialog_car_empty_message,
+                            Toast.LENGTH_SHORT).show();
+                }else {
+                    SocketIOClient.client.mSocket.emit(
+                            Constant.REQUEST_ADD_NEW_CAR, localData.getId(), licenseNumber);
+                    SocketIOClient.client.mSocket.on(
+                            Constant.RESPONSE_ADD_NEW_CAR, onResponseAddCar);
+                }
             }
         });
         TextView tvDalCancel = (TextView) dalAddLinense.findViewById(R.id.tv_cancel);

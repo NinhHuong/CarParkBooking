@@ -63,7 +63,7 @@
                 android:layout_marginTop="10dp"
                 android:background="@drawable/custom_button_bg"
                 android:text="@string/map_gara_find"
-                android:textColor="@color/text_light_title" />
+                android:textColor="@color/colorTextLight" />
 
             <Button
                 android:id="@+id/btnChooseGara"
@@ -72,7 +72,7 @@
                 android:layout_marginTop="10dp"
                 android:background="@drawable/custom_button_bg"
                 android:text="@string/map_gara_choose"
-                android:textColor="@color/text_light_title" />
+                android:textColor="@color/colorTextLight"/>
 
             <Button
                 android:id="@+id/btnBookDetail"
@@ -81,7 +81,7 @@
                 android:layout_marginTop="10dp"
                 android:background="@drawable/custom_button_bg"
                 android:text="@string/map_book_detail"
-                android:textColor="@color/text_light_title" />
+                android:textColor="@color/colorTextLight"/>
 
 
         </LinearLayout>
