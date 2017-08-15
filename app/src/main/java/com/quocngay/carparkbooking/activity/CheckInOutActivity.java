@@ -2,7 +2,6 @@ package com.quocngay.carparkbooking.activity;
 
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -21,7 +20,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.TextView;
@@ -31,9 +29,7 @@ import com.github.nkzawa.emitter.Emitter;
 import com.google.gson.Gson;
 import com.quocngay.carparkbooking.LicenseSecurityRecyclerViewAdapter;
 import com.quocngay.carparkbooking.R;
-import com.quocngay.carparkbooking.model.CarModel;
 import com.quocngay.carparkbooking.model.LocalData;
-import com.quocngay.carparkbooking.model.LocationDataModel;
 import com.quocngay.carparkbooking.model.ParkingInfoSecurityModel;
 import com.quocngay.carparkbooking.other.Constant;
 import com.quocngay.carparkbooking.other.OnListInteractionListener;
@@ -45,9 +41,21 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-public class CheckInActivity extends AppCompatActivity {
-
+public class CheckInOutActivity extends AppCompatActivity {
     public static final String PARKINGINFO_MODEL = "parkinginfor_model";
+
+    public static final String EXTRA_SECURITY_FUNCTION = "security_function";
+    public static final String EXTRA_CAR_IN = "car_in";
+    public static final String EXTRA_CAR_OUT = "car_out";
+
+    private String requestItemSelect;
+    private String responseItemSelect;
+    private String requestCarFunc;
+    private String responseCarFunc;
+    private int dialogTitle;
+    private int dialogMessage;
+    private int dialogMessageFinish;
+
     SearchView svLicense;
     CardView containerSearch;
     RecyclerView recyclerViewLicense;
@@ -58,10 +66,32 @@ public class CheckInActivity extends AppCompatActivity {
     int mColumnCount = 1;
     private MenuItem refreshItem;
     private OnListInteractionListener listener;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_check_in);
+        setContentView(R.layout.check_in_out_activity);
+
+        String resultExtra = getIntent().getStringExtra(EXTRA_SECURITY_FUNCTION);
+
+        if (resultExtra.compareTo(EXTRA_CAR_IN) == 0) {
+            requestItemSelect = Constant.REQUEST_ONE_CAR_IN_ID;
+            responseItemSelect = Constant.RESPONSE_ONE_CAR_IN_ID;
+            requestCarFunc = Constant.REQUEST_CAR_WILL_IN;
+            responseCarFunc = Constant.RESPONSE_CAR_WILL_IN;
+            dialogTitle = R.string.dialog_security_checkin;
+            dialogMessage = R.string.dialog_security_checkin_message;
+            dialogMessageFinish = R.string.security_checkin_success;
+        } else {
+            requestItemSelect = Constant.REQUEST_ONE_CAR_OUT;
+            responseItemSelect = Constant.RESPONSE_ONE_CAR_OUT;
+            requestCarFunc = Constant.REQUEST_CAR_WILL_OUT;
+            responseCarFunc = Constant.RESPONSE_CAR_WILL_OUT;
+            dialogTitle = R.string.dialog_security_checkout;
+            dialogMessage = R.string.dialog_security_checkout_message;
+            dialogMessageFinish = R.string.security_checkout_success;
+        }
+
         initToolbar();
         initSearchBar();
         localData = new LocalData(getApplicationContext());
@@ -70,17 +100,17 @@ public class CheckInActivity extends AppCompatActivity {
         listener = new OnListInteractionListener() {
             @Override
             public void OnLicenseClickListener(final ParkingInfoSecurityModel item) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(CheckInActivity.this);
-                builder.setTitle(R.string.dialog_security_checkin)
-                        .setMessage(R.string.dialog_security_checkin_message)
+                AlertDialog.Builder builder = new AlertDialog.Builder(CheckInOutActivity.this);
+                builder.setTitle(dialogTitle)
+                        .setMessage(dialogMessage)
                         .setPositiveButton(R.string.dialog_button_ok,
                                 new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int id) {
                                         SocketIOClient.client.mSocket.emit(
-                                                Constant.REQUEST_ONE_CAR_IN_ID,
+                                                requestItemSelect,
                                                 item.getId(), garageId);
                                         SocketIOClient.client.mSocket.on(
-                                                Constant.RESPONSE_ONE_CAR_IN_ID,
+                                                responseItemSelect,
                                                 onResponseCheckin);
                                     }
                                 })
@@ -121,9 +151,10 @@ public class CheckInActivity extends AppCompatActivity {
             }
         });
 
-        SocketIOClient.client.mSocket.emit(Constant.REQUEST_CAR_WILL_IN, garageId);
-        SocketIOClient.client.mSocket.on(Constant.RESPONSE_CAR_WILL_IN, onCarIn);
+        SocketIOClient.client.mSocket.emit(requestCarFunc, garageId);
+        SocketIOClient.client.mSocket.on(responseCarFunc, onCarIn);
 
+        SocketIOClient.client.mSocket.on(Constant.REQUEST_REFRESH_SECURITY_PARKING_LIST, onRequestResetList);
     }
 
     @Override
@@ -142,13 +173,15 @@ public class CheckInActivity extends AppCompatActivity {
         rotation.setRepeatCount(Animation.INFINITE);
         iv.startAnimation(rotation);
 
-        refreshItem.setActionView(iv);
+        if (refreshItem != null)
+            refreshItem.setActionView(iv);
 
         //Refresh car list
         recyclerViewAdapter.swap(listCarIn);
+
         recyclerViewLicense.smoothScrollToPosition(0);
-        SocketIOClient.client.mSocket.emit(Constant.REQUEST_CAR_WILL_IN, garageId);
-        SocketIOClient.client.mSocket.on(Constant.RESPONSE_CAR_WILL_IN, onCarIn);
+        SocketIOClient.client.mSocket.emit(requestCarFunc, garageId);
+        SocketIOClient.client.mSocket.on(responseCarFunc, onCarIn);
     }
 
     public void completeRefresh() {
@@ -180,6 +213,9 @@ public class CheckInActivity extends AppCompatActivity {
                     JSONObject data = (JSONObject) args[0];
                     try {
                         Log.i("Data car in", data.toString());
+
+                        listCarIn.clear();
+
                         Gson gson = new Gson();
                         if (data.getBoolean(Constant.RESULT)) {
                             JSONArray listJsonGarasParkInfo = data.getJSONArray(Constant.DATA);
@@ -187,14 +223,14 @@ public class CheckInActivity extends AppCompatActivity {
                                 ParkingInfoSecurityModel p = gson
                                         .fromJson(listJsonGarasParkInfo.getJSONObject(i).toString()
                                                 , ParkingInfoSecurityModel.class);
-                                listCarIn.add(0, p);
+                                listCarIn.add(p);
                                 recyclerViewAdapter.notifyDataSetChanged();
                             }
                         } else {
                             Log.w(getClass().getName(), "Error: " +
                                     data.getString(Constant.MESSAGE));
                         }
-                        SocketIOClient.client.mSocket.off(Constant.RESPONSE_CAR_WILL_IN);
+                        SocketIOClient.client.mSocket.off(responseCarFunc);
                         completeRefresh();
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -214,14 +250,43 @@ public class CheckInActivity extends AppCompatActivity {
                     JSONObject data = (JSONObject) args[0];
                     try {
                         if (data.getBoolean(Constant.RESULT)) {
-                            Toast.makeText(CheckInActivity.this,
-                                    getResources().getString(R.string.security_checkin_success),
+                            Toast.makeText(CheckInOutActivity.this,
+                                    getResources().getString(dialogMessageFinish),
                                     Toast.LENGTH_SHORT).show();
-                            refresh();
+//                            refresh();
                         } else {
                             Log.w(getClass().getName(), "Error: " +
                                     data.getString(Constant.MESSAGE));
                         }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
+    };
+
+    private Emitter.Listener onRequestResetList = new Emitter.Listener() {
+
+        @Override
+        public void call(final Object... args) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    JSONObject data = (JSONObject) args[0];
+                    try {
+                        Log.i("request reset all list", data.toString());
+                        Boolean result = data.getBoolean(Constant.RESULT);
+
+                        String requestGarageID = data.
+                                getJSONObject(Constant.DATA).
+                                getString("garageID");
+
+                        if (!result || requestGarageID.compareTo(garageId) != 0)
+                            return;
+
+                        refresh();
+
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }

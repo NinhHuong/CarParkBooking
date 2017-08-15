@@ -18,18 +18,20 @@ public class GarageModel implements Serializable {
     private String address;
     private int totalSlot;
     private int busySlot;
+    private String accountID;
     private String locationX;
     private String locationY;
     private Date timeStart;
     private Date timeEnd;
     private String xStatus;
 
-    public GarageModel(int id, String name, String address, int totalSlot, int busySlot, String locationX, String locationY, Date timeStart, Date timeEnd, String xStatus) {
+    public GarageModel(int id, String name, String address, int totalSlot, int busySlot, String accountID, String locationX, String locationY, Date timeStart, Date timeEnd, String xStatus) {
         this.id = id;
         this.name = name;
         this.address = address;
         this.totalSlot = totalSlot;
         this.busySlot = busySlot;
+        this.accountID = accountID;
         this.locationX = locationX;
         this.locationY = locationY;
         this.timeStart = timeStart;
@@ -38,6 +40,14 @@ public class GarageModel implements Serializable {
     }
 
     public GarageModel() {
+    }
+
+    public String getAccountID() {
+        return accountID;
+    }
+
+    public void setAccountID(String accountID) {
+        this.accountID = accountID;
     }
 
     public int getId() {

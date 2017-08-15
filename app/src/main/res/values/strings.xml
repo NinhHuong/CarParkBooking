@@ -195,6 +195,10 @@
     <string name="security_checkin_success">Đã xong! Hãy cho xe vào</string>
     <string name="dialog_security_checkin">Cho xe vào</string>
     <string name="dialog_security_checkin_message">Bạn có chắc muốn cho xe vào?</string>
+    <string name="dialog_security_checkout">Cho xe ra</string>
+    <string name="dialog_security_checkout_message">Bạn có chắc muốn cho xe ra?</string>
+    <string name="security_checkout_success">Đã xong! Hãy cho xe ra</string>
+
     <string name="title_activity_booking">Đặt chỗ</string>
     <string name="title_activity_nearest">Bãi đỗ xe gần nhất</string>
     <string name="title_activity_car_manager">Quản lý xe</string>

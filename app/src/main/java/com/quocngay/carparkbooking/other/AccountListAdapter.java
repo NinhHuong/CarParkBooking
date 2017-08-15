@@ -69,14 +69,19 @@ public class AccountListAdapter extends BaseAdapter {
         txtdob.setText(mAccountList.get(position).getDateOfBirth());
         txtAddress.setText(mAccountList.get(position).getAddress());
 
+
         btnDelete.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 mDeleteDialog = new AlertDialog.Builder(parentActivity);
                 mDeleteDialog.setTitle(R.string.dialog_delete_sec_title);
                 mDeleteDialog.setMessage(R.string.dialog_delete_sec_mess)
                         .setPositiveButton(R.string.fire, new DialogInterface.OnClickListener() {
+                            LocalData l = new LocalData(mContext);
+                            String garageID = l.getGarageID();
+                            int accountID = mAccountList.get(position).getId();
+
                             public void onClick(DialogInterface dialog, int id) {
-//                                SocketIOClient.client.mSocket.emit(Constant.REQUEST_REMOVE_SECURITY, mAccountList.get(position).getId());
+                                SocketIOClient.client.mSocket.emit(Constant.REQUEST_REMOVE_SECURITY, accountID,garageID);
                             }
                         })
                         .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {

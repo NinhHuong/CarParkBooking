@@ -66,7 +66,7 @@ public class NearestGaraActivity extends AppCompatActivity implements View.OnCli
 
 
         for (GarageModel garageModel : MapActivity.garageModelList) {
-            if(garageModel.getRemainSlot() > 0) {
+            if (garageModel.getRemainSlot() > 0) {
                 String url = getDirectionsUrl(new LatLng(lastKnownLocation.getLatitude(),
                         lastKnownLocation.getLongitude()), garageModel.getPosition(), false);
                 GetAPIDataForNearest getAPIData = new GetAPIDataForNearest(garageModel);
@@ -168,7 +168,7 @@ public class NearestGaraActivity extends AppCompatActivity implements View.OnCli
         @Override
         protected void onPostExecute(LocationDataModel result) {
             dataModelList.add(result);
-            Collections.sort(dataModelList);
+                Collections.sort(dataModelList);
             recyclerViewAdapter.notifyDataSetChanged();
             mRecyclerView.setVisibility(View.VISIBLE);
         }

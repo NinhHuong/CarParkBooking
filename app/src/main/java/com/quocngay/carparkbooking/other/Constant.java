@@ -136,6 +136,8 @@ public class Constant {
     //endregion
 
     //region Security
+
+
     public static final String REQUEST_CAR_WILL_IN = "request_car_go_in";
     public static final String RESPONSE_CAR_WILL_IN = "response_car_go_in";
 
@@ -150,7 +152,7 @@ public class Constant {
     public static final String RESPONSE_ONE_CAR_IN = "response_one_car_in";
 
     public static final String REQUEST_ONE_CAR_OUT = "request_one_car_out";
-//    public static final String RESPONSE_ONE_CAR_OUT = "response_one_car_out";
+    public static final String RESPONSE_ONE_CAR_OUT = "response_one_car_out";
 
     public static final String REQUEST_GET_GARAGE_ID = "request_find_security_by_account_id";
     public static final String RESPONSE_GET_GARAGE_ID = "response_find_security_by_account_id";
@@ -168,6 +170,9 @@ public class Constant {
 
     public static final String REQUEST_ALL_SECURITY = "request_all_security";
     public static final String RESPONSE_ALL_SECURITY = "response_all_security";
+
+    public static final String REQUEST_REMOVE_SECURITY = "request_remove_security";
+    public static final String RESPONSE_REMOVE_SECURITY = "response_remove_security";
 
     public static final String REQUEST_HISTORY = "request_history";
     public static final String RESPONSE_HISTORY = "response_history";
