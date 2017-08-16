@@ -92,8 +92,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             localData.setRole(role);
                             localData.setToken(serverToken);
                             localData.setRemmember(cbRemember.isChecked());
-                            Intent intent = new Intent(LoginActivity.this, MapActivity.class);
-                            startActivity(intent);
+                            loginSuccess(role);
                             finish();
                         } else {
                             Toast.makeText(getApplicationContext(), R.string.error_code, Toast.LENGTH_SHORT).show();

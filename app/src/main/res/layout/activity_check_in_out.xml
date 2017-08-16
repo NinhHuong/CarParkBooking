@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.quocngay.carparkbooking.activity.CheckInOutActivity">
+
+    <include layout="@layout/app_bar" />
+
+    <include layout="@layout/container_custom_searchview" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/list_license_security"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:background="@android:color/white"
+            app:layoutManager="LinearLayoutManager"
+            tools:listitem="@layout/item_license_security" />
+        <!--android:layout_toEndOf="@+id/btnAddNewCarIn"-->
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/btnAddNewCarIn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginBottom="25dp"
+            android:layout_marginRight="25dp"
+            android:clickable="true"
+            app:fabSize="normal"
+            app:layout_anchorGravity="bottom|right|end"
+            app:srcCompat="@drawable/ic_add_black" />
+    </RelativeLayout>
+
+</LinearLayout>

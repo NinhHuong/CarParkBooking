@@ -2,6 +2,7 @@ package com.quocngay.carparkbooking.activity;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -20,7 +21,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -55,11 +58,12 @@ public class CheckInOutActivity extends AppCompatActivity {
     private int dialogTitle;
     private int dialogMessage;
     private int dialogMessageFinish;
+    private FloatingActionButton btnAddNewCarIn;
 
     SearchView svLicense;
     CardView containerSearch;
     RecyclerView recyclerViewLicense;
-    private ArrayList<ParkingInfoSecurityModel> listCarIn;
+    private ArrayList<ParkingInfoSecurityModel> listCar;
     private String garageId;
     private LocalData localData;
     LicenseSecurityRecyclerViewAdapter recyclerViewAdapter;
@@ -70,18 +74,23 @@ public class CheckInOutActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.check_in_out_activity);
+        setContentView(R.layout.activity_check_in_out);
 
         String resultExtra = getIntent().getStringExtra(EXTRA_SECURITY_FUNCTION);
 
+        initToolbar();
+        initSearchBar();
+        initButtonAddCarIn();
+
         if (resultExtra.compareTo(EXTRA_CAR_IN) == 0) {
             requestItemSelect = Constant.REQUEST_ONE_CAR_IN_ID;
-            responseItemSelect = Constant.RESPONSE_ONE_CAR_IN_ID;
+            responseItemSelect = Constant.RESPONSE_ONE_CAR_IN;
             requestCarFunc = Constant.REQUEST_CAR_WILL_IN;
             responseCarFunc = Constant.RESPONSE_CAR_WILL_IN;
             dialogTitle = R.string.dialog_security_checkin;
             dialogMessage = R.string.dialog_security_checkin_message;
             dialogMessageFinish = R.string.security_checkin_success;
+            btnAddNewCarIn.setVisibility(View.VISIBLE);
         } else {
             requestItemSelect = Constant.REQUEST_ONE_CAR_OUT;
             responseItemSelect = Constant.RESPONSE_ONE_CAR_OUT;
@@ -90,10 +99,9 @@ public class CheckInOutActivity extends AppCompatActivity {
             dialogTitle = R.string.dialog_security_checkout;
             dialogMessage = R.string.dialog_security_checkout_message;
             dialogMessageFinish = R.string.security_checkout_success;
+            btnAddNewCarIn.setVisibility(View.INVISIBLE);
         }
 
-        initToolbar();
-        initSearchBar();
         localData = new LocalData(getApplicationContext());
         garageId = localData.getGarageID();
 
@@ -111,7 +119,7 @@ public class CheckInOutActivity extends AppCompatActivity {
                                                 item.getId(), garageId);
                                         SocketIOClient.client.mSocket.on(
                                                 responseItemSelect,
-                                                onResponseCheckin);
+                                                onResponseCarInOut);
                                     }
                                 })
                         .setNegativeButton(R.string.dialog_btn_cancel,
@@ -124,7 +132,7 @@ public class CheckInOutActivity extends AppCompatActivity {
             }
         };
 
-        listCarIn = new ArrayList<>();
+        listCar = new ArrayList<>();
         recyclerViewLicense = (RecyclerView) findViewById(R.id.list_license_security);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         if (mColumnCount <= 1) {
@@ -132,7 +140,7 @@ public class CheckInOutActivity extends AppCompatActivity {
         } else {
             recyclerViewLicense.setLayoutManager(new GridLayoutManager(this, mColumnCount));
         }
-        recyclerViewAdapter = new LicenseSecurityRecyclerViewAdapter(listCarIn, listener);
+        recyclerViewAdapter = new LicenseSecurityRecyclerViewAdapter(listCar, listener);
         recyclerViewLicense.setAdapter(recyclerViewAdapter);
         DividerItemDecoration mDividerItemDecoration = new DividerItemDecoration(
                 recyclerViewLicense.getContext(), layoutManager.getOrientation());
@@ -177,7 +185,7 @@ public class CheckInOutActivity extends AppCompatActivity {
             refreshItem.setActionView(iv);
 
         //Refresh car list
-        recyclerViewAdapter.swap(listCarIn);
+        recyclerViewAdapter.swap(listCar);
 
         recyclerViewLicense.smoothScrollToPosition(0);
         SocketIOClient.client.mSocket.emit(requestCarFunc, garageId);
@@ -214,7 +222,7 @@ public class CheckInOutActivity extends AppCompatActivity {
                     try {
                         Log.i("Data car in", data.toString());
 
-                        listCarIn.clear();
+                        listCar.clear();
 
                         Gson gson = new Gson();
                         if (data.getBoolean(Constant.RESULT)) {
@@ -223,7 +231,7 @@ public class CheckInOutActivity extends AppCompatActivity {
                                 ParkingInfoSecurityModel p = gson
                                         .fromJson(listJsonGarasParkInfo.getJSONObject(i).toString()
                                                 , ParkingInfoSecurityModel.class);
-                                listCarIn.add(p);
+                                listCar.add(p);
                                 recyclerViewAdapter.notifyDataSetChanged();
                             }
                         } else {
@@ -240,7 +248,7 @@ public class CheckInOutActivity extends AppCompatActivity {
         }
     };
 
-    private Emitter.Listener onResponseCheckin = new Emitter.Listener() {
+    private Emitter.Listener onResponseCarInOut = new Emitter.Listener() {
 
         @Override
         public void call(final Object... args) {
@@ -253,11 +261,12 @@ public class CheckInOutActivity extends AppCompatActivity {
                             Toast.makeText(CheckInOutActivity.this,
                                     getResources().getString(dialogMessageFinish),
                                     Toast.LENGTH_SHORT).show();
-//                            refresh();
                         } else {
                             Log.w(getClass().getName(), "Error: " +
                                     data.getString(Constant.MESSAGE));
                         }
+
+                        SocketIOClient.client.mSocket.off(responseItemSelect);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -336,5 +345,50 @@ public class CheckInOutActivity extends AppCompatActivity {
         assert actionBar != null;
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayShowTitleEnabled(false);
+    }
+
+    private void initButtonAddCarIn(){
+        btnAddNewCarIn = (FloatingActionButton) findViewById(R.id.btnAddNewCarIn);
+
+        btnAddNewCarIn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder alertDialog = new AlertDialog.Builder(CheckInOutActivity.this);
+                // Setting Dialog Title
+                alertDialog.setTitle(dialogTitle );
+
+                // Setting Icon to Dialog
+                alertDialog.setIcon(R.drawable.ic_directions_car_black_24dp);
+
+                final EditText input = new EditText(CheckInOutActivity.this);
+//                input.setHint("Số xe hiện tại");
+                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.MATCH_PARENT);
+                input.setLayoutParams(lp);
+                alertDialog.setView(input);
+
+                // Setting Positive "Yes" Button
+                alertDialog.setPositiveButton(getResources().getString(R.string.dialog_button_ok),
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                SocketIOClient.client.mSocket.emit(Constant.REQUEST_ONE_CAR_IN_NUMBER, input.getText().toString(), garageId);
+                                SocketIOClient.client.mSocket.on(responseItemSelect,onResponseCarInOut);
+                            }
+                        });
+                // Setting Negative "NO" Button
+                alertDialog.setNegativeButton(getResources().getString(R.string.dialog_btn_cancel),
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                // Write your code here to execute after dialog
+                                dialog.cancel();
+                            }
+                        });
+                // closed
+
+                // Showing Alert Message
+                alertDialog.show();
+            }
+        });
     }
 }
