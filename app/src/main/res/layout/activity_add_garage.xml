@@ -107,67 +107,6 @@
 
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="25dp"
-            android:scaleY="2"
-            android:scaleX="2"
-            app:srcCompat="@drawable/ic_timer_black_24dp" />
-
-        <EditText
-            android:id="@+id/edtTimeStart"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:inputType="time"
-            android:hint="Thời gian mở cửa" />
-
-        <!--<ImageButton-->
-            <!--android:id="@+id/btnTimeIn"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:padding="10dp"-->
-            <!--app:srcCompat="@drawable/ic_timer_black_24dp" />-->
-
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="25dp"
-            android:scaleY="2"
-            android:scaleX="2"
-            app:srcCompat="@drawable/ic_timer_black_24dp" />
-
-        <EditText
-            android:id="@+id/edtTimeEnd"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:inputType="time"
-            android:hint="Thời gian đóng cửa" />
-
-        <!--<ImageButton-->
-            <!--android:id="@+id/btnTimeOut"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:padding="10dp"-->
-            <!--app:srcCompat="@drawable/ic_timer_black_24dp" />-->
-
-    </LinearLayout>
-
     <Button
         android:id="@+id/btnAddNewGarage"
         android:layout_width="match_parent"
