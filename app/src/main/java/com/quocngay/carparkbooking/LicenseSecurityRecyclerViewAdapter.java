@@ -6,12 +6,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
-import android.widget.ImageButton;
 import android.widget.TextView;
 
-import com.quocngay.carparkbooking.activity.BookingActivity;
-import com.quocngay.carparkbooking.activity.CheckInActivity;
-import com.quocngay.carparkbooking.model.CarModel;
 import com.quocngay.carparkbooking.model.ParkingInfoSecurityModel;
 import com.quocngay.carparkbooking.other.OnListInteractionListener;
 

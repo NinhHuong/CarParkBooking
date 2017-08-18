@@ -25,6 +25,7 @@ public class Constant {
     public static final int REQUEST_CODE_BOOKING = 1;
     public static final int REQUEST_CODE_NEAREST = 9;
     public static final int REQUEST_CODE_BOOKING_DETAIL = 8;
+    public static final String ACCOUNT_ID = "accountID";
 
 
     public static final String GARA_LOCATION = "gara_latlng";
@@ -136,6 +137,8 @@ public class Constant {
     //endregion
 
     //region Security
+
+
     public static final String REQUEST_CAR_WILL_IN = "request_car_go_in";
     public static final String RESPONSE_CAR_WILL_IN = "response_car_go_in";
 
@@ -150,7 +153,7 @@ public class Constant {
     public static final String RESPONSE_ONE_CAR_IN = "response_one_car_in";
 
     public static final String REQUEST_ONE_CAR_OUT = "request_one_car_out";
-//    public static final String RESPONSE_ONE_CAR_OUT = "response_one_car_out";
+    public static final String RESPONSE_ONE_CAR_OUT = "response_one_car_out";
 
     public static final String REQUEST_GET_GARAGE_ID = "request_find_security_by_account_id";
     public static final String RESPONSE_GET_GARAGE_ID = "response_find_security_by_account_id";
@@ -169,11 +172,21 @@ public class Constant {
     public static final String REQUEST_ALL_SECURITY = "request_all_security";
     public static final String RESPONSE_ALL_SECURITY = "response_all_security";
 
+    public static final String REQUEST_REMOVE_SECURITY = "request_remove_security";
+    public static final String RESPONSE_REMOVE_SECURITY = "response_remove_security";
+
     public static final String REQUEST_HISTORY = "request_history";
     public static final String RESPONSE_HISTORY = "response_history";
     //endregion
 
+    //endregion
 
+    //region SUPER ADMIN
+    public static final String REQUEST_ADD_NEW_GARAGE = "request_add_new_garage";
+    public static final String RESPONSE_ADD_NEW_GARAGE = "response_add_new_garage";
+
+    public static final String REQUEST_CREATE_ACCOUNT_ADMIN = "request_create_new_account_for_admin";
+    public static final String RESPONSE_CREATE_ACCOUNT_ADMIN = "response_create_new_account_for_admin";
     //endregion
 
     public static final String REQUEST_GET_GARAGE_BY_ID = "request_get_garage_by_id";

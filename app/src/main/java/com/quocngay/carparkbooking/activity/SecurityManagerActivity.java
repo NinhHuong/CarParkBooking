@@ -53,9 +53,10 @@ public class SecurityManagerActivity extends AppCompatActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayShowTitleEnabled(true);
 
-        SocketIOClient.client.mSocket.emit(Constant.REQUEST_ALL_SECURITY, accountID);
+        SocketIOClient.client.mSocket.emit(Constant.REQUEST_ALL_SECURITY, garageID);
 
         SocketIOClient.client.mSocket.on(Constant.RESPONSE_ALL_SECURITY, onGetAccountSecurity);
+        SocketIOClient.client.mSocket.on(Constant.RESPONSE_REMOVE_SECURITY, onRemoveAccount);
     }
 
     @Override
@@ -80,6 +81,34 @@ public class SecurityManagerActivity extends AppCompatActivity {
                         } else {
                             Toast.makeText(getApplicationContext(), R.string.not_have_security, Toast.LENGTH_SHORT).show();
                         }
+
+                        SocketIOClient.client.mSocket.off(Constant.RESPONSE_ALL_SECURITY);
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
+    };
+
+    private Emitter.Listener onRemoveAccount = new Emitter.Listener() {
+
+        @Override
+        public void call(final Object... args) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    JSONObject data = (JSONObject) args[0];
+                    try {
+                        Boolean result = data.getBoolean(Constant.RESULT);
+                        if (result) {
+                            SocketIOClient.client.mSocket.emit(Constant.REQUEST_ALL_SECURITY, garageID);
+
+                            SocketIOClient.client.mSocket.on(Constant.RESPONSE_ALL_SECURITY, onGetAccountSecurity);
+                        } else
+                            Toast.makeText(getApplicationContext(), R.string.error_general, Toast.LENGTH_SHORT).show();
+
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }

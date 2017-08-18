@@ -18,7 +18,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.DatePicker;
-import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -194,7 +193,7 @@ public class AdminActivity extends AppCompatActivity
 
         switch (id) {
             case R.id.nav_add_security:
-                startActivity(new Intent(AdminActivity.this, RegisterForSecurityActivity.class));
+                startActivity(new Intent(AdminActivity.this, RegisterForOtherActivity.class));
                 break;
             case R.id.nav_all_security:
                 startActivity(new Intent(AdminActivity.this, SecurityManagerActivity.class));

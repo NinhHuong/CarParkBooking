@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.quocngay.carparkbooking.R;
 import com.quocngay.carparkbooking.model.AccountModel;
+import com.quocngay.carparkbooking.model.LocalData;
 
 import java.util.List;
 
@@ -145,7 +146,7 @@ public class AccountListAdapter extends BaseExpandableListAdapter {
     }
 
     @Override
-    public View getChildView(int groupPosition, int childPosition,
+    public View getChildView(final int groupPosition, int childPosition,
                              boolean isLastChild, View convertView, ViewGroup parent) {
         View v = convertView;
         if (v == null) {
@@ -153,6 +154,7 @@ public class AccountListAdapter extends BaseExpandableListAdapter {
                     (Context.LAYOUT_INFLATER_SERVICE);
             v = inflater.inflate(R.layout.item_account_detail, parent, false);
         }
+        final AccountModel accountModel = mAccountList.get(groupPosition);
         TextView  txtEmail, txtRole, txtphone, txtdob, txtAddress;
         txtEmail = (TextView) v.findViewById(R.id.txtEmail);
         txtRole = (TextView) v.findViewById(R.id.txtRole);
@@ -161,11 +163,12 @@ public class AccountListAdapter extends BaseExpandableListAdapter {
         txtAddress = (TextView) v.findViewById(R.id.txtAddress);
         Button btnDelete = (Button) v.findViewById(R.id.btnDelete);
 
-        txtEmail.setText(mAccountList.get(groupPosition).getEmail());
-        txtRole.setText(mAccountList.get(groupPosition).getRoleID().compareTo("3") == 0 ? "Bảo vệ" : " ");
-        txtphone.setText(mAccountList.get(groupPosition).getPhone());
-        txtdob.setText(mAccountList.get(groupPosition).getDateOfBirth());
-        txtAddress.setText(mAccountList.get(groupPosition).getAddress());
+        txtEmail.setText(accountModel.getEmail());
+        txtRole.setText(accountModel.getRoleID().compareTo("3") == 0 ? "Bảo vệ" : " ");
+        txtphone.setText(accountModel.getPhone());
+        txtdob.setText(accountModel.getDateOfBirth());
+        txtAddress.setText(accountModel.getAddress());
+
 
         btnDelete.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -173,8 +176,12 @@ public class AccountListAdapter extends BaseExpandableListAdapter {
                 mDeleteDialog.setTitle(R.string.dialog_delete_sec_title);
                 mDeleteDialog.setMessage(R.string.dialog_delete_sec_mess)
                         .setPositiveButton(R.string.fire, new DialogInterface.OnClickListener() {
+                            LocalData l = new LocalData(mContext);
+                            String garageID = l.getGarageID();
+                            int accountID =accountModel.getId();
+
                             public void onClick(DialogInterface dialog, int id) {
-//                                SocketIOClient.client.mSocket.emit(Constant.REQUEST_REMOVE_SECURITY, mAccountList.get(position).getId());
+                                SocketIOClient.client.mSocket.emit(Constant.REQUEST_REMOVE_SECURITY, accountID,garageID);
                             }
                         })
                         .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {

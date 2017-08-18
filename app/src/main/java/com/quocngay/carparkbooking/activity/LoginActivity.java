@@ -87,8 +87,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             localData.setRole(role);
                             localData.setToken(serverToken);
                             localData.setRemmember(cbRemember.isChecked());
-                            Intent intent = new Intent(LoginActivity.this, MapActivity.class);
-                            startActivity(intent);
+                            loginSuccess(role);
                             finish();
                         } else {
                             Toast.makeText(getApplicationContext(), R.string.error_code, Toast.LENGTH_SHORT).show();
@@ -353,6 +352,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             int roleValue = Integer.parseInt(role);
             switch (roleValue) {
                 case Constant.ROLE_SUPER_ADMIN_VALUE:
+                    intent = new Intent(LoginActivity.this, SuperAdminActivity.class);
                     break;
                 case Constant.ROLE_ADMIN_VALUE:
                     intent = new Intent(LoginActivity.this, AdminActivity.class);
