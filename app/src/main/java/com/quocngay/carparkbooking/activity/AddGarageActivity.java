@@ -17,7 +17,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class AddGarageActivity extends AppCompatActivity {
-    private EditText edtName, edtTimeStart,edtTimeEnd,edtAddress,edtNumberSlot,edtLongitude, edtLatitude;
+    private EditText edtName, edtAddress,edtNumberSlot,edtLongitude, edtLatitude;
     String accountID;
     private Button addNewGarage;
     @Override
@@ -28,8 +28,7 @@ public class AddGarageActivity extends AppCompatActivity {
         accountID = getIntent().getStringExtra(Constant.ACCOUNT_ID);
 
         edtName = (EditText)findViewById(R.id.edtName);
-        edtTimeStart = (EditText)findViewById(R.id.edtTimeStart);
-        edtTimeEnd = (EditText)findViewById(R.id.edtTimeEnd);
+
         edtAddress = (EditText)findViewById(R.id.edtAddress);
         edtNumberSlot = (EditText)findViewById(R.id.edtTotalSlot);
         edtLongitude = (EditText)findViewById(R.id.edtLocationX);
@@ -49,8 +48,8 @@ public class AddGarageActivity extends AppCompatActivity {
         String name,address,timeStart,timeEnd,totalSlot,longitude,latitude;
         name = edtName.getText().toString();
         address = edtAddress.getText().toString();
-        timeStart = edtTimeStart.getText().toString();
-        timeEnd = edtTimeEnd.getText().toString();
+        timeStart = "00:00:00";
+        timeEnd = "00:00:00";
         totalSlot = edtNumberSlot.getText().toString();
         longitude = edtLongitude.getText().toString();
         latitude = edtLatitude.getText().toString();
