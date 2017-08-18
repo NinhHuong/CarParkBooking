@@ -2,9 +2,6 @@ package com.quocngay.carparkbooking.model;
 
 import java.io.Serializable;
 
-/**
- * Created by Quang Si on 7/22/2017.
- */
 
 public class CarModel implements Serializable{
 

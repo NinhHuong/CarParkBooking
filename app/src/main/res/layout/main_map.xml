@@ -49,8 +49,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:clickable="true"
-                android:clipToPadding="false"
-                android:foreground="?android:attr/selectableItemBackground">
+                android:clipToPadding="false">
 
                 <include layout="@layout/form_address_infor" />
 

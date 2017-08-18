@@ -40,8 +40,6 @@ public class HistoryActivity extends AppCompatActivity {
     ArrayList<Item> mItems;
     ProgressBar mProgressBar;
 
-    private Emitter.Listener onGetParkingInfo;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -90,7 +88,7 @@ public class HistoryActivity extends AppCompatActivity {
     void addDataToList(JSONObject data) {
         ParkingInfoHistoryModel p;
         Gson gson = new Gson();
-        JSONArray listJsonGarasParkInfo = null;
+        JSONArray listJsonGarasParkInfo;
         String header = "";
         SimpleDateFormat inputFormat =
                 new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.getDefault());

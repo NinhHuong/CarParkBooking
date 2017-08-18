@@ -37,13 +37,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     String serverToken;
     private EditText edtEmail, edtPass;
     private CheckBox cbRemember;
-    private String mSalt = "";
     private String email;
-    private String password;
-    private Boolean rememmber;
     private Dialog dalInputCode;
-    private Button btnDalContinue;
-    private TextView tvDalCancel;
     private EditText edCode1, edCode2, edCode3, edCode4;
     private String code;
     private Emitter.Listener onResponseCheckToken = new Emitter.Listener() {
@@ -161,8 +156,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         dalInputCode = new Dialog(this);
         dalInputCode.setTitle(R.string.dialog_verify);
         dalInputCode.setContentView(R.layout.dialog_input_code);
-        btnDalContinue = (Button) dalInputCode.findViewById(R.id.btn_continue);
-        tvDalCancel = (TextView) dalInputCode.findViewById(R.id.tv_cancel);
+        Button btnDalContinue = (Button) dalInputCode.findViewById(R.id.btn_continue);
+        TextView tvDalCancel = (TextView) dalInputCode.findViewById(R.id.tv_cancel);
         tvDalCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -318,7 +313,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         switch (v.getId()) {
             case R.id.btnLogin:
                 email = edtEmail.getText().toString().trim();
-                password = edtPass.getText().toString();
+                String password = edtPass.getText().toString();
                 if (email.isEmpty() || !Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
                     Toast.makeText(getApplicationContext(), getResources().getString(R.string.error_email), Toast.LENGTH_SHORT).show();
                     break;

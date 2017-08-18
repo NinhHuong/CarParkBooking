@@ -43,16 +43,10 @@ import java.util.Locale;
 
 public class ProfileActivity extends AppCompatActivity {
 
-    private static final int ID_FIRSTNAME = 0;
-    private static final int ID_LASTNAME = 1;
-    private static final int ID_ADDRESS = 2;
-    private static final int ID_PHONE = 3;
-    private static final int ID_DOB = 4;
     TextView tvName, tvEmail;
     EditText edtFirstName, edtLastName;
     LocalData localData;
     Boolean isView = true;
-    ViewSwitcher swName;
     LayoutInflater layoutInflater;
     private UserModel mUserModel;
     ViewSwitcher switcherName, switcherContent;
@@ -77,7 +71,7 @@ public class ProfileActivity extends AppCompatActivity {
                 if (!isView) {
                     //change to edit state
                     isView = true;
-                    changeState(isView);
+                    changeState(true);
                     fabCancel.hide();
                     fab.setImageResource(R.drawable.ic_mode_edit_white);
                 }
@@ -89,7 +83,7 @@ public class ProfileActivity extends AppCompatActivity {
                 if (isView) {
                     //change to edit state
                     isView = false;
-                    changeState(isView);
+                    changeState(false);
                     fabCancel.show();
                     fab.setImageResource(R.drawable.ic_check_white);
                 } else {

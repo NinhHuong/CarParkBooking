@@ -1,19 +1,15 @@
 package com.quocngay.carparkbooking.activity;
 
 import android.app.Dialog;
-import android.content.DialogInterface;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -61,11 +57,11 @@ public class CarManagerActivity extends AppCompatActivity {
         btnAddNewCar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(mCarList.size() >= 5){
+                if (mCarList.size() >= 5) {
                     Toast.makeText(CarManagerActivity.this,
                             getResources().getString(R.string.error_add_license_limit),
                             Toast.LENGTH_SHORT).show();
-                }else {
+                } else {
                     initAddLicenseDialog();
                 }
             }
@@ -90,7 +86,7 @@ public class CarManagerActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(),
                             R.string.dialog_car_empty_message,
                             Toast.LENGTH_SHORT).show();
-                }else {
+                } else {
                     SocketIOClient.client.mSocket.emit(Constant.REQUEST_ADD_NEW_CAR, accountid, licenseNumber);
                     SocketIOClient.client.mSocket.on(Constant.RESPONSE_ADD_NEW_CAR, onAddCar);
                 }
@@ -199,10 +195,10 @@ public class CarManagerActivity extends AppCompatActivity {
         CarModel p;
         Gson gson = new Gson();
 
-        JSONArray listJsonCar = null;
+        JSONArray listJsonCar;
         try {
             listJsonCar = data.getJSONArray(Constant.DATA);
-            mCarList = new ArrayList<CarModel>();
+            mCarList = new ArrayList<>();
             for (int i = 0; i < listJsonCar.length(); i++) {
                 p = gson.fromJson(listJsonCar.getJSONObject(i).toString(), CarModel.class);
                 Log.i("car number ", p.getVehicleNumber());

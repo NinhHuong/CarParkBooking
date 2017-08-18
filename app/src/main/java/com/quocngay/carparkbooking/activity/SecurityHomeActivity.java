@@ -33,16 +33,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-/**
- * Created by Quang Si on 8/13/2017.
- */
-
 public class SecurityHomeActivity extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
 
     private Toolbar toolbar;
-    private LinearLayout btnCheckin, btnCheckout;
-    private GarageModel garageModel;
     private LocalData localData;
 
     @Override
@@ -66,8 +60,8 @@ public class SecurityHomeActivity extends AppCompatActivity implements
 
         navigationView.getMenu().findItem(R.id.nav_car_manager).setVisible(false);
         navigationView.getMenu().findItem(R.id.nav_history).setVisible(false);
-        btnCheckin = (LinearLayout) findViewById(R.id.btn_checkin);
-        btnCheckout = (LinearLayout) findViewById(R.id.btn_checkout);
+        LinearLayout btnCheckin = (LinearLayout) findViewById(R.id.btn_checkin);
+        LinearLayout btnCheckout = (LinearLayout) findViewById(R.id.btn_checkout);
         btnCheckin.setOnClickListener(this);
         btnCheckout.setOnClickListener(this);
 

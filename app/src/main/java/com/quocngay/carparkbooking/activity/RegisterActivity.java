@@ -75,7 +75,6 @@ public class RegisterActivity extends AppCompatActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-        LocalData p = new LocalData(getApplicationContext());
         edtEmail = (EditText) findViewById(R.id.edtEmailRegist);
         edtPass = (EditText) findViewById(R.id.edtPassRegist);
         edtRetypePass = (EditText) findViewById(R.id.edtRePassRegist);

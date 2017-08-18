@@ -15,6 +15,7 @@ import com.quocngay.carparkbooking.other.Constant;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
@@ -48,7 +49,7 @@ public class FetchAddressIntentService extends IntentService {
                     location.getLatitude(),
                     location.getLongitude(),
                     // In this sample, get just a single address.
-                    3);
+                    1);
         } catch (IOException ioException) {
             // Catch network or other I/O problems.
             errorMessage = getString(R.string.service_not_available);
@@ -75,9 +76,16 @@ public class FetchAddressIntentService extends IntentService {
 
             // Fetch the address lines using getAddressLine,
             // join them, and send them to the thread.
-            String addressTitle = address.getAddressLine(0);
-            for (int i = 1; i <= address.getMaxAddressLineIndex(); i++) {
-                addressFragments.add(address.getAddressLine(i));
+            String addressTitle = "";
+            if (address.getMaxAddressLineIndex() <= 0) {
+                String[] addressList = address.getAddressLine(0).split(",");
+                addressTitle = addressList[0].trim();
+                addressFragments.addAll(Arrays.asList(addressList).subList(1, addressList.length - 1));
+            }else {
+                addressTitle = address.getAddressLine(0);
+                for (int i = 1; i <= address.getMaxAddressLineIndex(); i++) {
+                    addressFragments.add(address.getAddressLine(i));
+                }
             }
             Log.i("TAG", getString(R.string.address_found));
             deliverResultToReceiver(Constant.SUCCESS_RESULT,

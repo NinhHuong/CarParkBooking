@@ -44,17 +44,12 @@ import java.util.Locale;
 
 public class BookingDetailActivity extends AppCompatActivity {
 
-    private Button btnBookCancel;
-    private Button btnBookRefresh;
-    private TextView tvLicenseNumber;
     private ImageView mMapImage;
     private TextView tvBookingDetailTitle, tvBookingDetailDes, tvBookingDetailDuration, tvBookingDetailDistance;
     private TextView tvBookingDetailTime, tvBookingDetailLicense;
     private ParkingInfoModel mParkingInfoModel;
     private CarModel mCarModel;
     private GarageModel mGaraModel;
-    private LocalData localData;
-    private AlertDialog.Builder mBookAlertDialog;
     private TextView tvRemainSlots;
 
 
@@ -183,18 +178,17 @@ public class BookingDetailActivity extends AppCompatActivity {
     }
 
     private void initBookingDetailElements() {
-        localData = new LocalData(getApplicationContext());
         mMapImage = (ImageView) findViewById(R.id.iv_map);
         tvRemainSlots = (TextView) findViewById(R.id.tv_booking_detail_remain);
 
-        btnBookCancel = (Button) findViewById(R.id.btn_book_cancel);
+        Button btnBookCancel = (Button) findViewById(R.id.btn_book_cancel);
         btnBookCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 cancelBooking();
             }
         });
-        btnBookRefresh = (Button) findViewById(R.id.btn_book_refresh);
+        Button btnBookRefresh = (Button) findViewById(R.id.btn_book_refresh);
         btnBookRefresh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

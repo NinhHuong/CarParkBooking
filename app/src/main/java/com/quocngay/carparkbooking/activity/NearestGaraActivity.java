@@ -33,7 +33,6 @@ import java.util.Locale;
 
 public class NearestGaraActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private static final String ARG_COLUMN_COUNT = "column-count";
     public static final String GARA_SELECTED = "gara_selected";
     String distance;
     String duration;

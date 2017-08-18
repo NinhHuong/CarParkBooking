@@ -51,20 +51,16 @@ import java.util.Locale;
 
 public class BookingActivity extends AppCompatActivity {
 
-    private Button btnBook;
-    private LatLng garaLatLng;
     private RecyclerView mRecyclerView;
     private LicenseNumRecyclerViewAdapter recyclerViewAdapter;
-    private String clientID;
     private List<CarModel> licenseList;
     private TextView tvLicenseNumber;
-    private LinearLayoutManager layoutManager;
-    private TextView tvGaraTitle, tvGaraDes, tvGaraDuration, tvGaraDistance;
+    private TextView tvGaraDuration;
+    private TextView tvGaraDistance;
     private GarageModel markerGara;
     private LocalData localData;
     private CarModel mCurrentCar;
     private AlertDialog.Builder mBookAlertDialog;
-    private TextView tvRemainSlots;
     private Location mMyLocation;
     private ImageButton btnAddLicense;
     private Dialog dalAddLinense;
@@ -129,7 +125,7 @@ public class BookingActivity extends AppCompatActivity {
     private void initBookingElements() {
         ImageView imageView = (ImageView) findViewById(R.id.iv_map);
         Picasso.with(this).load(getMapImageUrl()).into(imageView);
-        tvRemainSlots = (TextView) findViewById(R.id.tv_gara_remain);
+        TextView tvRemainSlots = (TextView) findViewById(R.id.tv_gara_remain);
 
         if (markerGara.getRemainSlot() <= 0) {
             tvRemainSlots.setText(getResources().getString(R.string.booking_slot_not_available));
@@ -141,7 +137,7 @@ public class BookingActivity extends AppCompatActivity {
             tvRemainSlots.setTextColor(getResources().getColor(R.color.colorAvailable));
         }
 
-        btnBook = (Button) findViewById(R.id.btn_book);
+        Button btnBook = (Button) findViewById(R.id.btn_book);
         if (markerGara.getRemainSlot() <= 0) {
             btnBook.setEnabled(false);
         }
@@ -187,8 +183,8 @@ public class BookingActivity extends AppCompatActivity {
             }
         });
 
-        tvGaraTitle = (TextView) findViewById(R.id.tv_gara_title);
-        tvGaraDes = (TextView) findViewById(R.id.tv_gara_des);
+        TextView tvGaraTitle = (TextView) findViewById(R.id.tv_gara_title);
+        TextView tvGaraDes = (TextView) findViewById(R.id.tv_gara_des);
         tvGaraDuration = (TextView) findViewById(R.id.tv_duration_book);
         tvGaraDistance = (TextView) findViewById(R.id.tv_distance_book);
 
@@ -251,7 +247,7 @@ public class BookingActivity extends AppCompatActivity {
         });
 
         mRecyclerView = (RecyclerView) dialog.findViewById(R.id.list_license);
-        layoutManager = new LinearLayoutManager(dialog.getContext());
+        LinearLayoutManager layoutManager = new LinearLayoutManager(dialog.getContext());
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setHasFixedSize(true);
         listener = new OnListInteractionListener() {

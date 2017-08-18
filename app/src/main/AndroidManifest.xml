@@ -83,22 +83,6 @@
                 android:value=".activity.MapActivity" />
         </activity>
 
-        <!-- <activity -->
-        <!-- android:name=".activity.History_Activity2" -->
-        <!-- android:label="@string/title_activity_history_2" -->
-        <!-- android:theme="@style/AppTheme.NoActionBar"></activity> -->
-
-
-        <!-- <receiver -->
-        <!-- android:name=".other.NotificationReceiver" -->
-        <!-- android:enabled="true" -->
-        <!-- android:exported="false"> -->
-        <!-- <intent-filter> -->
-        <!-- <action android:name="android.intent.action.BOOT_COMPLETED" /> -->
-        <!-- &lt;!&ndash; Receives the actual messages. &ndash;&gt; -->
-        <!-- </intent-filter> -->
-        <!-- </receiver> -->
-
         <service
             android:name=".services.FetchAddressIntentService"
             android:exported="false" />
@@ -137,6 +121,14 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.quocngay.carparkbooking.activity.MapActivity" />
+        </activity>
+        <activity
+            android:name=".activity.RegisterForSecurityActivity"
+            android:label="@string/title_activity_register_security"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.quocngay.carparkbooking.activity.AdminActivity" />
         </activity>
         <activity
             android:label="@string/title_activity_security_manager"

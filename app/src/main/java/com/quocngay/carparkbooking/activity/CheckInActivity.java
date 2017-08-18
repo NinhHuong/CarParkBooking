@@ -2,11 +2,10 @@ package com.quocngay.carparkbooking.activity;
 
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
+import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.GridLayoutManager;
@@ -21,7 +20,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.TextView;
@@ -31,9 +29,7 @@ import com.github.nkzawa.emitter.Emitter;
 import com.google.gson.Gson;
 import com.quocngay.carparkbooking.LicenseSecurityRecyclerViewAdapter;
 import com.quocngay.carparkbooking.R;
-import com.quocngay.carparkbooking.model.CarModel;
 import com.quocngay.carparkbooking.model.LocalData;
-import com.quocngay.carparkbooking.model.LocationDataModel;
 import com.quocngay.carparkbooking.model.ParkingInfoSecurityModel;
 import com.quocngay.carparkbooking.other.Constant;
 import com.quocngay.carparkbooking.other.OnListInteractionListener;
@@ -53,21 +49,20 @@ public class CheckInActivity extends AppCompatActivity {
     RecyclerView recyclerViewLicense;
     private ArrayList<ParkingInfoSecurityModel> listCarIn;
     private String garageId;
-    private LocalData localData;
     LicenseSecurityRecyclerViewAdapter recyclerViewAdapter;
     int mColumnCount = 1;
     private MenuItem refreshItem;
-    private OnListInteractionListener listener;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_check_in);
         initToolbar();
         initSearchBar();
-        localData = new LocalData(getApplicationContext());
+        LocalData localData = new LocalData(getApplicationContext());
         garageId = localData.getGarageID();
 
-        listener = new OnListInteractionListener() {
+        OnListInteractionListener listener = new OnListInteractionListener() {
             @Override
             public void OnLicenseClickListener(final ParkingInfoSecurityModel item) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(CheckInActivity.this);

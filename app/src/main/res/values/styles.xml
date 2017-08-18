@@ -13,7 +13,9 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:textColorPrimary">@color/colorText</item>
         <item name="android:textColor">@color/colorText</item>
+        <item name="actionMenuTextColor">@color/colorText</item>
         <item name="android:textColorSecondary">@color/colorTextSecondary</item>
         <item name="android:windowAnimationStyle">@null</item>
         <item name="android:textColorHint">@color/colorTextHint</item>
@@ -57,6 +59,13 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">1dp</item>
         <item name="android:background">?android:attr/listDivider</item>
+    </style>
+
+    <style name="TitleTheme" parent="android:Theme.Light">
+        <item name="android:textAppearance">@style/TitleTextAppearance</item>
+    </style>
+    <style name="TitleTextAppearance" parent="@android:style/TextAppearance">
+        <item name="android:textColor">@color/colorAccent</item>
     </style>
 
 </resources>

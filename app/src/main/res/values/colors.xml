@@ -1,25 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <color name="colorPrimary">#F6C90E</color>
+    <color name="colorPrimary">#f6b80e</color>
     <color name="colorPrimaryLight">#E3E3E3</color>
     <color name="colorPrimaryDark">#303841</color>
     <color name="colorLoginBg">#ffffff</color>
     <color name="colorAccent">#2E4750</color>
 
-    <!--<color name="colorPrimary">#455D7A</color>-->
-    <!--<color name="colorPrimaryLight">#E3E3E3</color>-->
-    <!--<color name="colorPrimaryDark">#233142</color>-->
-    <!--<color name="colorLoginBg">#ffffff</color>-->
-    <!--<color name="colorAccent">#F95959</color>-->
-
-    <!--<color name="colorPrimary">#79D1C3</color>-->
-    <!--<color name="colorPrimaryLight">#72c6b8</color>-->
-    <!--<color name="colorPrimaryDark">#5fb6a8</color>-->
-    <!--<color name="colorLoginBg">#ffffff</color>-->
-    <!--<color name="colorAccent">#79D1C3</color>-->
-    <color name="colorText">#3e3e3e</color>
-    <color name="colorTextLight">#ffffff</color>
+    <color name="colorText">#2E4750</color>
+    <color name="colorTextLight">#f7f7f7</color>
     <color name="colorTextSecondary">#919191</color>
     <color name="colorTextHint">#c7c7c7</color>
     <color name="colorDark">#f1f1f1</color>
@@ -29,13 +18,14 @@
     <color name="colorAvailable">#50ae01</color>
     <color name="ripplePrimary">#69bcb0</color>
     <color name="rippleCancel">#ce312e</color>
+    <color name="colorIconLight">#ffffff</color>
 
     <!--open booked ticket list-->
     <color name="count_time_background">#008000</color>
     <color name="text_color">#ffffff</color>
     <color name="text_dark_title">#4b4b4b</color>
     <color name="text_light_title">#ffffff</color>
-    <color name="text_dark_description">#919191</color>
+    <color name="text_dark_description">#6d8d97</color>
     <color name="count_time_expired">#F44336</color>
     <color name="ripple">#74a7a7a7</color>
     <color name="card_bg">#ffffff</color>

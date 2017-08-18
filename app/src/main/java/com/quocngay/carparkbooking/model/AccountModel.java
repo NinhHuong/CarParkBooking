@@ -1,9 +1,5 @@
 package com.quocngay.carparkbooking.model;
 
-/**
- * Created by Windows on 07-Aug-17.
- */
-
 public class AccountModel {
     private int id;
     private String email;
@@ -28,6 +24,14 @@ public class AccountModel {
         this.phone = phone;
         this.dateOfBirth = dateOfBirth;
         this.address = address;
+    }
+
+    public String getFullName() {
+        StringBuilder result = new StringBuilder();
+        result.append(lastName == null ? "" : lastName);
+        result.append(" ");
+        result.append(firstName == null ? "" : firstName);
+        return result.toString();
     }
 
     public int getId() {

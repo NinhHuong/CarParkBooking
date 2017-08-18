@@ -3,7 +3,6 @@ package com.quocngay.carparkbooking.activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -75,14 +74,14 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.gson.Gson;
 import com.quocngay.carparkbooking.R;
 import com.quocngay.carparkbooking.model.GarageModel;
+import com.quocngay.carparkbooking.model.LocalData;
 import com.quocngay.carparkbooking.model.LocationDataModel;
 import com.quocngay.carparkbooking.model.ParkingInfoModel;
-import com.quocngay.carparkbooking.model.LocalData;
 import com.quocngay.carparkbooking.model.UserModel;
-import com.quocngay.carparkbooking.other.Constant;
-import com.quocngay.carparkbooking.services.FetchAddressIntentService;
 import com.quocngay.carparkbooking.other.AddressResult;
+import com.quocngay.carparkbooking.other.Constant;
 import com.quocngay.carparkbooking.other.SocketIOClient;
+import com.quocngay.carparkbooking.services.FetchAddressIntentService;
 import com.quocngay.carparkbooking.tasks.DirectionParserTask;
 import com.quocngay.carparkbooking.tasks.DownloadTask;
 import com.quocngay.carparkbooking.tasks.GetDirectionApiData;
@@ -112,27 +111,19 @@ public class MapActivity extends AppCompatActivity
     private boolean mLocationPermissionGranted;
     private GoogleApiClient mGoogleApiClient;
     private CameraPosition mCameraPosition;
-    private LatLng mDefaultLocation;
-    private Location mCurrentLocation;
-    private int mMaxEntries = 50;
     private FloatingActionButton btnMyLocation;
     private TextView tvAddressTitle, tvAddressDescription, tvAddressDuration, tvAddressDistance;
-    private String errorMessage = "";
-    private Location clickedLocation;
     private CardView cardViewMarkerInfo;
     private Marker mOrtherMarker, mSelectedGaraMarker;
-    private String placeName = "";
     private Button btnChoose, btnFind, btnBookDetail;
     private Polyline mPolyline;
-    private Toolbar toolbar;
     private UserModel mUserModel;
     private FloatingActionButton btnGgDirection;
     private ViewGroup root;
-    private Emitter.Listener onResponseGetStatusParkingInfo;
     private ParkingInfoModel mParkingInfoModel;
     private TextView tvGarageSlots;
     private LocalData localData;
-    private TextView tvNavHeaderName, tvNavHeaderEmail;
+    private TextView tvNavHeaderName;
     private List<Marker> garaMarkerList;
 
     @Override
@@ -166,8 +157,8 @@ public class MapActivity extends AppCompatActivity
                         Gson gson = new Gson();
                         try {
                             JSONArray listJsonGaras = jsonObject.getJSONArray(Constant.SERVER_GARAGES_RESULT);
-                            garageModelList = new ArrayList<GarageModel>();
-                            garaMarkerList = new ArrayList<Marker>();
+                            garageModelList = new ArrayList<>();
+                            garaMarkerList = new ArrayList<>();
 
                             for (int i = 0; i < listJsonGaras.length(); i++) {
                                 GarageModel garageModel =
@@ -235,7 +226,6 @@ public class MapActivity extends AppCompatActivity
                 if (resultCode == RESULT_OK) {
                     Place place = PlaceAutocomplete.getPlace(this, data);
                     Log.i("TAG", "Place: " + place.getName());
-                    placeName = place.getName().toString();
 
                     googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
                             place.getLatLng(), Constant.DEFAULT_ZOOM));
@@ -290,7 +280,15 @@ public class MapActivity extends AppCompatActivity
                     getLocationAddress(location);
                     mCameraPosition = new CameraPosition(locationDataModel.getGarageModel().getPosition(),
                             Constant.DEFAULT_ZOOM + 1, 0, 0);
-                    btnMapStatus(BTN_STATUS_FIND);
+                    for (Marker marker : garaMarkerList) {
+                        if (((marker.getTag()) != null ?
+                                ((GarageModel) marker.getTag()).getId() : 0) ==
+                                locationDataModel.getGarageModel().getId()) {
+                            mSelectedGaraMarker = marker;
+                        }
+                    }
+                    setMarkerInfo(mSelectedGaraMarker);
+                    btnMapStatus(BTN_STATUS_CHOOSE);
                 }
                 break;
             case Constant.REQUEST_CODE_BOOKING_DETAIL:
@@ -307,7 +305,6 @@ public class MapActivity extends AppCompatActivity
     protected void onPause() {
         super.onPause();
         mCameraPosition = googleMap.getCameraPosition();
-        mCurrentLocation = mLastKnownLocation;
     }
 
     @Override
@@ -342,7 +339,7 @@ public class MapActivity extends AppCompatActivity
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
         switch (id) {
@@ -368,7 +365,7 @@ public class MapActivity extends AppCompatActivity
     }
 
     private void initToolbar() {
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         root = (ViewGroup) findViewById(R.id.map_view);
         setSupportActionBar(toolbar);
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -389,7 +386,7 @@ public class MapActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         tvNavHeaderName = (TextView) navigationView.getHeaderView(0).findViewById(R.id.tv_nav_header_name);
-        tvNavHeaderEmail = (TextView) navigationView.getHeaderView(0).findViewById(R.id.tv_nav_header_email);
+        TextView tvNavHeaderEmail = (TextView) navigationView.getHeaderView(0).findViewById(R.id.tv_nav_header_email);
         tvNavHeaderEmail.setText(localData.getEmail());
 
         getUserDetail();
@@ -434,7 +431,7 @@ public class MapActivity extends AppCompatActivity
     };
 
     private void initMapCheckBooking() {
-        onResponseGetStatusParkingInfo = new Emitter.Listener() {
+        Emitter.Listener onResponseGetStatusParkingInfo = new Emitter.Listener() {
             @Override
             public void call(final Object... args) {
                 runOnUiThread(new Runnable() {
@@ -543,12 +540,6 @@ public class MapActivity extends AppCompatActivity
         });
         cardViewMarkerInfo = (CardView) findViewById(R.id.cvAddress);
         cardViewMarkerInfo.setVisibility(View.GONE);
-        cardViewMarkerInfo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
 
         tvAddressDuration = (TextView) findViewById(R.id.tv_duration);
         tvAddressDistance = (TextView) findViewById(R.id.tv_distance);
@@ -623,15 +614,6 @@ public class MapActivity extends AppCompatActivity
     private void initMapBookedStatus() {
         btnMapStatus(BTN_STATUS_BOOK_DETAIL);
         googleMap.setOnMapClickListener(null);
-        googleMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
-            @Override
-            public void onMapLongClick(LatLng latLng) {
-                clickedLocation = new Location("");
-                clickedLocation.setLatitude(latLng.latitude);
-                clickedLocation.setLongitude(latLng.longitude);
-                addMarker(clickedLocation);
-            }
-        });
 
         googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
@@ -657,7 +639,11 @@ public class MapActivity extends AppCompatActivity
         if (mPolyline != null) {
             mPolyline.remove();
         }
-        btnMapStatus(BTN_STATUS_FIND);
+        if(mSelectedGaraMarker != null) {
+            btnMapStatus(BTN_STATUS_CHOOSE);
+        }else{
+            btnMapStatus(BTN_STATUS_FIND);
+        }
         googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
@@ -668,16 +654,6 @@ public class MapActivity extends AppCompatActivity
                     mOrtherMarker.remove();
                 }
 
-            }
-        });
-
-        googleMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
-            @Override
-            public void onMapLongClick(LatLng latLng) {
-                clickedLocation = new Location("");
-                clickedLocation.setLatitude(latLng.latitude);
-                clickedLocation.setLongitude(latLng.longitude);
-                addMarker(clickedLocation);
             }
         });
 
@@ -738,44 +714,48 @@ public class MapActivity extends AppCompatActivity
 
     private void btnMapStatus(String status) {
 
-        if (status.equals(BTN_STATUS_FIND)) {
-            btnBookDetail.setVisibility(View.GONE);
-            btnChoose.setVisibility(View.GONE);
-            btnFind.setVisibility(View.VISIBLE);
-            btnFind.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(MapActivity.this, NearestGaraActivity.class);
-                    intent.putExtra(Constant.MY_LOCATION, mLastKnownLocation == null ? new Location("") : mLastKnownLocation);
-                    startActivityForResult(intent, Constant.REQUEST_CODE_NEAREST);
-                }
-            });
-        } else if (status.equals(BTN_STATUS_CHOOSE)) {
-            btnBookDetail.setVisibility(View.GONE);
-            btnFind.setVisibility(View.GONE);
-            btnChoose.setVisibility(View.VISIBLE);
-            btnChoose.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent bookingIntent = new Intent(getApplicationContext(), BookingActivity.class);
-                    bookingIntent.putExtra(Constant.GARA_DETAIL, (GarageModel) mSelectedGaraMarker.getTag());
-                    bookingIntent.putExtra(Constant.MY_LOCATION, mLastKnownLocation == null ? new Location("") : mLastKnownLocation);
-                    startActivityForResult(bookingIntent, Constant.REQUEST_CODE_BOOKING);
-                }
-            });
-        } else if (status.equals(BTN_STATUS_BOOK_DETAIL)) {
+        switch (status) {
+            case BTN_STATUS_FIND:
+                btnBookDetail.setVisibility(View.GONE);
+                btnChoose.setVisibility(View.GONE);
+                btnFind.setVisibility(View.VISIBLE);
+                btnFind.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(MapActivity.this, NearestGaraActivity.class);
+                        intent.putExtra(Constant.MY_LOCATION, mLastKnownLocation == null ? new Location("") : mLastKnownLocation);
+                        startActivityForResult(intent, Constant.REQUEST_CODE_NEAREST);
+                    }
+                });
+                break;
+            case BTN_STATUS_CHOOSE:
+                btnBookDetail.setVisibility(View.GONE);
+                btnFind.setVisibility(View.GONE);
+                btnChoose.setVisibility(View.VISIBLE);
+                btnChoose.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent bookingIntent = new Intent(getApplicationContext(), BookingActivity.class);
+                        bookingIntent.putExtra(Constant.GARA_DETAIL, (GarageModel) mSelectedGaraMarker.getTag());
+                        bookingIntent.putExtra(Constant.MY_LOCATION, mLastKnownLocation == null ? new Location("") : mLastKnownLocation);
+                        startActivityForResult(bookingIntent, Constant.REQUEST_CODE_BOOKING);
+                    }
+                });
+                break;
+            case BTN_STATUS_BOOK_DETAIL:
 
-            btnFind.setVisibility(View.GONE);
-            btnChoose.setVisibility(View.GONE);
-            btnBookDetail.setVisibility(View.VISIBLE);
-            btnBookDetail.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent bookingIntent = new Intent(getApplicationContext(), BookingDetailActivity.class);
-                    startActivityForResult(bookingIntent, Constant.REQUEST_CODE_BOOKING_DETAIL);
-                    //cancelBooking();
-                }
-            });
+                btnFind.setVisibility(View.GONE);
+                btnChoose.setVisibility(View.GONE);
+                btnBookDetail.setVisibility(View.VISIBLE);
+                btnBookDetail.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent bookingIntent = new Intent(getApplicationContext(), BookingDetailActivity.class);
+                        startActivityForResult(bookingIntent, Constant.REQUEST_CODE_BOOKING_DETAIL);
+                        //cancelBooking();
+                    }
+                });
+                break;
         }
     }
 
@@ -921,7 +901,7 @@ public class MapActivity extends AppCompatActivity
                             mLastKnownLocation.getLongitude()), Constant.DEFAULT_ZOOM));
         } else {
             Log.d("TAG", "Current location is null. Using defaults.");
-            mDefaultLocation = new LatLng(-33.852, 151.211);
+            LatLng mDefaultLocation = new LatLng(-33.852, 151.211);
             googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mDefaultLocation, Constant.DEFAULT_ZOOM));
             googleMap.getUiSettings().setMyLocationButtonEnabled(false);
         }
@@ -1002,7 +982,7 @@ public class MapActivity extends AppCompatActivity
         }
     }
 
-    public class GetAPIData extends DownloadTask {
+    private class GetAPIData extends DownloadTask {
 
         @Override
         protected void onPostExecute(String result) {
@@ -1016,11 +996,9 @@ public class MapActivity extends AppCompatActivity
 
         @Override
         protected void onPostExecute(List<List<HashMap<String, String>>> result) {
-            ArrayList<LatLng> points = null;
+            ArrayList<LatLng> points;
             PolylineOptions lineOptions = null;
-            MarkerOptions markerOptions = new MarkerOptions();
             String distance = "";
-            String duration;
             for (int i = 0; i < result.size(); i++) {
                 points = new ArrayList<>();
                 lineOptions = new PolylineOptions();
@@ -1034,7 +1012,6 @@ public class MapActivity extends AppCompatActivity
                         distance = point.get("distance");
                         continue;
                     } else if (j == 1) {
-                        duration = point.get("duration");
                         continue;
                     }
                     double lat = Double.parseDouble(point.get("lat"));
