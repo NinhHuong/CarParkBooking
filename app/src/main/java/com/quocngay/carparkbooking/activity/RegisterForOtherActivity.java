@@ -25,8 +25,12 @@ import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-public class RegisterForSecurityActivity extends AppCompatActivity {
-    String email, password, hashPassword;
+public class RegisterForOtherActivity extends AppCompatActivity {
+    public static String REGISTER_EXTRA = "isAdmin";
+
+    String email, password, hashPassword, roleNewUser ;
+    boolean isAdmin;
+
     private EditText edtEmail, edtPass, edtRetypePass;
     private Emitter.Listener onNewMessageResultRegistNewAccount = new Emitter.Listener() {
         @Override
@@ -65,12 +69,11 @@ public class RegisterForSecurityActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register_for_security);
 
+        isAdmin = getIntent().getBooleanExtra(REGISTER_EXTRA,false);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_regist);
         setSupportActionBar(toolbar);
-//        ActionBar actionBar = getSupportActionBar();
-//        if (actionBar != null) {
-//            actionBar.setDisplayHomeAsUpEnabled(true);
-//        }
+
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
@@ -112,10 +115,50 @@ public class RegisterForSecurityActivity extends AppCompatActivity {
 
         String idAccountAdmin = p.getId();
 
-        SocketIOClient.client.mSocket.emit(Constant.REQUEST_CREATE_ACCOUNT_SECURITY, email, hashPassword,idAccountAdmin);
-        SocketIOClient.client.mSocket.on(Constant.RESPONSE_CREATE_ACCOUNT_SECURITY, onNewMessageResultRegistNewAccount);
-
+        if(!isAdmin) {
+            SocketIOClient.client.mSocket.emit(Constant.REQUEST_CREATE_ACCOUNT_SECURITY, email, hashPassword, idAccountAdmin);
+            SocketIOClient.client.mSocket.on(Constant.RESPONSE_CREATE_ACCOUNT_SECURITY, onNewMessageResultRegistNewAccount);
+        }else{
+            SocketIOClient.client.mSocket.emit(Constant.REQUEST_CREATE_ACCOUNT_ADMIN, email, hashPassword);
+            SocketIOClient.client.mSocket.on(Constant.RESPONSE_CREATE_ACCOUNT_ADMIN, onNewMessageResultRegistNewAccountAdmin);
+        }
     }
+
+    private Emitter.Listener onNewMessageResultRegistNewAccountAdmin = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    JSONObject data = (JSONObject) args[0];
+                    Log.i("Data", data.toString());
+                    try {
+                        boolean res = data.getBoolean(Constant.RESULT);
+                        if (res) {
+                            Toast.makeText(getApplicationContext(),
+                                    getResources().getString(R.string.register_successfull),
+                                    Toast.LENGTH_SHORT).show();
+                            SocketIOClient.client.mSocket.off(Constant.RESPONSE_CREATE_ACCOUNT_ADMIN);
+
+                            String accountID = data.getJSONObject(Constant.DATA).getString(Constant.ACCOUNT_ID);
+                            Intent addGarage = new Intent(RegisterForOtherActivity.this, AddGarageActivity.class);
+                            addGarage.putExtra(Constant.ACCOUNT_ID,accountID);
+                            startActivity(addGarage);
+
+                            finish();
+                        } else if (data.getString(Constant.MESSAGE).equals("email_registered")) {
+                            Toast.makeText(getApplicationContext(), getResources().
+                                            getString(R.string.error_server_email_registered),
+                                    Toast.LENGTH_SHORT).show();
+
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
+    };
 
     //create hash pass from salt code and original pass
     public String sha512Password(String passwordToHash) {

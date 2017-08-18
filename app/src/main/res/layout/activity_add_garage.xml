@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    tools:context="com.quocngay.carparkbooking.activity.AddGarageActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            app:srcCompat="@drawable/ic_home_black_24dp" />
+
+        <EditText
+            android:id="@+id/edtName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Tên" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="25dp"
+            android:scaleType="center"
+            android:scaleX="2"
+            android:scaleY="2"
+            app:srcCompat="@drawable/ic_directions_car_black_24dp" />
+
+        <EditText
+            android:id="@+id/edtAddress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Địa chỉ" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="25dp"
+            android:scaleType="center"
+            android:scaleX="2"
+            android:scaleY="2"
+            app:srcCompat="@drawable/ic_directions_car_black_24dp" />
+
+        <EditText
+            android:id="@+id/edtTotalSlot"
+            android:inputType="numberDecimal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Tổng số chỗ" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="20dp"
+            android:scaleType="center"
+            android:scaleX="2"
+            android:scaleY="2"
+            app:srcCompat="@drawable/ic_map" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <EditText
+                android:id="@+id/edtLocationX"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Kinh độ" />
+            <EditText
+                android:id="@+id/edtLocationY"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Vĩ độ" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="25dp"
+            android:scaleY="2"
+            android:scaleX="2"
+            app:srcCompat="@drawable/ic_timer_black_24dp" />
+
+        <EditText
+            android:id="@+id/edtTimeStart"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="time"
+            android:hint="Thời gian mở cửa" />
+
+        <!--<ImageButton-->
+            <!--android:id="@+id/btnTimeIn"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:padding="10dp"-->
+            <!--app:srcCompat="@drawable/ic_timer_black_24dp" />-->
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="25dp"
+            android:scaleY="2"
+            android:scaleX="2"
+            app:srcCompat="@drawable/ic_timer_black_24dp" />
+
+        <EditText
+            android:id="@+id/edtTimeEnd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="time"
+            android:hint="Thời gian đóng cửa" />
+
+        <!--<ImageButton-->
+            <!--android:id="@+id/btnTimeOut"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:padding="10dp"-->
+            <!--app:srcCompat="@drawable/ic_timer_black_24dp" />-->
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btnAddNewGarage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Thêm garage" />
+
+</LinearLayout>

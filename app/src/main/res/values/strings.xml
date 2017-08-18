@@ -207,4 +207,5 @@
     <string name="title_activity_security_manager">Quản lý bảo vệ</string>
     <string name="title_activity_checkin">Cho xe vào</string>
     <string name="title_activity_checkout">Cho xe ra</string>
+    <string name="title_activity_super_admin">SuperAdminActivity</string>
 </resources>

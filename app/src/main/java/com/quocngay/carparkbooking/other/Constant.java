@@ -25,6 +25,7 @@ public class Constant {
     public static final int REQUEST_CODE_BOOKING = 1;
     public static final int REQUEST_CODE_NEAREST = 9;
     public static final int REQUEST_CODE_BOOKING_DETAIL = 8;
+    public static final String ACCOUNT_ID = "accountID";
 
 
     public static final String GARA_LOCATION = "gara_latlng";
@@ -178,7 +179,14 @@ public class Constant {
     public static final String RESPONSE_HISTORY = "response_history";
     //endregion
 
+    //endregion
 
+    //region SUPER ADMIN
+    public static final String REQUEST_ADD_NEW_GARAGE = "request_add_new_garage";
+    public static final String RESPONSE_ADD_NEW_GARAGE = "response_add_new_garage";
+
+    public static final String REQUEST_CREATE_ACCOUNT_ADMIN = "request_create_new_account_for_admin";
+    public static final String RESPONSE_CREATE_ACCOUNT_ADMIN = "response_create_new_account_for_admin";
     //endregion
 
     public static final String REQUEST_GET_GARAGE_BY_ID = "request_get_garage_by_id";

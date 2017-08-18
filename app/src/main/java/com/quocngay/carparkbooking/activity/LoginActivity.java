@@ -357,6 +357,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             int roleValue = Integer.parseInt(role);
             switch (roleValue) {
                 case Constant.ROLE_SUPER_ADMIN_VALUE:
+                    intent = new Intent(LoginActivity.this, SuperAdminActivity.class);
                     break;
                 case Constant.ROLE_ADMIN_VALUE:
                     intent = new Intent(LoginActivity.this, AdminActivity.class);

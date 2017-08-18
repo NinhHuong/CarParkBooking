@@ -1,12 +1,10 @@
 package com.quocngay.carparkbooking.activity;
 
 import android.app.DatePickerDialog;
-import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.support.design.widget.NavigationView;
@@ -26,7 +24,6 @@ import android.widget.TextView;
 import com.github.nkzawa.emitter.Emitter;
 import com.google.gson.Gson;
 import com.quocngay.carparkbooking.R;
-import com.quocngay.carparkbooking.fragment.DatePickerFragment;
 import com.quocngay.carparkbooking.model.GarageModel;
 import com.quocngay.carparkbooking.model.LocalData;
 import com.quocngay.carparkbooking.model.ParkingInfoSecurityModel;
@@ -152,7 +149,7 @@ public class AdminActivity extends AppCompatActivity
 
         switch (id) {
             case R.id.nav_add_security:
-                startActivity(new Intent(AdminActivity.this, RegisterForSecurityActivity.class));
+                startActivity(new Intent(AdminActivity.this, RegisterForOtherActivity.class));
                 break;
             case R.id.nav_all_security:
                 startActivity(new Intent(AdminActivity.this, SecurityManagerActivity.class));
