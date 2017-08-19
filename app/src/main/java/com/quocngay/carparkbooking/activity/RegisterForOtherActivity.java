@@ -1,7 +1,6 @@
 package com.quocngay.carparkbooking.activity;
 
 import android.content.Intent;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -28,8 +27,8 @@ import java.security.NoSuchAlgorithmException;
 public class RegisterForOtherActivity extends AppCompatActivity {
     public static String REGISTER_EXTRA = "isAdmin";
 
-    String email, password, hashPassword, roleNewUser ;
-    boolean isAdmin;
+    String email, password, hashPassword, roleNewUser;
+    boolean isAdmin, isClickButton;
 
     private EditText edtEmail, edtPass, edtRetypePass;
     private Emitter.Listener onNewMessageResultRegistNewAccount = new Emitter.Listener() {
@@ -42,6 +41,7 @@ public class RegisterForOtherActivity extends AppCompatActivity {
                     Log.i("Data", data.toString());
                     try {
                         boolean res = data.getBoolean(Constant.RESULT);
+                        isClickButton = false;
                         if (res) {
                             Toast.makeText(getApplicationContext(),
                                     getResources().getString(R.string.register_successfull),
@@ -68,8 +68,8 @@ public class RegisterForOtherActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register_for_security);
-
-        isAdmin = getIntent().getBooleanExtra(REGISTER_EXTRA,false);
+        isClickButton = false;
+        isAdmin = getIntent().getBooleanExtra(REGISTER_EXTRA, false);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_regist);
         setSupportActionBar(toolbar);
@@ -85,7 +85,7 @@ public class RegisterForOtherActivity extends AppCompatActivity {
 
         btnRegist.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                registNewAccount();
+                if (!isClickButton) registNewAccount();
             }
         });
     }
@@ -114,11 +114,12 @@ public class RegisterForOtherActivity extends AppCompatActivity {
         hashPassword = sha512Password(password);
 
         String idAccountAdmin = p.getId();
+        isClickButton = true;
 
-        if(!isAdmin) {
+        if (!isAdmin) {
             SocketIOClient.client.mSocket.emit(Constant.REQUEST_CREATE_ACCOUNT_SECURITY, email, hashPassword, idAccountAdmin);
             SocketIOClient.client.mSocket.on(Constant.RESPONSE_CREATE_ACCOUNT_SECURITY, onNewMessageResultRegistNewAccount);
-        }else{
+        } else {
             SocketIOClient.client.mSocket.emit(Constant.REQUEST_CREATE_ACCOUNT_ADMIN, email, hashPassword);
             SocketIOClient.client.mSocket.on(Constant.RESPONSE_CREATE_ACCOUNT_ADMIN, onNewMessageResultRegistNewAccountAdmin);
         }
@@ -134,17 +135,17 @@ public class RegisterForOtherActivity extends AppCompatActivity {
                     Log.i("Data", data.toString());
                     try {
                         boolean res = data.getBoolean(Constant.RESULT);
+                        isClickButton = false;
                         if (res) {
                             Toast.makeText(getApplicationContext(),
                                     getResources().getString(R.string.register_successfull),
                                     Toast.LENGTH_SHORT).show();
-                            SocketIOClient.client.mSocket.off(Constant.RESPONSE_CREATE_ACCOUNT_ADMIN);
 
-                            String accountID = data.getJSONObject(Constant.DATA).getString(Constant.ACCOUNT_ID);
+                            String accountID = data.getJSONObject(Constant.DATA).getString(Constant.ACCOUNT_ADMIN_ID);
                             Intent addGarage = new Intent(RegisterForOtherActivity.this, AddGarageActivity.class);
-                            addGarage.putExtra(Constant.ACCOUNT_ID,accountID);
+                            addGarage.putExtra(Constant.ACCOUNT_ADMIN_ID, accountID);
                             startActivity(addGarage);
-
+                            SocketIOClient.client.mSocket.off(Constant.RESPONSE_CREATE_ACCOUNT_ADMIN);
                             finish();
                         } else if (data.getString(Constant.MESSAGE).equals("email_registered")) {
                             Toast.makeText(getApplicationContext(), getResources().

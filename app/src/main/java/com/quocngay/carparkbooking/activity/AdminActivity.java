@@ -70,7 +70,9 @@ public class AdminActivity extends AppCompatActivity
                         Boolean result = data.getBoolean(Constant.RESULT);
 
                         if (!result) return;
-                        allList = new ArrayList<>();
+                        if (allList == null)
+                            allList = new ArrayList<>();
+                        else allList.clear();
                         Gson gson = new Gson();
 
                         JSONArray garage = data.getJSONArray(Constant.DATA);
@@ -148,7 +150,7 @@ public class AdminActivity extends AppCompatActivity
         year = myCalendar.get(Calendar.YEAR);
         month = myCalendar.get(Calendar.MONTH);
         day = myCalendar.get(Calendar.DAY_OF_MONTH);
-
+        allList = new ArrayList<>();
         datePickerDialog = new DatePickerDialog(
                 this, AdminActivity.this, year, month, day);
 
@@ -247,23 +249,24 @@ public class AdminActivity extends AppCompatActivity
         SimpleDateFormat dateFormat =
                 new SimpleDateFormat("d-M-yyyy", Locale.getDefault());
 
-        for (int i = 0; i < allList.size(); i++) {
-            try {
-                Date date = inputFormat.parse(allList.get(i).getTimeGoIn());
-                String d = dateFormat.format(date);
-                if (d.compareTo(selectDate) == 0) {
-                    listShow.add(allList.get(i));
+        if (allList != null)
+            for (int i = 0; i < allList.size(); i++) {
+                try {
+                    Date date = inputFormat.parse(allList.get(i).getTimeGoIn());
+                    String d = dateFormat.format(date);
+                    if (d.compareTo(selectDate) == 0) {
+                        listShow.add(allList.get(i));
+                    }
+
+                    AdminHistoryListAdapter adapter = new AdminHistoryListAdapter(getBaseContext(), listShow, this);
+                    lvHistory.setAdapter(adapter);
+
+                    txtNotCar.setVisibility(listShow.size() == 0 ? View.VISIBLE : View.GONE);
+                } catch (ParseException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
                 }
-
-                AdminHistoryListAdapter adapter = new AdminHistoryListAdapter(getBaseContext(), listShow, this);
-                lvHistory.setAdapter(adapter);
-
-                txtNotCar.setVisibility(listShow.size() == 0 ? View.VISIBLE : View.GONE);
-            } catch (ParseException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
             }
-        }
     }
     //endregion
 }

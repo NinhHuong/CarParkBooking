@@ -18,14 +18,14 @@ import org.json.JSONObject;
 
 public class AddGarageActivity extends AppCompatActivity {
     private EditText edtName, edtAddress,edtNumberSlot,edtLongitude, edtLatitude;
-    String accountID;
+    String accountAdminId;
     private Button addNewGarage;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_garage);
 
-        accountID = getIntent().getStringExtra(Constant.ACCOUNT_ID);
+        accountAdminId = getIntent().getStringExtra(Constant.ACCOUNT_ADMIN_ID);
 
         edtName = (EditText)findViewById(R.id.edtName);
 
@@ -44,6 +44,14 @@ public class AddGarageActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        SocketIOClient.client.mSocket.emit(Constant.REQUEST_REMOVE_ACCOUNT_BY_ID, accountAdminId);
+        SocketIOClient.client.mSocket.on(Constant.RESPONSE_REMOVE_ACCOUNT_BY_ID, onRemoveAccount);
+    }
+
+
     private void createNewGarage(){
         String name,address,timeStart,timeEnd,totalSlot,longitude,latitude;
         name = edtName.getText().toString();
@@ -59,14 +67,13 @@ public class AddGarageActivity extends AppCompatActivity {
                 address,
                 totalSlot,
                 0,
-                latitude,
                 longitude,
-                accountID,
+                latitude,
+                accountAdminId,
                 timeStart,
                 timeEnd,
                 0);
         SocketIOClient.client.mSocket.on(Constant.RESPONSE_ADD_NEW_GARAGE, onNewMessageResultRegistNewAccount);
-
     }
 
     private Emitter.Listener onNewMessageResultRegistNewAccount = new Emitter.Listener() {
@@ -81,15 +88,40 @@ public class AddGarageActivity extends AppCompatActivity {
                         boolean res = data.getBoolean(Constant.RESULT);
                         if (res) {
                             Toast.makeText(getApplicationContext(),
-                                    getResources().getString(R.string.register_successfull),
+                                    getResources().getString(R.string.message_regist_garage),
                                     Toast.LENGTH_SHORT).show();
-                            SocketIOClient.client.mSocket.off(Constant.RESPONSE_CREATE_ACCOUNT_SECURITY);
+                            SocketIOClient.client.mSocket.off(Constant.RESPONSE_ADD_NEW_GARAGE);
                             finish();
                         } else if (data.getString(Constant.MESSAGE).equals("email_registered")) {
                             Toast.makeText(getApplicationContext(), getResources().
-                                            getString(R.string.error_server_email_registered),
+                                            getString(R.string.error_general),
                                     Toast.LENGTH_SHORT).show();
 
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
+    };
+
+    private Emitter.Listener onRemoveAccount = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    JSONObject data = (JSONObject) args[0];
+                    Log.i("Data", data.toString());
+                    try {
+                        boolean res = data.getBoolean(Constant.RESULT);
+                        if (res) {
+                            Toast.makeText(getApplicationContext(),
+                                    getResources().getString(R.string.message_cancel_regist_garage),
+                                    Toast.LENGTH_SHORT).show();
+                            SocketIOClient.client.mSocket.off(Constant.RESPONSE_REMOVE_ACCOUNT_BY_ID);
+                            finish();
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
