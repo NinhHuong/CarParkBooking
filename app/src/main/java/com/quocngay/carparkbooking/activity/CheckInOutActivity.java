@@ -30,8 +30,9 @@ import android.widget.Toast;
 
 import com.github.nkzawa.emitter.Emitter;
 import com.google.gson.Gson;
-import com.quocngay.carparkbooking.LicenseSecurityRecyclerViewAdapter;
+import com.quocngay.carparkbooking.adapter.LicenseSecurityRecyclerViewAdapter;
 import com.quocngay.carparkbooking.R;
+import com.quocngay.carparkbooking.model.GarageModel;
 import com.quocngay.carparkbooking.model.LocalData;
 import com.quocngay.carparkbooking.model.ParkingInfoSecurityModel;
 import com.quocngay.carparkbooking.other.Constant;
@@ -44,7 +45,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-public class CheckInOutActivity extends AppCompatActivity {
+public class CheckInOutActivity extends GeneralActivity {
     public static final String PARKINGINFO_MODEL = "parkinginfor_model";
 
     public static final String EXTRA_SECURITY_FUNCTION = "security_function";
@@ -78,9 +79,9 @@ public class CheckInOutActivity extends AppCompatActivity {
 
         String resultExtra = getIntent().getStringExtra(EXTRA_SECURITY_FUNCTION);
 
-        initToolbar();
+        initToolbar(R.id.toolbar, true, true);
         initSearchBar();
-        LocalData localData = new LocalData(getApplicationContext());
+        LocalData localData;
         initButtonAddCarIn();
 
         if (resultExtra.compareTo(EXTRA_CAR_IN) == 0) {
@@ -108,7 +109,7 @@ public class CheckInOutActivity extends AppCompatActivity {
 
         OnListInteractionListener listener = new OnListInteractionListener() {
             @Override
-            public void OnLicenseClickListener(final ParkingInfoSecurityModel item) {
+            public void onLicenseClickListener(final ParkingInfoSecurityModel item) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(CheckInOutActivity.this);
                 builder.setTitle(dialogTitle)
                         .setMessage(dialogMessage)
@@ -130,6 +131,11 @@ public class CheckInOutActivity extends AppCompatActivity {
                                     }
                                 });
                 builder.create().show();
+            }
+
+            @Override
+            public void onGarageClickListener(GarageModel item) {
+
             }
         };
 
@@ -335,17 +341,6 @@ public class CheckInOutActivity extends AppCompatActivity {
                 return false;
             }
         });
-    }
-
-
-    private void initToolbar() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        ActionBar actionBar = getSupportActionBar();
-
-        assert actionBar != null;
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setDisplayShowTitleEnabled(false);
     }
 
     private void initButtonAddCarIn(){

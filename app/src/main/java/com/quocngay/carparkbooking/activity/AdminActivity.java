@@ -27,7 +27,7 @@ import com.quocngay.carparkbooking.R;
 import com.quocngay.carparkbooking.model.GarageModel;
 import com.quocngay.carparkbooking.model.LocalData;
 import com.quocngay.carparkbooking.model.ParkingInfoSecurityModel;
-import com.quocngay.carparkbooking.other.AdminHistoryListAdapter;
+import com.quocngay.carparkbooking.adapter.AdminHistoryListAdapter;
 import com.quocngay.carparkbooking.other.Constant;
 import com.quocngay.carparkbooking.other.SocketIOClient;
 
@@ -43,7 +43,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-public class AdminActivity extends AppCompatActivity
+public class AdminActivity extends GeneralActivity
         implements NavigationView.OnNavigationItemSelectedListener, DatePickerDialog.OnDateSetListener {
 
     DatePickerDialog datePickerDialog;
@@ -131,14 +131,7 @@ public class AdminActivity extends AppCompatActivity
         txtNotCar = (TextView) findViewById(R.id.txtNotCar);
         lvHistory = (ListView) findViewById(R.id.lvHistory);
 
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout_admin);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
-        toggle.syncState();
+        initToolbarWithDrawer(R.id.toolbar, R.id.drawer_layout_admin);
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view_admin);
         navigationView.setNavigationItemSelectedListener(this);
         localData = new LocalData(getApplicationContext());
@@ -199,37 +192,13 @@ public class AdminActivity extends AppCompatActivity
                 startActivity(new Intent(AdminActivity.this, SecurityManagerActivity.class));
                 break;
             case R.id.nav_logout:
-                activityLogout();
+                actionLogout();
                 break;
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout_admin);
         drawer.closeDrawer(GravityCompat.START);
         return true;
-    }
-
-    private void activityLogout() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage(R.string.dialog_logout_message)
-                .setPositiveButton(R.string.fire, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        SharedPreferences mSharedPref = getSharedPreferences(Constant.APP_PREF, MODE_PRIVATE);
-                        SharedPreferences.Editor editor = mSharedPref.edit();
-                        editor.remove(Constant.APP_PREF_TOKEN);
-                        editor.remove(Constant.APP_PREF_REMEMBER);
-                        editor.apply();
-                        Intent intent = new Intent(AdminActivity.this, LoginActivity.class);
-                        startActivity(intent);
-                        finish();
-                    }
-                })
-                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.dismiss();
-                    }
-                });
-        // Create the AlertDialog object and return it
-        builder.create().show();
     }
 
     @Override

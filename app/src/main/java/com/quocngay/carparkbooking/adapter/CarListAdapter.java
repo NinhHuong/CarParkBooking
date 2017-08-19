@@ -1,4 +1,4 @@
-package com.quocngay.carparkbooking.other;
+package com.quocngay.carparkbooking.adapter;
 
 import android.app.Activity;
 import android.content.Context;
@@ -15,6 +15,8 @@ import android.widget.TextView;
 
 import com.quocngay.carparkbooking.R;
 import com.quocngay.carparkbooking.model.CarModel;
+import com.quocngay.carparkbooking.other.Constant;
+import com.quocngay.carparkbooking.other.SocketIOClient;
 
 import java.util.List;
 

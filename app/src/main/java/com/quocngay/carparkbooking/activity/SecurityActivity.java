@@ -46,7 +46,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SecurityActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class SecurityActivity extends GeneralActivity implements NavigationView.OnNavigationItemSelectedListener {
     private Spinner spnCarIn;
     private Spinner spnCarOut;
     private Button btnCarGoIn;
@@ -426,9 +426,7 @@ public class SecurityActivity extends AppCompatActivity implements NavigationVie
     }
 
     private void initSecurityActivity() {
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        defaultToolbar();
+        initToolbarWithDrawer(R.id.toolbar, R.id.drawer_layout);
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view_security);
         navigationView.setNavigationItemSelectedListener(this);
@@ -439,15 +437,6 @@ public class SecurityActivity extends AppCompatActivity implements NavigationVie
 
         navigationView.getMenu().findItem(R.id.nav_car_manager).setVisible(false);
         navigationView.getMenu().findItem(R.id.nav_history).setVisible(false);
-    }
-
-    private void defaultToolbar() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
-        toggle.syncState();
-        toggle.setDrawerSlideAnimationEnabled(true);
     }
 
     private void CreateDialog(String title, String message, final String request, final String carUse) {

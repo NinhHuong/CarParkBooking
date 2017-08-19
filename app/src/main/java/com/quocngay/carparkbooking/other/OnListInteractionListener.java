@@ -1,5 +1,6 @@
 package com.quocngay.carparkbooking.other;
 
+import com.quocngay.carparkbooking.model.GarageModel;
 import com.quocngay.carparkbooking.model.ParkingInfoSecurityModel;
 
 /**
@@ -8,5 +9,7 @@ import com.quocngay.carparkbooking.model.ParkingInfoSecurityModel;
 
 public interface OnListInteractionListener {
 
-    void OnLicenseClickListener(ParkingInfoSecurityModel item);
+    void onLicenseClickListener(ParkingInfoSecurityModel item);
+
+    void onGarageClickListener(GarageModel item);
 }

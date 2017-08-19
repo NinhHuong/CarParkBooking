@@ -1,4 +1,4 @@
-package com.quocngay.carparkbooking;
+package com.quocngay.carparkbooking.adapter;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -8,6 +8,7 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
 
+import com.quocngay.carparkbooking.R;
 import com.quocngay.carparkbooking.model.ParkingInfoSecurityModel;
 import com.quocngay.carparkbooking.other.OnListInteractionListener;
 
@@ -56,7 +57,7 @@ public class LicenseSecurityRecyclerViewAdapter
             @Override
             public void onClick(View v) {
                 if (null != mListener) {
-                    mListener.OnLicenseClickListener(holder.mItem);
+                    mListener.onLicenseClickListener(holder.mItem);
                 }
             }
         });

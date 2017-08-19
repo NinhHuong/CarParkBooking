@@ -125,11 +125,9 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.quocngay.carparkbooking.activity.MapActivity" />
         </activity>
-
         <activity
-            android:label="@string/title_activity_security_manager"
-            android:name=".activity.SecurityManagerActivity" />
-
+            android:name=".activity.SecurityManagerActivity"
+            android:label="@string/title_activity_security_manager" />
         <activity
             android:name=".activity.CheckInOutActivity"
             android:label="@string/title_activity_checkin">
@@ -141,7 +139,7 @@
             android:name=".activity.SuperAdminActivity"
             android:label="@string/title_activity_super_admin"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".activity.AddGarageActivity"/>
+        <activity android:name=".activity.AddGarageActivity" />
     </application>
 
 </manifest>

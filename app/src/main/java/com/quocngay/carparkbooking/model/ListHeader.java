@@ -5,10 +5,8 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.quocngay.carparkbooking.R;
-import com.quocngay.carparkbooking.other.Constant;
-import com.quocngay.carparkbooking.other.HistoryListAdapter;
+import com.quocngay.carparkbooking.adapter.HistoryListAdapter;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;

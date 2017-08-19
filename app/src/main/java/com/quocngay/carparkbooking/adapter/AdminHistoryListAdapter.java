@@ -1,4 +1,4 @@
-package com.quocngay.carparkbooking.other;
+package com.quocngay.carparkbooking.adapter;
 
 import android.app.Activity;
 import android.content.Context;

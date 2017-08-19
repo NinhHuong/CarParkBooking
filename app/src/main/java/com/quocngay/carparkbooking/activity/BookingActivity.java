@@ -27,7 +27,7 @@ import com.github.nkzawa.emitter.Emitter;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.gson.Gson;
-import com.quocngay.carparkbooking.LicenseNumRecyclerViewAdapter;
+import com.quocngay.carparkbooking.adapter.LicenseNumRecyclerViewAdapter;
 import com.quocngay.carparkbooking.R;
 import com.quocngay.carparkbooking.model.CarModel;
 import com.quocngay.carparkbooking.model.GarageModel;
@@ -49,7 +49,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
-public class BookingActivity extends AppCompatActivity {
+public class BookingActivity extends GeneralActivity {
 
     private RecyclerView mRecyclerView;
     private LicenseNumRecyclerViewAdapter recyclerViewAdapter;
@@ -95,7 +95,7 @@ public class BookingActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_booking);
-        initToolbar();
+        initToolbar(R.id.toolbar_booking_image, true, true);
         localData = new LocalData(getApplicationContext());
         markerGara = (GarageModel) getIntent().getSerializableExtra(Constant.GARA_DETAIL);
         mMyLocation = getIntent().getParcelableExtra(Constant.MY_LOCATION);
@@ -109,16 +109,6 @@ public class BookingActivity extends AppCompatActivity {
         SocketIOClient.client.mSocket.emit(Constant.REQUEST_GET_GARAGE_BY_ID,
                 markerGara.getId());
         SocketIOClient.client.mSocket.on(Constant.RESPONSE_GET_GARAGE_BY_ID, onResponseGetGaraById);
-    }
-
-    private void initToolbar() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_booking_image);
-        setSupportActionBar(toolbar);
-        ActionBar actionBar = getSupportActionBar();
-
-        assert actionBar != null;
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setDisplayShowTitleEnabled(false);
     }
 
     @SuppressLint("SimpleDateFormat")
@@ -414,26 +404,6 @@ public class BookingActivity extends AppCompatActivity {
                 return false;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    public String getDirectionsUrl(LatLng origin, LatLng dest, Boolean redirect) {
-
-        String str_origin = "origin=" + origin.latitude + "," + origin.longitude;
-        String str_dest = "destination=" + dest.latitude + "," + dest.longitude;
-        String sensor = "sensor=false";
-        String mode = "mode=driving";
-        String language = "language=" + Locale.getDefault().getLanguage();
-        String parameters = str_origin + "&" + str_dest + "&" + sensor + "&" + mode + "&" + language;
-        String output = "json";
-        String url;
-        if (redirect) {
-            url = getResources().getString(R.string.google_direction_api_redirect, parameters);
-        } else {
-            url = getResources().getString(R.string.google_direction_api, output, parameters);
-        }
-        Log.d("APIUrl", url);
-
-        return url;
     }
 
     private Emitter.Listener onResponseAddCar = new Emitter.Listener() {
