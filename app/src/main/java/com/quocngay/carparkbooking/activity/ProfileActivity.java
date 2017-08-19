@@ -41,7 +41,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-public class ProfileActivity extends AppCompatActivity {
+public class ProfileActivity extends GeneralActivity {
 
     TextView tvName, tvEmail;
     EditText edtFirstName, edtLastName;
@@ -59,7 +59,7 @@ public class ProfileActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
-        initToolbar();
+        initToolbar(R.id.toolbar, true, true);
         initElements();
 
         fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -322,16 +322,6 @@ public class ProfileActivity extends AppCompatActivity {
                 }
             }
         });
-    }
-
-    private void initToolbar() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        ActionBar actionBar = getSupportActionBar();
-
-        assert actionBar != null;
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setDisplayShowTitleEnabled(true);
     }
 
 }

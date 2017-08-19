@@ -42,7 +42,7 @@ import org.json.JSONObject;
 
 import java.util.Locale;
 
-public class BookingDetailActivity extends AppCompatActivity {
+public class BookingDetailActivity extends GeneralActivity {
 
     private ImageView mMapImage;
     private TextView tvBookingDetailTitle, tvBookingDetailDes, tvBookingDetailDuration, tvBookingDetailDistance;
@@ -58,7 +58,7 @@ public class BookingDetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_booking_detail);
-        initToolbar();
+        initToolbar(R.id.toolbar_booking_image, true, false);
         initBookingDetailElements();
         if (SocketIOClient.client == null) {
             new SocketIOClient();
@@ -165,16 +165,6 @@ public class BookingDetailActivity extends AppCompatActivity {
 
         SocketIOClient.client.mSocket.emit(Constant.REQUEST_FIND_CAR_BY_ID, carId);
         SocketIOClient.client.mSocket.on(Constant.RESPONSE_FIND_CAR_BY_ID, onResponseGetCarById);
-    }
-
-    private void initToolbar() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_booking_image);
-        setSupportActionBar(toolbar);
-        ActionBar actionBar = getSupportActionBar();
-
-        assert actionBar != null;
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setDisplayShowTitleEnabled(false);
     }
 
     private void initBookingDetailElements() {

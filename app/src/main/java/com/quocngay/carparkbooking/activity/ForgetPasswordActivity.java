@@ -23,7 +23,7 @@ import com.quocngay.carparkbooking.other.SocketIOClient;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class ForgetPasswordActivity extends AppCompatActivity {
+public class ForgetPasswordActivity extends GeneralActivity {
 
     private Button btnForget;
     private String email;
@@ -66,12 +66,8 @@ public class ForgetPasswordActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_forget_password);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_forget);
-        setSupportActionBar(toolbar);
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-        }
+        initToolbar(R.id.toolbar_forget, true, false);
+
         initCodeDialog();
         edEmail = (EditText) findViewById(R.id.edtForgetEmail);
         btnForget = (Button) findViewById(R.id.btnForget);

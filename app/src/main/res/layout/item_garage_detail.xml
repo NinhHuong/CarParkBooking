@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <android.support.v7.widget.CardView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="5dp"
+        android:background="?android:attr/selectableItemBackground"
+        app:contentPadding="5dp">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/btn_delete"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_alignParentEnd="true"
+                android:background="?android:attr/selectableItemBackground"
+                android:clickable="true"
+                android:src="@mipmap/ic_close" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/btn_delete"
+                android:layout_marginBottom="@dimen/text_margin"
+                android:layout_marginEnd="@dimen/text_margin"
+                android:layout_marginStart="@dimen/text_margin"
+                android:orientation="vertical">
+
+
+                <TextView
+                    android:id="@+id/tv_gara_detail_slots"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginStart="@dimen/text_margin"
+                    android:text="123"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/tv_gara_detail_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/text_margin"
+                    android:layout_toStartOf="@id/tv_gara_detail_slots"
+                    android:maxLines="2"
+                    android:text="123"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/tv_gara_detail_des"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/tv_gara_detail_title"
+                    android:layout_marginTop="@dimen/text_margin"
+                    android:text="asdasxzc" />
+
+                <TextView
+                    android:id="@+id/tv_gara_detail_email"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/tv_gara_detail_title"
+                    android:layout_marginTop="@dimen/text_margin"
+                    android:text="asdasxzc" />
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+    </android.support.v7.widget.CardView>
+
+</FrameLayout>

@@ -9,14 +9,9 @@
     tools:openDrawer="start">
 
     <include
-        layout="@layout/app_bar"
+        layout="@layout/main_super_admin"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
-
-    <!--<include-->
-        <!--layout="@layout/activity_super_admin_map"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent" />-->
 
     <android.support.design.widget.NavigationView
         android:id="@+id/nav_view"

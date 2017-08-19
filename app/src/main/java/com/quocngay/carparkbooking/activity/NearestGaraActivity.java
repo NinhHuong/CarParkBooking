@@ -16,7 +16,7 @@ import android.view.View;
 import android.widget.ProgressBar;
 
 import com.google.android.gms.maps.model.LatLng;
-import com.quocngay.carparkbooking.GaragesRecyclerViewAdapter;
+import com.quocngay.carparkbooking.adapter.GaragesRecyclerViewAdapter;
 import com.quocngay.carparkbooking.R;
 import com.quocngay.carparkbooking.model.GarageModel;
 import com.quocngay.carparkbooking.model.LocationDataModel;
@@ -31,7 +31,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
-public class NearestGaraActivity extends AppCompatActivity implements View.OnClickListener {
+public class NearestGaraActivity extends GeneralActivity implements View.OnClickListener {
 
     public static final String GARA_SELECTED = "gara_selected";
     String distance;
@@ -47,11 +47,7 @@ public class NearestGaraActivity extends AppCompatActivity implements View.OnCli
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_nearest_gara);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        ActionBar actionBar = getSupportActionBar();
-        assert actionBar != null;
-        actionBar.setDisplayHomeAsUpEnabled(true);
+        initToolbar(R.id.toolbar, true, true);
 
         Location lastKnownLocation = getIntent().getParcelableExtra(Constant.MY_LOCATION);
         progressBar = (ProgressBar) findViewById(R.id.nearst_progress);

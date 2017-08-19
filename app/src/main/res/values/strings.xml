@@ -20,7 +20,7 @@
     <string name="time_exprited">Expired!</string>
     <string name="dialog_btn_cancel"><u>Hủy</u></string>
     <string name="dialog_btn_continue">Tiếp tục</string>
-    <string name="dialog_reset_title">Reset Password</string>
+    <string name="dialog_reset_title">Đặt lại</string>
     <string name="hint_retype_password">Re-type Password</string>
     <string name="hint_password">Password</string>
     <string name="hint_reset_code">Reset code</string>
@@ -93,8 +93,7 @@
     <!--<string name="error_invalid_email">This email address is invalid</string>-->
     <!--<string name="error_incorrect_password">This password is incorrect</string>-->
     <string name="error_incorrect_number_slot">Số chỗ bận phải bé hơn tổng số chỗ</string>
-    <string name="error_mismatch_password">Your confirmation password is mismatch</string>
-    <string name="forget_reset_success">Lấy lại mật khẩu thành công!</string>
+    <string name="forget_reset_success">Đặt lại thành công!</string>
     <string name="error_code">Mã lỗi! Hãy kiểm tra lại</string>
     <string name="newpass_button">Xác nhận</string>
     <string name="register_successfull">Đăng ký thành công. Vào email để lấy mã xác nhận</string>

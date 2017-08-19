@@ -24,11 +24,8 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
-import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.SpannableString;
 import android.text.TextUtils;
@@ -42,17 +39,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.fenchtose.tooltip.Tooltip;
-import com.fenchtose.tooltip.TooltipAnimation;
 import com.github.nkzawa.emitter.Emitter;
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GoogleApiAvailability;
-import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
-import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.LocationServices;
@@ -94,9 +84,8 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 
-public class MapActivity extends AppCompatActivity
+public class MapActivity extends GeneralActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener {
 
@@ -119,7 +108,6 @@ public class MapActivity extends AppCompatActivity
     private Polyline mPolyline;
     private UserModel mUserModel;
     private FloatingActionButton btnGgDirection;
-    private ViewGroup root;
     private ParkingInfoModel mParkingInfoModel;
     private TextView tvGarageSlots;
     private LocalData localData;
@@ -364,24 +352,12 @@ public class MapActivity extends AppCompatActivity
         return true;
     }
 
-    private void initToolbar() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        root = (ViewGroup) findViewById(R.id.map_view);
-        setSupportActionBar(toolbar);
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
-        toggle.syncState();
-        toggle.setDrawerSlideAnimationEnabled(true);
-    }
-
     private void initMapActivity() {
 
 //        Intent notificationIntent = new Intent(getApplicationContext(), NotificationIntentService.class);
 //        getApplicationContext().startService(notificationIntent);
 
-        initToolbar();
+        initToolbarWithDrawer(R.id.toolbar, R.id.drawer_layout);
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
@@ -551,7 +527,7 @@ public class MapActivity extends AppCompatActivity
         btnMapStatus(BTN_STATUS_FIND);
     }
 
-    private void initGoogleApi() {
+    public void initGoogleApi() {
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .enableAutoManage(this, this)
                 .addConnectionCallbacks(this)
@@ -562,33 +538,6 @@ public class MapActivity extends AppCompatActivity
         mGoogleApiClient.connect();
     }
 
-    private void showToolTip(View anchorView, View contentView) {
-        new Tooltip.Builder(getApplicationContext())
-                .anchor(anchorView, Tooltip.LEFT)
-                .content(contentView)
-                .animate(new TooltipAnimation(TooltipAnimation.FADE, 500))
-                .autoAdjust(true)
-                .autoCancel(2000)
-                .into(root)
-                .withTip(new Tooltip.Tip(15, 15, getResources().getColor(R.color.colorPrimary))).show();
-    }
-
-    private void openAutocompleteActivity() {
-        try {
-            Intent intent = new PlaceAutocomplete.IntentBuilder(PlaceAutocomplete.MODE_FULLSCREEN).build(this);
-            startActivityForResult(intent, Constant.REQUEST_CODE_AUTOCOMPLETE);
-        } catch (GooglePlayServicesRepairableException e) {
-            GoogleApiAvailability.getInstance().getErrorDialog(this, e.getConnectionStatusCode(), 0 /* requestCode */).show();
-        } catch (GooglePlayServicesNotAvailableException e) {
-            String message = "Google Play Services is not available: " +
-                    GoogleApiAvailability.getInstance().getErrorString(e.errorCode);
-
-            Log.e("TAG", message);
-            Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
-        }
-    }
-
-
     private void setInfoViewContent(String title, String description, String duration, String distance) {
         tvAddressTitle.setText(title);
         tvAddressDescription.setText(description);
@@ -597,7 +546,7 @@ public class MapActivity extends AppCompatActivity
     }
 
 
-    private void initMap() {
+    public void initMap() {
         googleMap.getUiSettings().setMyLocationButtonEnabled(false);
         googleMap.getUiSettings().setMapToolbarEnabled(false);
         btnMyLocation.setOnClickListener(new View.OnClickListener() {
@@ -639,9 +588,9 @@ public class MapActivity extends AppCompatActivity
         if (mPolyline != null) {
             mPolyline.remove();
         }
-        if(mSelectedGaraMarker != null) {
+        if (mSelectedGaraMarker != null) {
             btnMapStatus(BTN_STATUS_CHOOSE);
-        }else{
+        } else {
             btnMapStatus(BTN_STATUS_FIND);
         }
         googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
@@ -852,7 +801,7 @@ public class MapActivity extends AppCompatActivity
 
     }
 
-    private void updateLocationUI() {
+    public void updateLocationUI() {
         if (googleMap == null) {
             return;
         }
@@ -875,7 +824,7 @@ public class MapActivity extends AppCompatActivity
         }
     }
 
-    private void getDeviceLocation() {
+    public void getDeviceLocation() {
 
         if (ContextCompat.checkSelfPermission(this.getApplicationContext(),
                 android.Manifest.permission.ACCESS_FINE_LOCATION)
@@ -929,25 +878,6 @@ public class MapActivity extends AppCompatActivity
             }
         }
         updateLocationUI();
-    }
-
-    private String getDirectionsUrl(LatLng origin, LatLng dest, Boolean redirect) {
-
-        String str_origin = "origin=" + origin.latitude + "," + origin.longitude;
-        String str_dest = "destination=" + dest.latitude + "," + dest.longitude;
-        String mode = "mode=driving";
-        String language = "language=" + Locale.getDefault().getLanguage();
-        String parameters = str_origin + "&" + str_dest + "&" + mode + "&" + language;
-        String output = "json";
-        String url;
-        if (redirect) {
-            url = getResources().getString(R.string.google_direction_api_redirect, parameters);
-        } else {
-            url = getResources().getString(R.string.google_direction_api, output, parameters);
-        }
-        Log.d("APIUrl", url);
-
-        return url;
     }
 
     public void centerIncidentRouteOnMap(List<LatLng> copiedPoints) {
@@ -1025,8 +955,6 @@ public class MapActivity extends AppCompatActivity
                 lineOptions.color(getResources().getColor(R.color.map_direction));
                 lineOptions.geodesic(true);
                 btnGgDirection.setVisibility(View.VISIBLE);
-                FrameLayout contentView = (FrameLayout) getLayoutInflater().inflate(R.layout.tooltip, null);
-                showToolTip(btnGgDirection, contentView);
                 centerIncidentRouteOnMap(points);
 
             }
@@ -1043,25 +971,4 @@ public class MapActivity extends AppCompatActivity
             super.onSaveInstanceState(outState);
         }
     }
-
-    private void actionLogout() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage(R.string.dialog_logout_message)
-                .setPositiveButton(R.string.fire, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        localData.clearData();
-                        Intent intent = new Intent(MapActivity.this, LoginActivity.class);
-                        startActivity(intent);
-                        finish();
-                    }
-                })
-                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.dismiss();
-                    }
-                });
-        // Create the AlertDialog object and return it
-        builder.create().show();
-    }
-
 }

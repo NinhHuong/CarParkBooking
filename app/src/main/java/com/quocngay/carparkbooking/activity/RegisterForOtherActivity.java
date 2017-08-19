@@ -24,7 +24,7 @@ import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-public class RegisterForOtherActivity extends AppCompatActivity {
+public class RegisterForOtherActivity extends GeneralActivity {
     public static String REGISTER_EXTRA = "isAdmin";
 
     String email, password, hashPassword, roleNewUser;
@@ -71,11 +71,7 @@ public class RegisterForOtherActivity extends AppCompatActivity {
         isClickButton = false;
         isAdmin = getIntent().getBooleanExtra(REGISTER_EXTRA, false);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_regist);
-        setSupportActionBar(toolbar);
-
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        initToolbar(R.id.toolbar, true, false);
 
         p = new LocalData(getApplicationContext());
         edtEmail = (EditText) findViewById(R.id.edtAdminEmailRegist);
