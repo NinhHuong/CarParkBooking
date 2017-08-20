@@ -4,15 +4,12 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -66,6 +63,8 @@ public class CheckInOutActivity extends GeneralActivity {
     RecyclerView recyclerViewLicense;
     private ArrayList<ParkingInfoSecurityModel> listCar;
     private String garageId;
+    private String securityID;
+
     LicenseSecurityRecyclerViewAdapter recyclerViewAdapter;
     int mColumnCount = 1;
     private MenuItem refreshItem;
@@ -106,7 +105,7 @@ public class CheckInOutActivity extends GeneralActivity {
 
         localData = new LocalData(getApplicationContext());
         garageId = localData.getGarageID();
-
+        securityID = localData.getId();
         OnListInteractionListener listener = new OnListInteractionListener() {
             @Override
             public void onLicenseClickListener(final ParkingInfoSecurityModel item) {
@@ -177,6 +176,13 @@ public class CheckInOutActivity extends GeneralActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.security_check, menu);
         return true;
+    }
+
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+
+        SocketIOClient.client.mSocket.off(Constant.RESPONSE_GARAGE_UPDATED);
     }
 
     public void refresh() {
@@ -294,11 +300,15 @@ public class CheckInOutActivity extends GeneralActivity {
                         Log.i("request reset all list", data.toString());
                         Boolean result = data.getBoolean(Constant.RESULT);
 
-                        String requestGarageID = data.
-                                getJSONObject(Constant.DATA).
-                                getString("garageID");
+                        Gson gson = new Gson();
 
-                        if (!result || requestGarageID.compareTo(garageId) != 0)
+                        GarageModel resultGara = gson.fromJson(
+                                data
+                                        .getJSONArray(Constant.DATA)
+                                        .getJSONObject(0).toString(),
+                                GarageModel.class);
+
+                        if (!result || String.valueOf(resultGara.getId()).compareTo(garageId) != 0)
                             return;
 
                         refresh();
@@ -343,7 +353,7 @@ public class CheckInOutActivity extends GeneralActivity {
         });
     }
 
-    private void initButtonAddCarIn(){
+    private void initButtonAddCarIn() {
         btnAddNewCarIn = (FloatingActionButton) findViewById(R.id.btnAddNewCarIn);
 
         btnAddNewCarIn.setOnClickListener(new View.OnClickListener() {
@@ -351,7 +361,7 @@ public class CheckInOutActivity extends GeneralActivity {
             public void onClick(View v) {
                 AlertDialog.Builder alertDialog = new AlertDialog.Builder(CheckInOutActivity.this);
                 // Setting Dialog Title
-                alertDialog.setTitle(dialogTitle );
+                alertDialog.setTitle(dialogTitle);
 
                 // Setting Icon to Dialog
                 alertDialog.setIcon(R.drawable.ic_directions_car_black_24dp);
@@ -368,8 +378,8 @@ public class CheckInOutActivity extends GeneralActivity {
                 alertDialog.setPositiveButton(getResources().getString(R.string.dialog_button_ok),
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
-                                SocketIOClient.client.mSocket.emit(Constant.REQUEST_ONE_CAR_IN_NUMBER, input.getText().toString(), garageId);
-                                SocketIOClient.client.mSocket.on(responseItemSelect,onResponseCarInOut);
+                                SocketIOClient.client.mSocket.emit(Constant.REQUEST_ONE_CAR_IN_NUMBER, input.getText().toString(),securityID, garageId);
+                                SocketIOClient.client.mSocket.on(responseItemSelect, onResponseCarInOut);
                             }
                         });
                 // Setting Negative "NO" Button
