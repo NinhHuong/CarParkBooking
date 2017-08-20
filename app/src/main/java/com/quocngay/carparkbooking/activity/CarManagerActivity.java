@@ -44,7 +44,7 @@ public class CarManagerActivity extends AppCompatActivity {
         accountid = new LocalData(getApplicationContext()).getId();
 
         lvCarList = (ListView) findViewById(R.id.lvCarManager);
-
+        mCarList = new ArrayList<>();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
@@ -57,6 +57,7 @@ public class CarManagerActivity extends AppCompatActivity {
         btnAddNewCar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 if (mCarList.size() >= 5) {
                     Toast.makeText(CarManagerActivity.this,
                             getResources().getString(R.string.error_add_license_limit),

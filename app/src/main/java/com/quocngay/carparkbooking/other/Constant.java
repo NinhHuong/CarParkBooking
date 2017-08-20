@@ -159,7 +159,6 @@ public class Constant {
     public static final String RESPONSE_GET_GARAGE_ID = "response_find_security_by_account_id";
 
     public static final String REQUEST_EDIT_GARAGE_STATUS = "request_edit_status_garage_by_id";
-    public static final String REQUEST_REFRESH_SECURITY_PARKING_LIST = "request_refresh_security_parking_list";
     //endregion
 
     //region ADMIN

@@ -163,7 +163,7 @@ public class CheckInOutActivity extends AppCompatActivity {
         SocketIOClient.client.mSocket.emit(requestCarFunc, garageId);
         SocketIOClient.client.mSocket.on(responseCarFunc, onCarIn);
 
-        SocketIOClient.client.mSocket.on(Constant.REQUEST_REFRESH_SECURITY_PARKING_LIST, onRequestResetList);
+        SocketIOClient.client.mSocket.on(Constant.RESPONSE_GARAGE_UPDATED, onRequestResetList);
     }
 
     @Override
