@@ -1,22 +1,16 @@
 package com.quocngay.carparkbooking.activity;
 
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.widget.ExpandableListView;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import com.github.nkzawa.emitter.Emitter;
 import com.google.gson.Gson;
 import com.quocngay.carparkbooking.R;
-import com.quocngay.carparkbooking.model.AccountListModel;
+import com.quocngay.carparkbooking.adapter.AccountListAdapter;
 import com.quocngay.carparkbooking.model.AccountModel;
-import com.quocngay.carparkbooking.model.GarageModel;
 import com.quocngay.carparkbooking.model.LocalData;
-import com.quocngay.carparkbooking.other.AccountListAdapter;
 import com.quocngay.carparkbooking.other.Constant;
 import com.quocngay.carparkbooking.other.SocketIOClient;
 
@@ -27,7 +21,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SecurityManagerActivity extends AppCompatActivity {
+public class SecurityManagerActivity extends GeneralActivity {
 
     private ExpandableListView lvSecurity;
     AccountListAdapter adapter;
@@ -40,18 +34,12 @@ public class SecurityManagerActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_security_manager);
 
+        initToolbar(R.id.toolbar, true, true);
+
         LocalData localData = new LocalData(getApplicationContext());
         accountID = localData.getId();
         lvSecurity = (ExpandableListView) findViewById(R.id.lvSecurity);
         garageID = localData.getGarageID();
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        ActionBar actionBar = getSupportActionBar();
-
-        assert actionBar != null;
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setDisplayShowTitleEnabled(true);
 
         SocketIOClient.client.mSocket.emit(Constant.REQUEST_ALL_SECURITY, garageID);
 

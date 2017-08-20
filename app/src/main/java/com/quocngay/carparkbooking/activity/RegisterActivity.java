@@ -25,7 +25,7 @@ import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-public class RegisterActivity extends AppCompatActivity {
+public class RegisterActivity extends GeneralActivity {
 
     String email, password, hashPassword;
     private EditText edtEmail, edtPass, edtRetypePass;
@@ -68,12 +68,8 @@ public class RegisterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_regist);
-        setSupportActionBar(toolbar);
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-        }
+        initToolbar(R.id.toolbar_regist, true, false);
+
 
         edtEmail = (EditText) findViewById(R.id.edtEmailRegist);
         edtPass = (EditText) findViewById(R.id.edtPassRegist);

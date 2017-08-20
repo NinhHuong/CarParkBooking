@@ -4,4 +4,5 @@
     <item name="ic_menu_history" type="drawable">@drawable/ic_history_black_24dp</item>
     <item name="ic_menu_car" type="drawable">@drawable/ic_directions_car_black_24dp</item>
     <item name="ic_menu_logout" type="drawable">@drawable/ic_sentiment_dissatisfied_black_24dp</item>
+    <item name="ic_name" type="drawable">@drawable/ic_person_black_45dp</item>
 </resources>

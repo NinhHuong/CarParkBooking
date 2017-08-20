@@ -18,7 +18,7 @@ import com.quocngay.carparkbooking.model.ListHeader;
 import com.quocngay.carparkbooking.model.ParkingInfoHistoryModel;
 import com.quocngay.carparkbooking.model.LocalData;
 import com.quocngay.carparkbooking.other.Constant;
-import com.quocngay.carparkbooking.other.HistoryListAdapter;
+import com.quocngay.carparkbooking.adapter.HistoryListAdapter;
 import com.quocngay.carparkbooking.other.SocketIOClient;
 
 import org.json.JSONArray;
@@ -33,7 +33,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-public class HistoryActivity extends AppCompatActivity {
+public class HistoryActivity extends GeneralActivity {
     ListView lvHistory;
     HistoryListAdapter adapter;
     List<ParkingInfoHistoryModel> mHistoryList;
@@ -44,12 +44,8 @@ public class HistoryActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_history_2);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        ActionBar actionBar = getSupportActionBar();
+        initToolbar(R.id.toolbar, true, true);
 
-        assert actionBar != null;
-        actionBar.setDisplayHomeAsUpEnabled(true);
         lvHistory = (ListView) findViewById(R.id.lvHistory);
 
         String id = new LocalData(getApplicationContext()).getId();

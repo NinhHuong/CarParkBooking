@@ -20,18 +20,24 @@
 
             <ImageView
                 android:id="@+id/btn_delete"
-                android:clickable="true"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:layout_alignParentEnd="true"
+                android:background="?android:attr/selectableItemBackground"
+
+                android:clickable="true"
                 android:src="@mipmap/ic_close" />
 
             <TextView
                 android:id="@+id/txtVehicleNumber"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="25dp"
                 android:layout_centerVertical="true"
+                android:layout_marginBottom="25dp"
+                android:layout_marginEnd="@dimen/text_margin"
+                android:layout_marginStart="25dp"
+                android:layout_marginTop="25dp"
+                android:layout_toStartOf="@id/btn_delete"
                 android:textAllCaps="true"
                 android:textSize="20sp" />
 

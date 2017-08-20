@@ -19,7 +19,7 @@ import com.google.gson.Gson;
 import com.quocngay.carparkbooking.R;
 import com.quocngay.carparkbooking.model.CarModel;
 import com.quocngay.carparkbooking.model.LocalData;
-import com.quocngay.carparkbooking.other.CarListAdapter;
+import com.quocngay.carparkbooking.adapter.CarListAdapter;
 import com.quocngay.carparkbooking.other.Constant;
 import com.quocngay.carparkbooking.other.SocketIOClient;
 
@@ -30,7 +30,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CarManagerActivity extends AppCompatActivity {
+public class CarManagerActivity extends GeneralActivity {
     ListView lvCarList;
     CarListAdapter adapter;
     List<CarModel> mCarList;
@@ -45,26 +45,20 @@ public class CarManagerActivity extends AppCompatActivity {
 
         lvCarList = (ListView) findViewById(R.id.lvCarManager);
         mCarList = new ArrayList<>();
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        ActionBar actionBar = getSupportActionBar();
 
-        assert actionBar != null;
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setDisplayShowTitleEnabled(true);
+        initToolbar(R.id.toolbar, true, true);
 
         ImageView btnAddNewCar = (ImageView) findViewById(R.id.btnAddNewCar);
         btnAddNewCar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                if (mCarList.size() >= 5) {
-                    Toast.makeText(CarManagerActivity.this,
-                            getResources().getString(R.string.error_add_license_limit),
-                            Toast.LENGTH_SHORT).show();
-                } else {
-                    initAddLicenseDialog();
-                }
+                    if (mCarList.size() >= 5) {
+                        Toast.makeText(CarManagerActivity.this,
+                                getResources().getString(R.string.error_add_license_limit),
+                                Toast.LENGTH_SHORT).show();
+                    } else {
+                        initAddLicenseDialog();
+                    }
             }
         });
         SocketIOClient.client.mSocket.emit(Constant.REQUEST_FIND_CAR_BY_ACCOUNT_ID, accountid);

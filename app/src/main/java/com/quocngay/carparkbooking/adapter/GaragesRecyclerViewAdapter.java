@@ -1,4 +1,4 @@
-package com.quocngay.carparkbooking;
+package com.quocngay.carparkbooking.adapter;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.quocngay.carparkbooking.R;
 import com.quocngay.carparkbooking.activity.NearestGaraActivity;
 import com.quocngay.carparkbooking.model.LocationDataModel;
 
