@@ -18,11 +18,11 @@ public class GarageModel implements Serializable {
     private String accountID;
     private String locationX;
     private String locationY;
-    private Date timeStart;
-    private Date timeEnd;
-    private String xStatus;
+//    private Date timeStart;
+//    private Date timeEnd;
+//    private String xStatus;
 
-    public GarageModel(int id, String name, String address, int totalSlot, int busySlot, String accountID, String locationX, String locationY, Date timeStart, Date timeEnd, String xStatus) {
+    public GarageModel(int id, String name, String address, int totalSlot, int busySlot, String accountID, String locationX, String locationY) {
         this.id = id;
         this.name = name;
         this.address = address;
@@ -31,9 +31,6 @@ public class GarageModel implements Serializable {
         this.accountID = accountID;
         this.locationX = locationX;
         this.locationY = locationY;
-        this.timeStart = timeStart;
-        this.timeEnd = timeEnd;
-        this.xStatus = xStatus;
     }
 
     public GarageModel() {
@@ -101,30 +98,6 @@ public class GarageModel implements Serializable {
 
     public void setLocationY(String locationY) {
         this.locationY = locationY;
-    }
-
-    public Date getTimeStart() {
-        return timeStart;
-    }
-
-    public void setTimeStart(Date timeStart) {
-        this.timeStart = timeStart;
-    }
-
-    public Date getTimeEnd() {
-        return timeEnd;
-    }
-
-    public void setTimeEnd(Date timeEnd) {
-        this.timeEnd = timeEnd;
-    }
-
-    public String getxStatus() {
-        return xStatus;
-    }
-
-    public void setxStatus(String xStatus) {
-        this.xStatus = xStatus;
     }
 
     public LatLng getPosition() {

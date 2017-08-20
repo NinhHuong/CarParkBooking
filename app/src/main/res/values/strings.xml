@@ -66,6 +66,8 @@
     <string name="no_address_found">No address was found</string>
     <string name="service_not_available">Service is not available</string>
     <string name="invalid_lat_long_used">Invalid latlng used</string>
+    <string name="message_cancel_regist_garage">Hủy đăng kí thành công</string>
+    <string name="message_regist_garage">Đăng kí thành công</string>
 
 
     <string name="map_gara_find">Tìm bãi đỗ gần nhất</string>
