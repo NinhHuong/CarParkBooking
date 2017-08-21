@@ -17,6 +17,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.nkzawa.emitter.Emitter;
 import com.google.gson.Gson;
@@ -90,7 +91,7 @@ public class SecurityHomeActivity extends GeneralActivity implements
     }
 
     @Override
-    public void onDestroy(){
+    public void onDestroy() {
         super.onDestroy();
 
         SocketIOClient.client.mSocket.off(Constant.RESPONSE_GARAGE_UPDATED);
@@ -117,10 +118,24 @@ public class SecurityHomeActivity extends GeneralActivity implements
         builder.setMessage(R.string.dialog_logout_message)
                 .setPositiveButton(R.string.fire, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        localData.clearData();
-                        Intent intent = new Intent(SecurityHomeActivity.this, LoginActivity.class);
-                        startActivity(intent);
-                        finish();
+                        SocketIOClient.client.mSocket.emit(Constant.REQUEST_LOG_OUT, localData.getId());
+                        SocketIOClient.client.mSocket.on(Constant.RESPONSE_LOG_OUT, new Emitter.Listener() {
+                            @Override
+                            public void call(Object... args) {
+                                localData.clearData();
+                                Intent intent = new Intent(SecurityHomeActivity.this, LoginActivity.class);
+                                JSONObject data = (JSONObject) args[0];
+                                try {
+                                    Boolean result = data.getBoolean(Constant.RESULT);
+                                    if (result) {
+                                        startActivity(intent);
+                                        finish();
+                                    }
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        });
                     }
                 })
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {

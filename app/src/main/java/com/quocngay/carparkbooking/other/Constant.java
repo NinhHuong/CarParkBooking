@@ -191,6 +191,11 @@ public class Constant {
     public static final String RESPONSE_REMOVE_ACCOUNT_BY_ID = "response_remove_account_by_id";
     //endregion
 
+    //region ACCOUNT
+    public static final String REQUEST_LOG_OUT = "request_log_out";
+    public static final String RESPONSE_LOG_OUT = "response_log_out";
+    //endregion
+
     public static final String REQUEST_GET_GARAGE_BY_ID = "request_get_garage_by_id";
     public static final String RESPONSE_GET_GARAGE_BY_ID = "response_get_garage_by_id";
     public static final int NOTIFICATION_TIME_OUT = 0;
@@ -202,9 +207,10 @@ public class Constant {
     //        public static String SERVER_HOST = "http://54.255.178.120:5000";
 
 
-    public static String SERVER_HOST = "http://192.168.1.13:5000";
+//    public static String SERVER_HOST = "http://52.15.194.52:5000";
 
-//    public static String SERVER_HOST = "http://54.255.178.120:5000";
+    // server chi huong
+    public static String SERVER_HOST = "http://192.168.0.110:5000";
 
     //    public static String SERVER_HOST = "http://52.15.194.52:5000";
     public static String APP_PREF = "AppPref";

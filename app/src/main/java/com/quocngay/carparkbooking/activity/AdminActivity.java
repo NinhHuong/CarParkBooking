@@ -133,7 +133,7 @@ public class AdminActivity extends GeneralActivity
         txtNotCar = (TextView) findViewById(R.id.txtNotCar);
         lvHistory = (ListView) findViewById(R.id.lvHistory);
 
-        initToolbarWithDrawer(R.id.toolbar, R.id.drawer_layout_admin);
+        toolbar = initToolbarWithDrawer(R.id.toolbar, R.id.drawer_layout_admin);
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view_admin);
         navigationView.setNavigationItemSelectedListener(this);
         localData = new LocalData(getApplicationContext());
@@ -209,6 +209,7 @@ public class AdminActivity extends GeneralActivity
     }
 
     private void searchCarParking(int year, int month, int dayOfMonth) {
+
         toolbar.setTitle(dayOfMonth + "/" + (month + 1) + "/" + year);
 
         List<ParkingInfoSecurityModel> listShow = new ArrayList<>();

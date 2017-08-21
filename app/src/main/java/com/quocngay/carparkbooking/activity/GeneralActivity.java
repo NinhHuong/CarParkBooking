@@ -33,7 +33,7 @@ import java.util.Locale;
 
 public class GeneralActivity extends AppCompatActivity {
 
-    public void initToolbar(int toolbarId, Boolean showUpBtn, Boolean showTitle) {
+    public Toolbar initToolbar(int toolbarId, Boolean showUpBtn, Boolean showTitle) {
         Toolbar toolbar = (Toolbar) findViewById(toolbarId);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
@@ -41,9 +41,10 @@ public class GeneralActivity extends AppCompatActivity {
         assert actionBar != null;
         actionBar.setDisplayHomeAsUpEnabled(showUpBtn);
         actionBar.setDisplayShowTitleEnabled(showTitle);
+        return toolbar;
     }
 
-    public void initToolbarWithDrawer(int toolbarId, int drawerId) {
+    public Toolbar initToolbarWithDrawer(int toolbarId, int drawerId) {
         Toolbar toolbar = (Toolbar) findViewById(toolbarId);
         setSupportActionBar(toolbar);
         DrawerLayout drawer = (DrawerLayout) findViewById(drawerId);
@@ -52,6 +53,7 @@ public class GeneralActivity extends AppCompatActivity {
         drawer.addDrawerListener(toggle);
         toggle.syncState();
         toggle.setDrawerSlideAnimationEnabled(true);
+        return toolbar;
     }
 
     public void openAutocompleteActivity() {
