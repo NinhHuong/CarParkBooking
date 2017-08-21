@@ -13,6 +13,7 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Debug;
 import android.os.Handler;
 import android.os.ResultReceiver;
 import android.provider.Settings;
@@ -383,6 +384,7 @@ public class MapActivity extends GeneralActivity
                 public void run() {
                     JSONObject jsonObject = (JSONObject) args[0];
                     try {
+                        Log.i("data cancel", jsonObject.toString());
                         if (jsonObject.getBoolean(Constant.RESULT)) {
                             AlertDialog.Builder builder = new AlertDialog.Builder(MapActivity.this);
                             builder.setTitle(R.string.dialog_booking_canceled_title)
@@ -450,7 +452,6 @@ public class MapActivity extends GeneralActivity
         SocketIOClient.client.mSocket.off(Constant.RESPONSE_BOOKING_CANCELED);
         SocketIOClient.client.mSocket.on(Constant.RESPONSE_BOOKING_CANCELED,
                 onResponseBookingCanceled);
-
     }
 
     private void getUserDetail() {

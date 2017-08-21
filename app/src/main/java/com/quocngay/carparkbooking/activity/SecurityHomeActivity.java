@@ -113,7 +113,6 @@ public class SecurityHomeActivity extends GeneralActivity implements
     }
 
     private void logout() {
-
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(R.string.dialog_logout_message)
                 .setPositiveButton(R.string.fire, new DialogInterface.OnClickListener() {
@@ -122,12 +121,13 @@ public class SecurityHomeActivity extends GeneralActivity implements
                         SocketIOClient.client.mSocket.on(Constant.RESPONSE_LOG_OUT, new Emitter.Listener() {
                             @Override
                             public void call(Object... args) {
-                                localData.clearData();
-                                Intent intent = new Intent(SecurityHomeActivity.this, LoginActivity.class);
+
                                 JSONObject data = (JSONObject) args[0];
                                 try {
                                     Boolean result = data.getBoolean(Constant.RESULT);
                                     if (result) {
+                                        localData.clearData();
+                                        Intent intent = new Intent(SecurityHomeActivity.this, LoginActivity.class);
                                         startActivity(intent);
                                         finish();
                                     }
