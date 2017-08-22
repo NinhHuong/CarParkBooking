@@ -44,6 +44,7 @@ public class CarManagerActivity extends GeneralActivity {
         accountid = new LocalData(getApplicationContext()).getId();
 
         lvCarList = (ListView) findViewById(R.id.lvCarManager);
+        mCarList = new ArrayList<>();
 
         initToolbar(R.id.toolbar, true, true);
 
@@ -51,13 +52,13 @@ public class CarManagerActivity extends GeneralActivity {
         btnAddNewCar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mCarList.size() >= 5) {
-                    Toast.makeText(CarManagerActivity.this,
-                            getResources().getString(R.string.error_add_license_limit),
-                            Toast.LENGTH_SHORT).show();
-                } else {
-                    initAddLicenseDialog();
-                }
+                    if (mCarList.size() >= 5) {
+                        Toast.makeText(CarManagerActivity.this,
+                                getResources().getString(R.string.error_add_license_limit),
+                                Toast.LENGTH_SHORT).show();
+                    } else {
+                        initAddLicenseDialog();
+                    }
             }
         });
         SocketIOClient.client.mSocket.emit(Constant.REQUEST_FIND_CAR_BY_ACCOUNT_ID, accountid);

@@ -209,6 +209,7 @@ public class AdminActivity extends GeneralActivity
     }
 
     private void searchCarParking(int year, int month, int dayOfMonth) {
+
         toolbar.setTitle(dayOfMonth + "/" + (month + 1) + "/" + year);
 
         List<ParkingInfoSecurityModel> listShow = new ArrayList<>();

@@ -10,14 +10,11 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
-import android.text.InputType;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -76,12 +73,12 @@ public class SecurityHomeActivity extends GeneralActivity implements
         tvName = (TextView) findViewById(R.id.tvName);
         btnCheckin.setOnClickListener(this);
         btnCheckout.setOnClickListener(this);
-
+        defaultToolbar();
         localData = new LocalData(this);
         SocketIOClient.client.mSocket.emit(Constant.REQUEST_GET_GARAGE_ID, localData.getId());
         SocketIOClient.client.mSocket.on(Constant.RESPONSE_GET_GARAGE_ID, onGetGarageID);
 
-        SocketIOClient.client.mSocket.on(Constant.REQUEST_REFRESH_SECURITY_PARKING_LIST, onRequestResetList);
+        SocketIOClient.client.mSocket.on(Constant.RESPONSE_GARAGE_UPDATED, onRequestResetList);
     }
 
     private void defaultToolbar() {
@@ -91,6 +88,13 @@ public class SecurityHomeActivity extends GeneralActivity implements
         drawer.addDrawerListener(toggle);
         toggle.syncState();
         toggle.setDrawerSlideAnimationEnabled(true);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        SocketIOClient.client.mSocket.off(Constant.RESPONSE_GARAGE_UPDATED);
     }
 
     @Override
@@ -109,15 +113,29 @@ public class SecurityHomeActivity extends GeneralActivity implements
     }
 
     private void logout() {
-
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(R.string.dialog_logout_message)
                 .setPositiveButton(R.string.fire, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        localData.clearData();
-                        Intent intent = new Intent(SecurityHomeActivity.this, LoginActivity.class);
-                        startActivity(intent);
-                        finish();
+                        SocketIOClient.client.mSocket.emit(Constant.REQUEST_LOG_OUT, localData.getId());
+                        SocketIOClient.client.mSocket.on(Constant.RESPONSE_LOG_OUT, new Emitter.Listener() {
+                            @Override
+                            public void call(Object... args) {
+
+                                JSONObject data = (JSONObject) args[0];
+                                try {
+                                    Boolean result = data.getBoolean(Constant.RESULT);
+                                    if (result) {
+                                        localData.clearData();
+                                        Intent intent = new Intent(SecurityHomeActivity.this, LoginActivity.class);
+                                        startActivity(intent);
+                                        finish();
+                                    }
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        });
                     }
                 })
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -159,11 +177,15 @@ public class SecurityHomeActivity extends GeneralActivity implements
                         Log.i("request reset all list", data.toString());
                         Boolean result = data.getBoolean(Constant.RESULT);
 
-                        String requestGarageID = data.
-                                getJSONObject(Constant.DATA).
-                                getString("garageID");
+                        Gson gson = new Gson();
 
-                        if (!result || requestGarageID.compareTo(garageId) != 0)
+                        GarageModel resultGara = gson.fromJson(
+                                data
+                                        .getJSONArray(Constant.DATA)
+                                        .getJSONObject(0).toString(),
+                                GarageModel.class);
+
+                        if (!result || String.valueOf(resultGara.getId()).compareTo(garageId) != 0)
                             return;
 
                         SocketIOClient.client.mSocket.emit(Constant.REQUEST_GET_GARAGE_ID, localData.getId());

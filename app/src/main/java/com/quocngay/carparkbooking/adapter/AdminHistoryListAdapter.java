@@ -58,6 +58,8 @@ public class AdminHistoryListAdapter extends BaseAdapter {
         txtTimeGoOut = (TextView) v.findViewById(R.id.txtTimeGoOut);
         txtVehicleNumber = (TextView) v.findViewById(R.id.txtVehicleNumber);
 
+
+
         SimpleDateFormat inputFormat =
                 new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault());
         SimpleDateFormat dateFormat =
@@ -65,9 +67,16 @@ public class AdminHistoryListAdapter extends BaseAdapter {
 
         String timeBooked = "", timeGoIn = "", timeGoOut = "";
         try {
-            timeBooked = dateFormat.format(inputFormat.parse(mParkingModel.get(position).getTimeBooked()));
-            timeGoIn = dateFormat.format(inputFormat.parse(mParkingModel.get(position).getTimeGoIn()));
-            timeGoOut = dateFormat.format(inputFormat.parse(mParkingModel.get(position).getTimeGoOut()));
+            if(mParkingModel.get(position).getTimeBooked().compareTo("0000-00-00 00:00:00")!=0){
+                timeBooked = dateFormat.format(inputFormat.parse(mParkingModel.get(position).getTimeBooked()));
+                timeGoIn = dateFormat.format(inputFormat.parse(mParkingModel.get(position).getTimeGoIn()));
+                timeGoOut = dateFormat.format(inputFormat.parse(mParkingModel.get(position).getTimeGoOut()));
+            }else{
+                timeBooked = "";
+                timeGoIn = dateFormat.format(inputFormat.parse(mParkingModel.get(position).getTimeGoIn()));
+                timeGoOut = dateFormat.format(inputFormat.parse(mParkingModel.get(position).getTimeGoOut()));
+            }
+
         } catch (ParseException e) {
             e.printStackTrace();
         }

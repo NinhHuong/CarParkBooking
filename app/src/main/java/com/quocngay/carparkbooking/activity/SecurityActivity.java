@@ -94,7 +94,7 @@ public class SecurityActivity extends GeneralActivity implements NavigationView.
 //        SocketIOClient.client.mSocket.on(Constant.RESPONSE_ONE_CAR_IN, onCarIn);
 //        SocketIOClient.client.mSocket.on(Constant.RESPONSE_ONE_CAR_OUT, onCarOut);
 
-        SocketIOClient.client.mSocket.on(Constant.REQUEST_REFRESH_SECURITY_PARKING_LIST, onRequestResetList);
+        SocketIOClient.client.mSocket.on(Constant.RESPONSE_GARAGE_UPDATED, onRequestResetList);
 
         spnCarIn.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
