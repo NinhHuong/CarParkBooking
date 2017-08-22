@@ -149,8 +149,8 @@
     <string name="dialog_delete_title">Xác nhân xóa xe</string>
     <string name="dialog_delete_car">Bạn có chắc chắn muốn xóa xe</string>
 
-    <string name="dialog_delete_sec_title">Xác nhân xóa xe</string>
-    <string name="dialog_delete_sec_mess">Bạn có chắc chắn muốn xóa xe</string>
+    <string name="dialog_delete_sec_title">Xác nhận xóa bảo vệ</string>
+    <string name="dialog_delete_sec_mess">Bạn có chắc chắn muốn xóa?</string>
 
 
     <string name="dialog_book_cancel_message">Bạn có chắc chắn muốn hủy bỏ đặt chỗ?</string>
