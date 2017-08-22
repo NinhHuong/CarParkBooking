@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.github.nkzawa.emitter.Emitter;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
@@ -24,6 +25,10 @@ import com.google.android.gms.maps.model.LatLng;
 import com.quocngay.carparkbooking.R;
 import com.quocngay.carparkbooking.model.LocalData;
 import com.quocngay.carparkbooking.other.Constant;
+import com.quocngay.carparkbooking.other.SocketIOClient;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.Locale;
 
@@ -115,10 +120,25 @@ public class GeneralActivity extends AppCompatActivity {
         builder.setMessage(R.string.dialog_logout_message)
                 .setPositiveButton(R.string.fire, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        new LocalData(getApplicationContext()).clearData();
-                        Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-                        startActivity(intent);
-                        finish();
+                        final LocalData localData = new LocalData(getApplicationContext());
+                        SocketIOClient.client.mSocket.emit(Constant.REQUEST_LOG_OUT, localData.getId());
+                        SocketIOClient.client.mSocket.on(Constant.RESPONSE_LOG_OUT, new Emitter.Listener() {
+                            @Override
+                            public void call(Object... args) {
+                                JSONObject data = (JSONObject) args[0];
+                                try {
+                                    Boolean result = data.getBoolean(Constant.RESULT);
+                                    if (result) {
+                                        localData.clearData();
+                                        Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                                        startActivity(intent);
+                                        finish();
+                                    }
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        });
                     }
                 })
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
