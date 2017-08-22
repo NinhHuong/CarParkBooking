@@ -73,21 +73,11 @@ public class SecurityHomeActivity extends GeneralActivity implements
         tvName = (TextView) findViewById(R.id.tvName);
         btnCheckin.setOnClickListener(this);
         btnCheckout.setOnClickListener(this);
-        defaultToolbar();
         localData = new LocalData(this);
         SocketIOClient.client.mSocket.emit(Constant.REQUEST_GET_GARAGE_ID, localData.getId());
         SocketIOClient.client.mSocket.on(Constant.RESPONSE_GET_GARAGE_ID, onGetGarageID);
 
         SocketIOClient.client.mSocket.on(Constant.RESPONSE_GARAGE_UPDATED, onRequestResetList);
-    }
-
-    private void defaultToolbar() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
-        toggle.syncState();
-        toggle.setDrawerSlideAnimationEnabled(true);
     }
 
     @Override

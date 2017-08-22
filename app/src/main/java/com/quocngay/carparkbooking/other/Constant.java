@@ -185,6 +185,9 @@ public class Constant {
     public static final String RESPONSE_HISTORY = "response_history";
     //endregion
 
+    //region ACCOUNT
+    public static final String REQUEST_LOG_OUT = "request_log_out";
+    public static final String RESPONSE_LOG_OUT = "response_log_out";
     //endregion
 
     //region SUPER ADMIN

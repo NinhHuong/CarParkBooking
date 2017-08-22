@@ -27,11 +27,10 @@ public class AccountModel {
     }
 
     public String getFullName() {
-        StringBuilder result = new StringBuilder();
-        result.append(lastName == null ? "" : lastName);
-        result.append(" ");
-        result.append(firstName == null ? "" : firstName);
-        return result.toString();
+        String result = (lastName == null ? "" : lastName) +
+                " " +
+                (firstName == null ? "" : firstName);
+        return result.trim();
     }
 
     public int getId() {

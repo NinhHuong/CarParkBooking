@@ -36,67 +36,6 @@ public class AccountListAdapter extends BaseExpandableListAdapter {
         this.mAccountList = mAccountList;
     }
 
-//    @Override
-//    public int getCount() {
-//        return mAccountList.size();
-//    }
-//
-//    @Override
-//    public Object getItem(int position) {
-//        return mAccountList.get(position);
-//    }
-//
-//    @Override
-//    public long getItemId(int position) {
-//        return position;
-//    }
-//
-//    @Override
-//    public View getView(final int position, View convertView, ViewGroup parent) {
-//        View v = View.inflate(mContext, R.layout.item_account_management, null);
-//        TextView txtFirstName, txtLastName, txtEmail, txtRole, txtphone, txtdob, txtAddress;
-//        txtFirstName = (TextView) v.findViewById(R.id.txtFirstName);
-//        txtLastName = (TextView) v.findViewById(R.id.txtLastName);
-//        txtEmail = (TextView) v.findViewById(R.id.txtEmail);
-//        txtRole = (TextView) v.findViewById(R.id.txtRole);
-//        txtphone = (TextView) v.findViewById(R.id.txtPhone);
-//        txtdob = (TextView) v.findViewById(R.id.txtdob);
-//        txtAddress = (TextView) v.findViewById(R.id.txtAddress);
-//        Button btnDelete = (Button) v.findViewById(R.id.btnDelete);
-//
-//        txtFirstName.setText(mAccountList.get(position).getFirstName());
-//        txtLastName.setText(mAccountList.get(position).getLastName());
-//        txtEmail.setText(mAccountList.get(position).getEmail());
-//        txtRole.setText(mAccountList.get(position).getRoleID().compareTo("3") == 0 ? "Bảo vệ" : " ");
-//        txtphone.setText(mAccountList.get(position).getPhone());
-//        txtdob.setText(mAccountList.get(position).getDateOfBirth());
-//        txtAddress.setText(mAccountList.get(position).getAddress());
-//
-//        btnDelete.setOnClickListener(new View.OnClickListener() {
-//            public void onClick(View v) {
-//                mDeleteDialog = new AlertDialog.Builder(parentActivity);
-//                mDeleteDialog.setTitle(R.string.dialog_delete_sec_title);
-//                mDeleteDialog.setMessage(R.string.dialog_delete_sec_mess)
-//                        .setPositiveButton(R.string.fire, new DialogInterface.OnClickListener() {
-//                            public void onClick(DialogInterface dialog, int id) {
-////                                SocketIOClient.client.mSocket.emit(Constant.REQUEST_REMOVE_SECURITY, mAccountList.get(position).getId());
-//                            }
-//                        })
-//                        .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-//                            public void onClick(DialogInterface dialog, int id) {
-//                                dialog.dismiss();
-//                            }
-//                        });
-//                // Create the AlertDialog object and return it
-//                mDeleteDialog.create().show();
-//
-//            }
-//        });
-//        v.setTag(mAccountList.get(position).getId());
-//
-//        return v;
-//    }
-
     @Override
     public int getGroupCount() {
         return mAccountList.size();
@@ -136,6 +75,7 @@ public class AccountListAdapter extends BaseExpandableListAdapter {
     public View getGroupView(final int groupPosition, boolean isExpanded,
                              View convertView, ViewGroup parent) {
         View v = convertView;
+        final AccountModel accountModel = mAccountList.get(groupPosition);
         if (v == null) {
             LayoutInflater inflater = (LayoutInflater) mContext.getSystemService
                     (Context.LAYOUT_INFLATER_SERVICE);
@@ -143,7 +83,8 @@ public class AccountListAdapter extends BaseExpandableListAdapter {
         }
         TextView txtName;
         txtName = (TextView) v.findViewById(R.id.txtName);
-        txtName.setText(mAccountList.get(groupPosition).getFullName());
+        txtName.setText(accountModel.getFullName().isEmpty() ?
+                accountModel.getEmail() : accountModel.getFullName());
 
         ImageView btnDelete = (ImageView) v.findViewById(R.id.btn_security_delete);
         btnDelete.setOnClickListener(new View.OnClickListener() {
@@ -154,7 +95,7 @@ public class AccountListAdapter extends BaseExpandableListAdapter {
                         .setPositiveButton(R.string.fire, new DialogInterface.OnClickListener() {
                             LocalData l = new LocalData(mContext);
                             String garageID = l.getGarageID();
-                            int accountID = mAccountList.get(groupPosition).getId();
+                            int accountID = accountModel.getId();
 
                             public void onClick(DialogInterface dialog, int id) {
                                 SocketIOClient.client.mSocket.emit(Constant.REQUEST_REMOVE_SECURITY,

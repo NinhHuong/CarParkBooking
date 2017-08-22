@@ -188,7 +188,7 @@ public class SuperAdminActivity extends GeneralActivity
     }
 
     private void removeGarages(GarageModel garageModel) {
-        Emitter.Listener onResponseRemoveGarage = new Emitter.Listener() {
+        Emitter.Listener onRemoveAccount = new Emitter.Listener() {
             @Override
             public void call(final Object... args) {
                 runOnUiThread(new Runnable() {
@@ -204,7 +204,7 @@ public class SuperAdminActivity extends GeneralActivity
                                 Log.w(getClass().getName(),
                                         "ERROR: " + jsonObject.getString(Constant.MESSAGE));
                             }
-                            SocketIOClient.client.mSocket.off(Constant.RESPONSE_REMOVE_GARAGE_BY_ID);
+                            SocketIOClient.client.mSocket.off(Constant.RESPONSE_REMOVE_ACCOUNT_BY_ID);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -212,9 +212,8 @@ public class SuperAdminActivity extends GeneralActivity
                 });
             }
         };
-        SocketIOClient.client.mSocket.emit(Constant.REQUEST_REMOVE_GARAGE_BY_ID,
-                garageModel.getId());
-        SocketIOClient.client.mSocket.on(Constant.RESPONSE_REMOVE_GARAGE_BY_ID,
-                onResponseRemoveGarage);
+
+        SocketIOClient.client.mSocket.emit(Constant.REQUEST_REMOVE_ACCOUNT_BY_ID, garageModel.getAccountID());
+        SocketIOClient.client.mSocket.on(Constant.RESPONSE_REMOVE_ACCOUNT_BY_ID, onRemoveAccount);
     }
 }
