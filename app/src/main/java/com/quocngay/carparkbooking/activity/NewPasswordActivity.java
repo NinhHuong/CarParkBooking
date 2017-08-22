@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import com.github.nkzawa.emitter.Emitter;
 import com.quocngay.carparkbooking.R;
+import com.quocngay.carparkbooking.model.LocalData;
 import com.quocngay.carparkbooking.other.Constant;
 import com.quocngay.carparkbooking.other.SocketIOClient;
 
@@ -56,20 +57,27 @@ public class NewPasswordActivity extends AppCompatActivity {
         edNewPass = (EditText) findViewById(R.id.edt_newpass);
         edReNewPass = (EditText) findViewById(R.id.edt_renewpass);
         btnNewPass = (Button) findViewById(R.id.btn_newpass);
-        final String email = getIntent().getStringExtra(Constant.EMAIL);
+
         btnNewPass.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String newPass = edNewPass.getText().toString();
                 String reNewPass = edReNewPass.getText().toString();
+                String email = getIntent().getStringExtra(Constant.EMAIL);
+                if(email == null || email.compareTo("")==0){
+                    email = new LocalData(getBaseContext()).getEmail();
+                }
+
                 if (newPass.isEmpty() || newPass.length() < Constant.PASSWORD_LENGTH) {
                     Toast.makeText(getApplicationContext(), getResources().getString(R.string.error_password, Constant.PASSWORD_LENGTH), Toast.LENGTH_SHORT).show();
                     return;
                 }
+
                 if (!reNewPass.equals(newPass)) {
                     Toast.makeText(getApplicationContext(), getResources().getString(R.string.error_repassword), Toast.LENGTH_SHORT).show();
                     return;
                 }
+
                 SocketIOClient.client.mSocket.emit(Constant.SERVER_REQUEST_CHANGE_PASSWORD, email, sha512Password(newPass));
                 SocketIOClient.client.mSocket.on(Constant.SERVER_RESPONSE_CHANGE_PASSWORD, onResponseChangePassword);
 

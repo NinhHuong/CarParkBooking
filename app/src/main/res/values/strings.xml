@@ -102,6 +102,7 @@
     <string name="tooltip_btn_direction">Dẫn đường</string>
     <string name="action_logout">Đăng xuất</string>
     <string name="action_history">Lịch sử</string>
+    <string name="action_change_password">Thay đổi mật khẩu</string>
     <string name="action_car_manager">Quản lý xe</string>
     <string name="action_profile">Thông tin cá nhân</string>
     <string name="map_gara_choose">Chọn</string>
