@@ -106,6 +106,9 @@ public class SecurityHomeActivity extends GeneralActivity implements
         } else if (id == R.id.nav_profile) {
             startActivity(new Intent(SecurityHomeActivity.this, ProfileActivity.class));
         }
+        if (id == R.id.nav_change_password) {
+            startActivity(new Intent(SecurityHomeActivity.this, NewPasswordActivity.class));
+        }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
@@ -156,6 +159,7 @@ public class SecurityHomeActivity extends GeneralActivity implements
                 checkInActivity.putExtra(CheckInOutActivity.EXTRA_SECURITY_FUNCTION, CheckInOutActivity.EXTRA_CAR_IN);
                 startActivity(checkInActivity);
                 break;
+
             case R.id.btn_checkout:
                 Intent checkOutActivity = new Intent(SecurityHomeActivity.this, CheckInOutActivity.class);
                 checkOutActivity.putExtra(CheckInOutActivity.EXTRA_SECURITY_FUNCTION, CheckInOutActivity.EXTRA_CAR_OUT);
@@ -242,62 +246,4 @@ public class SecurityHomeActivity extends GeneralActivity implements
         }
     };
 
-
-//    private void dialogOpenGarage(final int totalSlot) {
-//        AlertDialog.Builder alertDialog = new AlertDialog.Builder(SecurityHomeActivity.this);
-//
-//        // Setting Dialog Title
-//        TextView txtTitle = new TextView(SecurityHomeActivity.this);
-//        txtTitle.setText(getResources().getString(R.string.dialog_title_open_garage));
-//        txtTitle.setPadding(40, 40, 40, 40);
-//        txtTitle.setGravity(Gravity.CENTER);
-//        txtTitle.setTextSize(30);
-//        alertDialog.setCustomTitle(txtTitle);
-//
-//        // Setting Dialog Message
-//        alertDialog.setMessage(getResources().getString(R.string.dialog_message_total_slot) + ": " + totalSlot);
-//
-//        final EditText input = new EditText(SecurityHomeActivity.this);
-//        input.setInputType(InputType.TYPE_CLASS_NUMBER);
-////        input.setHint("Số xe hiện tại");
-//        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-//                LinearLayout.LayoutParams.MATCH_PARENT,
-//                LinearLayout.LayoutParams.MATCH_PARENT);
-//        input.setLayoutParams(lp);
-//        alertDialog.setView(input);
-//
-//        // Setting Positive "Yes" Button
-//        alertDialog.setPositiveButton(getResources().getString(R.string.dialog_button_ok),
-//                new DialogInterface.OnClickListener() {
-//                    public void onClick(DialogInterface dialog, int which) {
-//                        String s = input.getText().toString();
-//                        if (s.matches("\\d+")) {
-//                            int currentSlotBusy = Integer.parseInt(input.getText().toString());
-//                            if (currentSlotBusy > totalSlot) {
-//                                Toast.makeText(getBaseContext(), getResources().getString(R.string.error_incorrect_number_slot), Toast.LENGTH_SHORT).show();
-//                                dialogOpenGarage(totalSlot);
-//                            } else {
-//                                SocketIOClient.client.mSocket.emit(Constant.REQUEST_EDIT_GARAGE_STATUS, garageId, currentSlotBusy, Constant.STATUS_GARAGE_OPEN);
-//                                SocketIOClient.client.mSocket.off(Constant.RESPONSE_GET_GARAGE_ID);
-//                            }
-//                        } else {
-//                            Toast.makeText(getBaseContext(), getResources().getString(R.string.error_field_required), Toast.LENGTH_SHORT).show();
-//                            dialogOpenGarage(totalSlot);
-//                        }
-//                    }
-//                });
-//        // Setting Negative "NO" Button
-//        alertDialog.setNegativeButton(getResources().getString(R.string.dialog_btn_cancel),
-//                new DialogInterface.OnClickListener() {
-//                    public void onClick(DialogInterface dialog, int which) {
-//                        // Write your code here to execute after dialog
-//                        dialog.cancel();
-//                        finish();
-//                    }
-//                });
-//        // closed
-//
-//        // Showing Alert Message
-//        alertDialog.show();
-//    }
 }

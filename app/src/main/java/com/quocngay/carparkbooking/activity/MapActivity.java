@@ -363,6 +363,10 @@ public class MapActivity extends GeneralActivity
                 Intent carManagerIntent = new Intent(MapActivity.this, CarManagerActivity.class);
                 startActivity(carManagerIntent);
                 break;
+            case R.id.nav_change_password:
+                Intent changePasswordIntent = new Intent(MapActivity.this, NewPasswordActivity.class);
+                startActivity(changePasswordIntent);
+                break;
             case R.id.nav_logout:
                 actionLogout();
                 break;
