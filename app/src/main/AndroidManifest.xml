@@ -111,7 +111,11 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activity.RegisterForOtherActivity"
-            android:label="@string/title_activity_register" />
+            android:label="@string/title_activity_register">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activity.SuperAdminActivity" />
+        </activity>
         <activity
             android:name=".activity.AdminActivity"
             android:label="@string/title_activity_admin"

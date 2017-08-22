@@ -1,11 +1,13 @@
 package com.quocngay.carparkbooking.activity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -17,6 +19,7 @@ import com.github.nkzawa.emitter.Emitter;
 import com.google.gson.Gson;
 import com.quocngay.carparkbooking.R;
 import com.quocngay.carparkbooking.adapter.GaragesDetailRecyclerViewAdapter;
+import com.quocngay.carparkbooking.model.GarageAdminModel;
 import com.quocngay.carparkbooking.model.GarageModel;
 import com.quocngay.carparkbooking.model.LocalData;
 import com.quocngay.carparkbooking.model.ParkingInfoSecurityModel;
@@ -31,17 +34,17 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.quocngay.carparkbooking.activity.NearestGaraActivity.GARA_SELECTED;
-
 public class SuperAdminActivity extends GeneralActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    public static final int REQUEST_ADD_GARAGE = 1;
 
     private LocalData localData;
     private RecyclerView mRecyclerView;
     private int mColumnCount = 1;
     private List<GarageModel> dataModelList;
     private GaragesDetailRecyclerViewAdapter recyclerViewAdapter;
-    private List<GarageModel> garageModelList;
+    private List<GarageAdminModel> garageModelList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,13 +74,26 @@ public class SuperAdminActivity extends GeneralActivity
             }
 
             @Override
-            public void onGarageClickListener(GarageModel item) {
-//                Intent intent = new Intent(getApplicationContext(), MapActivity.class);
-//                Bundle bundle = new Bundle();
-//                bundle.putSerializable(GARA_SELECTED, item);
-//                intent.putExtras(bundle);
-//                setResult(RESULT_OK, intent);
-//                finish();
+            public void onGarageDeleteListener(final GarageModel item) {
+                AlertDialog.Builder builder =
+                        new AlertDialog.Builder(SuperAdminActivity.this);
+                builder.setTitle(R.string.dialog_garage_detail_remove)
+                        .setMessage(R.string.dialog_garage_detail_message)
+                        .setPositiveButton(R.string.fire,
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog,
+                                                        int id) {
+                                        removeGarages(item);
+                                    }
+                                })
+                        .setNegativeButton(R.string.cancel,
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog,
+                                                        int id) {
+                                        dialog.dismiss();
+                                    }
+                                });
+                builder.create().show();
             }
         };
         recyclerViewAdapter = new GaragesDetailRecyclerViewAdapter(garageModelList, listener);
@@ -97,25 +113,7 @@ public class SuperAdminActivity extends GeneralActivity
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.super_admin, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    @SuppressWarnings("StatementWithEmptyBody")
-    @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
@@ -131,6 +129,24 @@ public class SuperAdminActivity extends GeneralActivity
         return true;
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == REQUEST_ADD_GARAGE){
+            if (resultCode == RESULT_OK){
+                if(data.getBooleanExtra(AddGarageActivity.ADD_GARAGE_STATUS, false)){
+                    getAllGarages();
+                }
+            }
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        getAllGarages();
+    }
+
     private void getAllGarages() {
         Emitter.Listener onResponseGetAllGarages = new Emitter.Listener() {
             @Override
@@ -141,16 +157,24 @@ public class SuperAdminActivity extends GeneralActivity
                         JSONObject jsonObject = (JSONObject) args[0];
                         Log.d("Garas", jsonObject.toString());
                         Gson gson = new Gson();
+                        if(garageModelList.size() > 0){
+                            garageModelList.clear();
+                        }
                         try {
-                            JSONArray listJsonGaras = jsonObject.getJSONArray(Constant.SERVER_GARAGES_RESULT);
-                            for (int i = 0; i < listJsonGaras.length(); i++) {
-                                GarageModel garageModel =
-                                        gson.fromJson(listJsonGaras.getJSONObject(i).toString(),
-                                                GarageModel.class);
-                                garageModelList.add(garageModel);
-                                recyclerViewAdapter.notifyDataSetChanged();
+                            if (jsonObject.getBoolean(Constant.RESULT)) {
+                                JSONArray listJsonGaras = jsonObject.getJSONArray(Constant.DATA);
+                                for (int i = 0; i < listJsonGaras.length(); i++) {
+                                    GarageAdminModel garageAdminModel =
+                                            gson.fromJson(listJsonGaras.getJSONObject(i).toString(),
+                                                    GarageAdminModel.class);
+                                    garageModelList.add(garageAdminModel);
+                                    recyclerViewAdapter.notifyDataSetChanged();
+                                }
+                            } else {
+                                Log.w(getClass().getName(),
+                                        "ERROR: " + jsonObject.getString(Constant.MESSAGE));
                             }
-                            SocketIOClient.client.mSocket.off(Constant.RESPONSE_GET_ALL_GARAGES);
+                            SocketIOClient.client.mSocket.off(Constant.RESPONSE_GET_ALL_GARAGES_AND_ADMIN);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -159,7 +183,38 @@ public class SuperAdminActivity extends GeneralActivity
             }
         };
 
-        SocketIOClient.client.mSocket.emit(Constant.REQUEST_GET_ALL_GARAGES);
-        SocketIOClient.client.mSocket.on(Constant.RESPONSE_GET_ALL_GARAGES, onResponseGetAllGarages);
+        SocketIOClient.client.mSocket.emit(Constant.REQUEST_GET_ALL_GARAGES_AND_ADMIN);
+        SocketIOClient.client.mSocket.on(Constant.RESPONSE_GET_ALL_GARAGES_AND_ADMIN, onResponseGetAllGarages);
+    }
+
+    private void removeGarages(GarageModel garageModel) {
+        Emitter.Listener onResponseRemoveGarage = new Emitter.Listener() {
+            @Override
+            public void call(final Object... args) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        JSONObject jsonObject = (JSONObject) args[0];
+                        Log.d("Garas", jsonObject.toString());
+                        Gson gson = new Gson();
+                        try {
+                            if (jsonObject.getBoolean(Constant.RESULT)) {
+                                getAllGarages();
+                            } else {
+                                Log.w(getClass().getName(),
+                                        "ERROR: " + jsonObject.getString(Constant.MESSAGE));
+                            }
+                            SocketIOClient.client.mSocket.off(Constant.RESPONSE_REMOVE_GARAGE_BY_ID);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+            }
+        };
+        SocketIOClient.client.mSocket.emit(Constant.REQUEST_REMOVE_GARAGE_BY_ID,
+                garageModel.getId());
+        SocketIOClient.client.mSocket.on(Constant.RESPONSE_REMOVE_GARAGE_BY_ID,
+                onResponseRemoveGarage);
     }
 }

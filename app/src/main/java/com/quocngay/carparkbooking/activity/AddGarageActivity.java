@@ -21,6 +21,8 @@ import org.json.JSONObject;
 
 public class AddGarageActivity extends GeneralActivity {
 
+    public static final String ADD_GARAGE_STATUS = "addGaraStatus";
+
     private EditText edtName, edtAddress,edtNumberSlot,edtLongitude, edtLatitude;
     String accountAdminId;
     private Button addNewGarage;
@@ -95,6 +97,10 @@ public class AddGarageActivity extends GeneralActivity {
                                     getResources().getString(R.string.message_regist_garage),
                                     Toast.LENGTH_SHORT).show();
                             SocketIOClient.client.mSocket.off(Constant.RESPONSE_ADD_NEW_GARAGE);
+                            Intent intent = new Intent(getApplicationContext(),
+                                    RegisterForOtherActivity.class);
+                            intent.putExtra(ADD_GARAGE_STATUS, true);
+                            setResult(RESULT_OK, intent);
                             finish();
                         } else if (data.getString(Constant.MESSAGE).equals("email_registered")) {
                             Toast.makeText(getApplicationContext(), getResources().
@@ -134,4 +140,5 @@ public class AddGarageActivity extends GeneralActivity {
             });
         }
     };
+
 }

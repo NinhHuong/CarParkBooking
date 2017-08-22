@@ -39,7 +39,7 @@
     <string name="title_activity_maps">Map</string>
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
-    <string name="title_activity_register">Register</string>
+    <string name="title_activity_register">Tạo tài khoản cho Admin</string>
     <string name="title_activity_login">Log in</string>
     <string name="title_activity_history_2">Lịch sử</string>
     <string name="title_car_get_in">Xe đi vào</string>
@@ -211,4 +211,7 @@
     <string name="title_activity_register_security">Thêm bảo vệ</string>
     <string name="action_date">Chọn ngày</string>
     <string name="title_activity_super_admin">SuperAdminActivity</string>
+    <string name="dialog_garage_detail_remove">Xóa bãi đỗ xe</string>
+    <string name="dialog_garage_detail_message">Bạn có chắc muốn xóa bãi đỗ xe này?</string>
+    <string name="dialog_button_cancel">Không</string>
 </resources>

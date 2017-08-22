@@ -8,7 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
-import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.quocngay.carparkbooking.R;
@@ -133,7 +133,7 @@ public class AccountListAdapter extends BaseExpandableListAdapter {
     }
 
     @Override
-    public View getGroupView(int groupPosition, boolean isExpanded,
+    public View getGroupView(final int groupPosition, boolean isExpanded,
                              View convertView, ViewGroup parent) {
         View v = convertView;
         if (v == null) {
@@ -144,6 +144,36 @@ public class AccountListAdapter extends BaseExpandableListAdapter {
         TextView txtName;
         txtName = (TextView) v.findViewById(R.id.txtName);
         txtName.setText(mAccountList.get(groupPosition).getFullName());
+
+        ImageView btnDelete = (ImageView) v.findViewById(R.id.btn_security_delete);
+        btnDelete.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                mDeleteDialog = new AlertDialog.Builder(parentActivity);
+                mDeleteDialog.setTitle(R.string.dialog_delete_sec_title);
+                mDeleteDialog.setMessage(R.string.dialog_delete_sec_mess)
+                        .setPositiveButton(R.string.fire, new DialogInterface.OnClickListener() {
+                            LocalData l = new LocalData(mContext);
+                            String garageID = l.getGarageID();
+                            int accountID = mAccountList.get(groupPosition).getId();
+
+                            public void onClick(DialogInterface dialog, int id) {
+                                SocketIOClient.client.mSocket.emit(Constant.REQUEST_REMOVE_SECURITY,
+                                        accountID, garageID);
+                            }
+                        })
+                        .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.dismiss();
+                            }
+                        });
+                // Create the AlertDialog object and return it
+                mDeleteDialog.create().show();
+
+            }
+        });
+
+        v.setTag(mAccountList.get(groupPosition).getId());
+
         return v;
     }
 
@@ -157,47 +187,18 @@ public class AccountListAdapter extends BaseExpandableListAdapter {
             v = inflater.inflate(R.layout.item_account_detail, parent, false);
         }
         final AccountModel accountModel = mAccountList.get(groupPosition);
-        TextView  txtEmail, txtRole, txtphone, txtdob, txtAddress;
+        TextView txtEmail, txtRole, txtphone, txtdob, txtAddress;
         txtEmail = (TextView) v.findViewById(R.id.txtEmail);
         txtRole = (TextView) v.findViewById(R.id.txtRole);
         txtphone = (TextView) v.findViewById(R.id.txtPhone);
         txtdob = (TextView) v.findViewById(R.id.txtdob);
         txtAddress = (TextView) v.findViewById(R.id.txtAddress);
-        Button btnDelete = (Button) v.findViewById(R.id.btnDelete);
 
         txtEmail.setText(accountModel.getEmail());
         txtRole.setText(accountModel.getRoleID().compareTo("3") == 0 ? "Bảo vệ" : " ");
         txtphone.setText(accountModel.getPhone());
         txtdob.setText(accountModel.getDateOfBirth());
         txtAddress.setText(accountModel.getAddress());
-
-
-        btnDelete.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                mDeleteDialog = new AlertDialog.Builder(parentActivity);
-                mDeleteDialog.setTitle(R.string.dialog_delete_sec_title);
-                mDeleteDialog.setMessage(R.string.dialog_delete_sec_mess)
-                        .setPositiveButton(R.string.fire, new DialogInterface.OnClickListener() {
-                            LocalData l = new LocalData(mContext);
-                            String garageID = l.getGarageID();
-                            int accountID =accountModel.getId();
-
-                            public void onClick(DialogInterface dialog, int id) {
-                                SocketIOClient.client.mSocket.emit(Constant.REQUEST_REMOVE_SECURITY, accountID,garageID);
-                            }
-                        })
-                        .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                dialog.dismiss();
-                            }
-                        });
-                // Create the AlertDialog object and return it
-                mDeleteDialog.create().show();
-
-            }
-        });
-        v.setTag(mAccountList.get(childPosition).getId());
-
         return v;
     }
 
