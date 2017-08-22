@@ -90,16 +90,4 @@
             android:layout_margin="5dp"
             android:text="TextView" />
     </LinearLayout>
-
-
-    <Button
-        android:id="@+id/btnDelete"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/txtPhone"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="16dp"
-        android:text="Button"
-        android:visibility="gone" />
-
 </LinearLayout>

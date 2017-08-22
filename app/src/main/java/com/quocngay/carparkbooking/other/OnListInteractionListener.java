@@ -11,5 +11,5 @@ public interface OnListInteractionListener {
 
     void onLicenseClickListener(ParkingInfoSecurityModel item);
 
-    void onGarageClickListener(GarageModel item);
+    void onGarageDeleteListener(GarageModel item);
 }

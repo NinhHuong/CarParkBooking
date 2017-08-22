@@ -43,7 +43,7 @@ public class GeneralActivity extends AppCompatActivity {
         actionBar.setDisplayShowTitleEnabled(showTitle);
     }
 
-    public void initToolbarWithDrawer(int toolbarId, int drawerId) {
+    public Toolbar initToolbarWithDrawer(int toolbarId, int drawerId) {
         Toolbar toolbar = (Toolbar) findViewById(toolbarId);
         setSupportActionBar(toolbar);
         DrawerLayout drawer = (DrawerLayout) findViewById(drawerId);
@@ -52,6 +52,7 @@ public class GeneralActivity extends AppCompatActivity {
         drawer.addDrawerListener(toggle);
         toggle.syncState();
         toggle.setDrawerSlideAnimationEnabled(true);
+        return toolbar;
     }
 
     public void openAutocompleteActivity() {

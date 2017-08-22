@@ -84,6 +84,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.ListIterator;
 
 public class MapActivity extends GeneralActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
@@ -113,6 +114,7 @@ public class MapActivity extends GeneralActivity
     private LocalData localData;
     private TextView tvNavHeaderName;
     private List<Marker> garaMarkerList;
+    private ListIterator<Marker> garaMarkerListItr = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -147,11 +149,12 @@ public class MapActivity extends GeneralActivity
                             JSONArray listJsonGaras = jsonObject.getJSONArray(Constant.SERVER_GARAGES_RESULT);
                             garageModelList = new ArrayList<>();
                             garaMarkerList = new ArrayList<>();
-
+                            googleMap.clear();
                             for (int i = 0; i < listJsonGaras.length(); i++) {
                                 GarageModel garageModel =
                                         gson.fromJson(listJsonGaras.getJSONObject(i).toString(),
                                                 GarageModel.class);
+
                                 garageModelList.add(garageModel);
                                 garaMarkerList.add(addCustomGaraMarker(garageModel));
                             }
@@ -181,16 +184,21 @@ public class MapActivity extends GeneralActivity
                                                 .getJSONArray(Constant.DATA)
                                                 .getJSONObject(0).toString(),
                                         GarageModel.class);
-                                for (Marker marker : garaMarkerList) {
+                                garaMarkerListItr = garaMarkerList.listIterator();
+                                while (garaMarkerListItr.hasNext()) {
+                                    Marker marker = garaMarkerListItr.next();
                                     GarageModel garageModel = (GarageModel) marker.getTag();
                                     assert garageModel != null;
                                     if (resultGara.getId() == garageModel.getId()) {
-                                        marker = addCustomGaraMarker(resultGara);
-                                        Log.d(getClass().getName(),
-                                                "Updated marker: " + marker.getTag());
+                                        marker.remove();
+                                        garaMarkerListItr.remove();
+                                        break;
                                     }
-                                }
 
+                                }
+                                Marker updatedMarker = addCustomGaraMarker(resultGara);
+                                garaMarkerList.add(updatedMarker);
+                                setMarkerInfo(updatedMarker);
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -201,9 +209,11 @@ public class MapActivity extends GeneralActivity
         };
 
         SocketIOClient.client.mSocket.emit(Constant.REQUEST_GET_ALL_GARAGES);
-        SocketIOClient.client.mSocket.on(Constant.RESPONSE_GET_ALL_GARAGES, onResponseGetAllGarages);
+        SocketIOClient.client.mSocket.on(Constant.RESPONSE_GET_ALL_GARAGES,
+                onResponseGetAllGarages);
         SocketIOClient.client.mSocket.off(Constant.RESPONSE_GARAGE_UPDATED);
-        SocketIOClient.client.mSocket.on(Constant.RESPONSE_GARAGE_UPDATED, onResponseGarageUpdated);
+        SocketIOClient.client.mSocket.on(Constant.RESPONSE_GARAGE_UPDATED,
+                onResponseGarageUpdated);
     }
 
     @Override
@@ -238,7 +248,8 @@ public class MapActivity extends GeneralActivity
                             mPolyline.remove();
                         }
                         final LatLng dest = mSelectedGaraMarker.getPosition();
-                        final LatLng origin = new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude());
+                        final LatLng origin = new LatLng(mLastKnownLocation.getLatitude(),
+                                mLastKnownLocation.getLongitude());
                         btnGgDirection.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
@@ -257,7 +268,8 @@ public class MapActivity extends GeneralActivity
                 break;
             case Constant.REQUEST_CODE_NEAREST:
                 if (resultCode == RESULT_OK) {
-                    LocationDataModel locationDataModel = (LocationDataModel) data.getSerializableExtra(NearestGaraActivity.GARA_SELECTED);
+                    LocationDataModel locationDataModel = (LocationDataModel)
+                            data.getSerializableExtra(NearestGaraActivity.GARA_SELECTED);
                     setInfoViewContent(locationDataModel.getGarageModel().getName(),
                             locationDataModel.getGarageModel().getAddress(),
                             locationDataModel.getDuration(),
@@ -293,6 +305,13 @@ public class MapActivity extends GeneralActivity
     protected void onPause() {
         super.onPause();
         mCameraPosition = googleMap.getCameraPosition();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        SocketIOClient.client.mSocket.off(Constant.RESPONSE_BOOKING_CANCELED);
+        SocketIOClient.client.mSocket.off(Constant.RESPONSE_GARAGE_UPDATED);
     }
 
     @Override
@@ -384,16 +403,22 @@ public class MapActivity extends GeneralActivity
                     JSONObject jsonObject = (JSONObject) args[0];
                     try {
                         if (jsonObject.getBoolean(Constant.RESULT)) {
-                            AlertDialog.Builder builder = new AlertDialog.Builder(MapActivity.this);
-                            builder.setTitle(R.string.dialog_booking_canceled_title)
-                                    .setMessage(R.string.dialog_booking_canceled_message)
-                                    .setPositiveButton(R.string.dialog_button_ok, new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int id) {
-                                            dialog.dismiss();
-                                        }
-                                    });
-                            builder.create().show();
-                            initMapGeneralStatus();
+                            if (jsonObject.getString(Constant.MESSAGE).equals("booking_canceled")) {
+                                AlertDialog.Builder builder =
+                                        new AlertDialog.Builder(MapActivity.this);
+                                builder.setTitle(R.string.dialog_booking_canceled_title)
+                                        .setMessage(R.string.dialog_booking_canceled_message)
+                                        .setPositiveButton(R.string.dialog_button_ok, new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int id) {
+                                                dialog.dismiss();
+                                            }
+                                        });
+                                builder.create().show();
+                                initMapGeneralStatus();
+                            }
+                            if(jsonObject.getString(Constant.MESSAGE).equals("checked_in")){
+                                initMapGeneralStatus();
+                            }
                         } else {
                             initMapBookedStatus();
                         }
@@ -566,7 +591,7 @@ public class MapActivity extends GeneralActivity
 
         googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
-            public boolean onMarkerClick(final Marker marker) {
+            public boolean onMarkerClick(Marker marker) {
                 if (mOrtherMarker != null) {
                     mOrtherMarker.remove();
                 }

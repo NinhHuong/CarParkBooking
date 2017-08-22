@@ -134,7 +134,7 @@ public class CheckInOutActivity extends GeneralActivity {
             }
 
             @Override
-            public void onGarageClickListener(GarageModel item) {
+            public void onGarageDeleteListener(GarageModel item) {
 
             }
         };

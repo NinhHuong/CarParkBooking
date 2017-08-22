@@ -140,7 +140,7 @@ public class RegisterForOtherActivity extends GeneralActivity {
                             String accountID = data.getJSONObject(Constant.DATA).getString(Constant.ACCOUNT_ADMIN_ID);
                             Intent addGarage = new Intent(RegisterForOtherActivity.this, AddGarageActivity.class);
                             addGarage.putExtra(Constant.ACCOUNT_ADMIN_ID, accountID);
-                            startActivity(addGarage);
+                            startActivityForResult(addGarage, SuperAdminActivity.REQUEST_ADD_GARAGE);
                             SocketIOClient.client.mSocket.off(Constant.RESPONSE_CREATE_ACCOUNT_ADMIN);
                             finish();
                         } else if (data.getString(Constant.MESSAGE).equals("email_registered")) {
@@ -172,5 +172,21 @@ public class RegisterForOtherActivity extends GeneralActivity {
             e.printStackTrace();
         }
         return generatedPassword;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == SuperAdminActivity.REQUEST_ADD_GARAGE){
+            if(resultCode == RESULT_OK){
+                if(data.getBooleanExtra(AddGarageActivity.ADD_GARAGE_STATUS, false)) {
+                    Intent intent = new Intent(getApplicationContext(),
+                            SuperAdminActivity.class);
+                    intent.putExtra(AddGarageActivity.ADD_GARAGE_STATUS, true);
+                    setResult(RESULT_OK, intent);
+                    finish();
+                }
+            }
+        }
     }
 }

@@ -5,8 +5,15 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+    <include
+        android:id="@+id/app_bar_security"
+        layout="@layout/app_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
     <LinearLayout
         android:id="@+id/container_slots"
+        android:layout_below="@id/app_bar_security"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
@@ -15,12 +22,13 @@
             android:id="@+id/tv_available_slot"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="999/999"
             android:textAlignment="center"
             android:textSize="80sp" />
-        <View style="@style/Divider"
+
+        <View
+            style="@style/Divider"
             android:layout_marginLeft="@dimen/text_margin"
-            android:layout_marginRight="@dimen/text_margin"/>
+            android:layout_marginRight="@dimen/text_margin" />
 
     </LinearLayout>
 
@@ -38,7 +46,6 @@
             android:id="@+id/tvName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="20"
             android:textAlignment="center"
             android:textColor="@color/colorPrimary"
             android:textSize="50sp" />
@@ -47,7 +54,6 @@
             android:id="@+id/tvAddress"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="20"
             android:textAlignment="center"
             android:textSize="30sp" />
     </LinearLayout>
@@ -79,9 +85,9 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/text_margin"
                 android:text="Cho xe vào"
-                android:textColor="@color/colorTextLight"
                 android:textAlignment="center"
                 android:textAllCaps="true"
+                android:textColor="@color/colorTextLight"
                 android:textStyle="bold" />
         </LinearLayout>
 
@@ -106,9 +112,9 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/text_margin"
                 android:text="Cho xe ra"
-                android:textColor="@color/colorTextLight"
                 android:textAlignment="center"
                 android:textAllCaps="true"
+                android:textColor="@color/colorTextLight"
                 android:textStyle="bold" />
         </LinearLayout>
     </LinearLayout>

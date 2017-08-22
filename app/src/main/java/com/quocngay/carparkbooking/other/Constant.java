@@ -62,6 +62,12 @@ public class Constant {
     public static final String RESPONSE_CHECK_TOKEN = "response_check_token";
     public static final String REQUEST_GET_ALL_GARAGES = "request_all_garages";
     public static final String RESPONSE_GET_ALL_GARAGES = "response_all_garages";
+    public static final String REQUEST_GET_ALL_GARAGES_AND_ADMIN = "request_all_garages_and_admin";
+    public static final String RESPONSE_GET_ALL_GARAGES_AND_ADMIN = "response_all_garages_and_admin";
+    public static final String REQUEST_REMOVE_GARAGE_BY_ID = "request_remove_garage_by_id";
+    public static final String RESPONSE_REMOVE_GARAGE_BY_ID = "response_remove_garage_by_id";
+
+
     public static final String RESPONSE_GARAGE_UPDATED = "response_garage_updated";
 
     public static final String SERVER_GARAGES_RESULT = "Garages";
@@ -203,7 +209,7 @@ public class Constant {
     //        public static String SERVER_HOST = "http://54.255.178.120:5000";
 
 
-    public static String SERVER_HOST = "http://192.168.1.13:5000";
+    public static String SERVER_HOST = "http://192.168.1.2:5000";
 
 //    public static String SERVER_HOST = "http://54.255.178.120:5000";
 

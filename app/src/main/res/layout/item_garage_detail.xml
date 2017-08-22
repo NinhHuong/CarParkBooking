@@ -19,7 +19,7 @@
             android:layout_height="match_parent">
 
             <ImageView
-                android:id="@+id/btn_delete"
+                android:id="@+id/btn_gara_delete"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:layout_alignParentEnd="true"
@@ -30,7 +30,7 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/btn_delete"
+                android:layout_below="@id/btn_gara_delete"
                 android:layout_marginBottom="@dimen/text_margin"
                 android:layout_marginEnd="@dimen/text_margin"
                 android:layout_marginStart="@dimen/text_margin"
@@ -43,7 +43,6 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
                     android:layout_marginStart="@dimen/text_margin"
-                    android:text="123"
                     android:textSize="18sp" />
 
                 <TextView
@@ -53,7 +52,6 @@
                     android:layout_marginEnd="@dimen/text_margin"
                     android:layout_toStartOf="@id/tv_gara_detail_slots"
                     android:maxLines="2"
-                    android:text="123"
                     android:textSize="18sp" />
 
                 <TextView
@@ -61,16 +59,15 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/tv_gara_detail_title"
-                    android:layout_marginTop="@dimen/text_margin"
-                    android:text="asdasxzc" />
+                    android:layout_marginTop="@dimen/text_margin"/>
 
                 <TextView
                     android:id="@+id/tv_gara_detail_email"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/tv_gara_detail_title"
+                    android:layout_below="@id/tv_gara_detail_des"
                     android:layout_marginTop="@dimen/text_margin"
-                    android:text="asdasxzc" />
+                    android:layout_marginBottom="@dimen/text_margin"/>
 
             </RelativeLayout>
 
