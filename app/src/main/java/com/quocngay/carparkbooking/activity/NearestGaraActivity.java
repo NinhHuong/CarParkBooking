@@ -61,12 +61,10 @@ public class NearestGaraActivity extends GeneralActivity implements View.OnClick
 
 
         for (GarageModel garageModel : MapActivity.garageModelList) {
-            if (garageModel.getRemainSlot() > 0) {
                 String url = getDirectionsUrl(new LatLng(lastKnownLocation.getLatitude(),
                         lastKnownLocation.getLongitude()), garageModel.getPosition(), false);
                 GetAPIDataForNearest getAPIData = new GetAPIDataForNearest(garageModel);
                 getAPIData.execute(url);
-            }
         }
         dataModelList = new ArrayList<>();
         OnListInteractionListener listener = new OnListInteractionListener() {
@@ -80,7 +78,8 @@ public class NearestGaraActivity extends GeneralActivity implements View.OnClick
                 finish();
             }
         };
-        recyclerViewAdapter = new GaragesRecyclerViewAdapter(dataModelList, listener);
+        recyclerViewAdapter = new GaragesRecyclerViewAdapter(getApplicationContext(),dataModelList,
+                listener);
         mRecyclerView.setAdapter(recyclerViewAdapter);
         if (dataModelList != null) {
             recyclerViewAdapter.notifyDataSetChanged();

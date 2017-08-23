@@ -187,11 +187,6 @@ public class Constant {
     public static final String RESPONSE_HISTORY = "response_history";
     //endregion
 
-    //region ACCOUNT
-    public static final String REQUEST_LOG_OUT = "request_log_out";
-    public static final String RESPONSE_LOG_OUT = "response_log_out";
-    //endregion
-
     //region SUPER ADMIN
     public static final String REQUEST_ADD_NEW_GARAGE = "request_add_new_garage";
     public static final String RESPONSE_ADD_NEW_GARAGE = "response_add_new_garage";
@@ -214,7 +209,7 @@ public class Constant {
     //        public static String SERVER_HOST = "http://54.255.178.120:5000";
 
 
-    public static String SERVER_HOST = "http://192.168.0.110:5000";
+    public static String SERVER_HOST = "http://192.168.1.2:5000";
 
 //    public static String SERVER_HOST = "http://54.255.178.120:5000";
 

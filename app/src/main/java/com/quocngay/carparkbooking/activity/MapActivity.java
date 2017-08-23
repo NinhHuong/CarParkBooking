@@ -133,7 +133,8 @@ public class MapActivity extends GeneralActivity
         updateLocationUI();
         getDeviceLocation();
         getAllGarages();
-        initMapCheckBooking();
+        initMapGeneralStatus();
+
     }
 
     private void getAllGarages() {
@@ -160,6 +161,7 @@ public class MapActivity extends GeneralActivity
                                 garaMarkerList.add(addCustomGaraMarker(garageModel));
                             }
                             SocketIOClient.client.mSocket.off(Constant.RESPONSE_GET_ALL_GARAGES);
+                            initMapCheckBooking();
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -245,24 +247,6 @@ public class MapActivity extends GeneralActivity
                 if (resultCode == RESULT_OK) {
                     Boolean bookingStatus = data.getBooleanExtra(Constant.BOOKING_STATUS, false);
                     if (bookingStatus) {
-                        if (mPolyline != null) {
-                            mPolyline.remove();
-                        }
-                        final LatLng dest = mSelectedGaraMarker.getPosition();
-                        final LatLng origin = new LatLng(mLastKnownLocation.getLatitude(),
-                                mLastKnownLocation.getLongitude());
-                        btnGgDirection.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
-                                        Uri.parse(getDirectionsUrl(origin, dest, true)));
-                                startActivity(intent);
-                            }
-                        });
-                        //Draw direction to destination point
-                        String url = getDirectionsUrl(origin, dest, false);
-                        GetAPIData getAPIData = new GetAPIData();
-                        getAPIData.execute(url);
                         initMapCheckBooking();
                     }
                 }
@@ -282,10 +266,10 @@ public class MapActivity extends GeneralActivity
                     mCameraPosition = new CameraPosition(locationDataModel.getGarageModel().getPosition(),
                             Constant.DEFAULT_ZOOM + 1, 0, 0);
                     for (Marker marker : garaMarkerList) {
-                        if (((marker.getTag()) != null ?
-                                ((GarageModel) marker.getTag()).getId() : 0) ==
-                                locationDataModel.getGarageModel().getId()) {
+                        if (((marker.getTag()) != null ? ((GarageModel) marker.getTag()).getId() : 0)
+                                == locationDataModel.getGarageModel().getId()) {
                             mSelectedGaraMarker = marker;
+                            mSelectedGaraMarker.setTag(marker.getTag());
                         }
                     }
                     setMarkerInfo(mSelectedGaraMarker);
@@ -426,7 +410,8 @@ public class MapActivity extends GeneralActivity
                                 initMapGeneralStatus();
                             }
                         } else {
-                            initMapBookedStatus();
+                            Log.w(getClass().getName(), "Server message: "+
+                                    jsonObject.getString(Constant.MESSAGE));
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -458,7 +443,11 @@ public class MapActivity extends GeneralActivity
                             if (mParkingInfoModel != null &&
                                     mParkingInfoModel.getParkingStatus() ==
                                             Constant.PARKING_INFO_STATUS_BOOKED) {
-                                initMapBookedStatus();
+                                for(GarageModel garageModel : garageModelList) {
+                                    if (mParkingInfoModel.getGarageID() == garageModel.getId()) {
+                                        initMapBookedStatus(garageModel.getPosition());
+                                    }
+                                }
                             } else {
                                 initMapGeneralStatus();
                             }
@@ -590,7 +579,7 @@ public class MapActivity extends GeneralActivity
         });
     }
 
-    private void initMapBookedStatus() {
+    private void initMapBookedStatus(final LatLng dest) {
         btnMapStatus(BTN_STATUS_BOOK_DETAIL);
         googleMap.setOnMapClickListener(null);
 
@@ -610,6 +599,25 @@ public class MapActivity extends GeneralActivity
                 return false;
             }
         });
+
+        if (mPolyline != null) {
+            mPolyline.remove();
+        }
+        final LatLng origin = new LatLng(mLastKnownLocation.getLatitude(),
+                mLastKnownLocation.getLongitude());
+        btnGgDirection.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
+                        Uri.parse(getDirectionsUrl(origin, dest, true)));
+                startActivity(intent);
+            }
+        });
+        //Draw direction to destination point
+        String url = getDirectionsUrl(origin, dest, false);
+        GetAPIData getAPIData = new GetAPIData();
+        getAPIData.execute(url);
+
     }
 
     private void initMapGeneralStatus() {

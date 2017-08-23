@@ -106,8 +106,7 @@ public class BookingActivity extends GeneralActivity {
     }
 
     private void requestGaraDetail() {
-        SocketIOClient.client.mSocket.emit(Constant.REQUEST_GET_GARAGE_BY_ID,
-                markerGara.getId());
+        SocketIOClient.client.mSocket.emit(Constant.REQUEST_GET_GARAGE_BY_ID, markerGara.getId());
         SocketIOClient.client.mSocket.on(Constant.RESPONSE_GET_GARAGE_BY_ID, onResponseGetGaraById);
     }
 
