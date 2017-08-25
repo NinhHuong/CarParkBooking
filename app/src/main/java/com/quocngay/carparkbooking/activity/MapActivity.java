@@ -13,7 +13,6 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Debug;
 import android.os.Handler;
 import android.os.ResultReceiver;
 import android.provider.Settings;
@@ -129,6 +128,7 @@ public class MapActivity extends GeneralActivity
     @Override
     public void onMapReady(final GoogleMap map) {
         googleMap = map;
+        checkGps();
         initMap();
         updateLocationUI();
         getDeviceLocation();
@@ -266,10 +266,9 @@ public class MapActivity extends GeneralActivity
                     mCameraPosition = new CameraPosition(locationDataModel.getGarageModel().getPosition(),
                             Constant.DEFAULT_ZOOM + 1, 0, 0);
                     for (Marker marker : garaMarkerList) {
-                        if (((marker.getTag()) != null ? ((GarageModel) marker.getTag()).getId() : 0)
-                                == locationDataModel.getGarageModel().getId()) {
+                        if (((GarageModel) (marker.getTag())).getId() ==
+                                locationDataModel.getGarageModel().getId()) {
                             mSelectedGaraMarker = marker;
-                            mSelectedGaraMarker.setTag(marker.getTag());
                         }
                     }
                     setMarkerInfo(mSelectedGaraMarker);
@@ -406,11 +405,11 @@ public class MapActivity extends GeneralActivity
                                 builder.create().show();
                                 initMapGeneralStatus();
                             }
-                            if(jsonObject.getString(Constant.MESSAGE).equals("checked_in")){
+                            if (jsonObject.getString(Constant.MESSAGE).equals("checked_in")) {
                                 initMapGeneralStatus();
                             }
                         } else {
-                            Log.w(getClass().getName(), "Server message: "+
+                            Log.w(getClass().getName(), "Server message: " +
                                     jsonObject.getString(Constant.MESSAGE));
                         }
                     } catch (JSONException e) {
@@ -443,7 +442,7 @@ public class MapActivity extends GeneralActivity
                             if (mParkingInfoModel != null &&
                                     mParkingInfoModel.getParkingStatus() ==
                                             Constant.PARKING_INFO_STATUS_BOOKED) {
-                                for(GarageModel garageModel : garageModelList) {
+                                for (GarageModel garageModel : garageModelList) {
                                     if (mParkingInfoModel.getGarageID() == garageModel.getId()) {
                                         initMapBookedStatus(garageModel.getPosition());
                                     }
@@ -571,6 +570,7 @@ public class MapActivity extends GeneralActivity
         btnMyLocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mLastKnownLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
                 if (mLastKnownLocation != null)
                     googleMap.animateCamera(CameraUpdateFactory.newLatLng(
                             new LatLng(mLastKnownLocation.getLatitude(),
@@ -878,7 +878,6 @@ public class MapActivity extends GeneralActivity
             mLastKnownLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         }
 
-        //TODO: gete bug when gps is not enabled
         // Set the map's camera position to the current location of the device.
         if (mCameraPosition != null) {
             googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(mCameraPosition));
@@ -888,7 +887,7 @@ public class MapActivity extends GeneralActivity
                             mLastKnownLocation.getLongitude()), Constant.DEFAULT_ZOOM));
         } else {
             Log.d("TAG", "Current location is null. Using defaults.");
-            LatLng mDefaultLocation = new LatLng(-33.852, 151.211);
+            LatLng mDefaultLocation = new LatLng(21.0228161, 105.801944);
             googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mDefaultLocation, Constant.DEFAULT_ZOOM));
             googleMap.getUiSettings().setMyLocationButtonEnabled(false);
         }

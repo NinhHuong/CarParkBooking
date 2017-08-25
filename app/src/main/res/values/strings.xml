@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Car-Park Booking</string>
+    <string name="app_name">Parking Here</string>
 
     <string name="home_map">Map</string>
     <string name="home_history">History</string>
@@ -215,4 +215,6 @@
     <string name="dialog_garage_detail_remove">Xóa bãi đỗ xe</string>
     <string name="dialog_garage_detail_message">Bạn có chắc muốn xóa bãi đỗ xe này?</string>
     <string name="dialog_button_cancel">Không</string>
+    <string name="gps_not_enabled_title">Không có GPS</string>
+    <string name="gps_not_enabled_message">Bạn có muốn bật GPS để sử dụng ứng dụng?</string>
 </resources>

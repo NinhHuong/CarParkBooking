@@ -3,6 +3,7 @@ package com.quocngay.carparkbooking.activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.location.LocationManager;
 import android.os.Build;
 import android.provider.Settings;
 import android.support.v4.widget.DrawerLayout;
@@ -95,24 +96,39 @@ public class GeneralActivity extends AppCompatActivity {
         return url;
     }
 
-    private boolean isLocationEnabled(Context context) {
-        int locationMode = 0;
-        String locationProviders;
+    public void checkGps(){
+        LocationManager manager = (LocationManager) getSystemService( Context.LOCATION_SERVICE );
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            try {
-                locationMode = Settings.Secure.getInt(context.getContentResolver(), Settings.Secure.LOCATION_MODE);
-
-            } catch (Settings.SettingNotFoundException e) {
-                e.printStackTrace();
-                return false;
-            }
-            return locationMode != Settings.Secure.LOCATION_MODE_OFF;
-
-        } else {
-            locationProviders = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
-            return !TextUtils.isEmpty(locationProviders);
+        if ( !manager.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) {
+            buildAlertGps();
         }
+    }
+
+    private void buildAlertGps() {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(getResources().getString(R.string.gps_not_enabled_title))
+                .setMessage(getResources().getString(R.string.gps_not_enabled_message))
+                .setCancelable(false)
+                .setPositiveButton(getResources().getString(R.string.fire),
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(final DialogInterface dialog, final int id) {
+                                startActivity(new Intent(android
+                                        .provider
+                                        .Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                            }
+                        })
+                .setNegativeButton(getResources().getString(R.string.cancel),
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(final DialogInterface dialog, final int id) {
+                                dialog.cancel();
+                                Intent homeIntent = new Intent(Intent.ACTION_MAIN);
+                                homeIntent.addCategory( Intent.CATEGORY_HOME );
+                                homeIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                startActivity(homeIntent);
+                            }
+                        });
+        final AlertDialog alert = builder.create();
+        alert.show();
     }
 
     public void actionLogout() {
