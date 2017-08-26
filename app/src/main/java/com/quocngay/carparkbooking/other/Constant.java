@@ -209,9 +209,9 @@ public class Constant {
     //        public static String SERVER_HOST = "http://54.255.178.120:5000";
 
 
-    public static String SERVER_HOST = "http://192.168.1.3:5000";
+//    public static String SERVER_HOST = "http://192.168.1.3:5000";
 
-//    public static String SERVER_HOST = "http://54.255.178.120:5000";
+    public static String SERVER_HOST = "http://54.255.178.120:5000";
 
     //    public static String SERVER_HOST = "http://52.15.194.52:5000";
     public static String APP_PREF = "AppPref";

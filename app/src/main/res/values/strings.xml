@@ -140,7 +140,7 @@
     <string name="cancel">Không</string>
     <string name="title_licence_picker">Chọn 1 biển số</string>
     <string name="booking_license_title">Biển số</string>
-    <string name="error_book_new">Có lỗi xảy ra! Vui lòng kiểm tra lại</string>
+    <string name="error_book_new">Xe đang trong garage</string>
     <string name="dialog_book_message">Bạn có chắc chắn muốn đặt chỗ</string>
     <string name="dialog_book_title">Xác nhận đặt chỗ</string>
 
