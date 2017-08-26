@@ -217,4 +217,5 @@
     <string name="dialog_button_cancel">Không</string>
     <string name="gps_not_enabled_title">Không có GPS</string>
     <string name="gps_not_enabled_message">Bạn có muốn bật GPS để sử dụng ứng dụng?</string>
+    <string name="time_booked">Đặt vào lúc</string>
 </resources>

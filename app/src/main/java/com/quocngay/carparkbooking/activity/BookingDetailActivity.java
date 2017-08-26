@@ -7,10 +7,7 @@ import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,14 +19,13 @@ import android.widget.Toast;
 import com.github.nkzawa.emitter.Emitter;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.iid.FirebaseInstanceIdService;
 import com.google.gson.Gson;
 import com.quocngay.carparkbooking.R;
 import com.quocngay.carparkbooking.model.CarModel;
 import com.quocngay.carparkbooking.model.GarageModel;
+import com.quocngay.carparkbooking.model.LocalData;
 import com.quocngay.carparkbooking.model.LocationDataModel;
 import com.quocngay.carparkbooking.model.ParkingInfoModel;
-import com.quocngay.carparkbooking.model.LocalData;
 import com.quocngay.carparkbooking.other.Constant;
 import com.quocngay.carparkbooking.other.SocketIOClient;
 import com.quocngay.carparkbooking.services.FetchAddressIntentService;
@@ -51,7 +47,6 @@ public class BookingDetailActivity extends GeneralActivity {
     private CarModel mCarModel;
     private GarageModel mGaraModel;
     private TextView tvRemainSlots;
-
 
 
     @Override
@@ -85,7 +80,9 @@ public class BookingDetailActivity extends GeneralActivity {
                                     jsonObject.getJSONObject(Constant.DATA).toString(),
                                     ParkingInfoModel.class);
                             if (mParkingInfoModel.getParkingStatus() == Constant.PARKING_INFO_STATUS_BOOKED) {
-                                tvBookingDetailTime.setText(mParkingInfoModel.getTimeBookedFormatted());
+                                tvBookingDetailTime.setText(
+                                        getResources().getString(R.string.time_booked) + " " +
+                                        mParkingInfoModel.getTimeBookedFormatted());
                                 requestGaraDetail(mParkingInfoModel.getGarageID());
                                 requestCarDetail(mParkingInfoModel.getCarID());
                             }
@@ -312,7 +309,7 @@ public class BookingDetailActivity extends GeneralActivity {
                                         getResources()
                                                 .getString(R.string.booking_detail_refresh_success),
                                         Toast.LENGTH_SHORT).show();
-                            } else if(jsonObject.getString(Constant.MESSAGE).equals("refresh_failed")){
+                            } else if (jsonObject.getString(Constant.MESSAGE).equals("refresh_failed")) {
                                 Toast.makeText(BookingDetailActivity.this,
                                         getResources().getString(R.string.error_server),
                                         Toast.LENGTH_SHORT).show();
