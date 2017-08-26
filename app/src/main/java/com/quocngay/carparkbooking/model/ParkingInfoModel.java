@@ -1,5 +1,10 @@
 package com.quocngay.carparkbooking.model;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 /**
  * Created by Windows on 20-Jul-17.
  */
@@ -12,18 +17,19 @@ public class ParkingInfoModel {
     public String timeGoIn;
     public String timeGoOut;
     public int parkingStatus;
+    SimpleDateFormat inputFormat =
+            new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.getDefault());
+    SimpleDateFormat timeFormat =
+            new SimpleDateFormat("HH:mm", Locale.getDefault());
 
-    public ParkingInfoModel() {
-    }
-
-    public ParkingInfoModel(int id, int carID, int garageID, String timeBooked, String timeGoIn, String timeGoOut, int parkingStatus) {
-        this.id = id;
-        this.carID = carID;
-        this.garageID = garageID;
-        this.timeBooked = timeBooked;
-        this.timeGoIn = timeGoIn;
-        this.timeGoOut = timeGoOut;
-        this.parkingStatus = parkingStatus;
+    public String getTimeBookedFormatted(){
+        Date book = null;
+        try {
+            book = inputFormat.parse(getTimeBooked().replaceAll("Z$", "+0000"));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return timeFormat.format(book);
     }
 
     public int getId() {
@@ -51,10 +57,6 @@ public class ParkingInfoModel {
     }
 
     public String getTimeBooked() {
-        return timeBooked;
-    }
-
-    public String getTimeBookedFormatted() {
         return timeBooked;
     }
 

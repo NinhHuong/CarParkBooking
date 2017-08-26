@@ -105,6 +105,7 @@ public class MapActivity extends GeneralActivity
     private TextView tvAddressTitle, tvAddressDescription, tvAddressDuration, tvAddressDistance;
     private CardView cardViewMarkerInfo;
     private Marker mOrtherMarker, mSelectedGaraMarker;
+    private GarageModel mSelectedGaraModel;
     private Button btnChoose, btnFind, btnBookDetail;
     private Polyline mPolyline;
     private UserModel mUserModel;
@@ -152,6 +153,9 @@ public class MapActivity extends GeneralActivity
                             garageModelList = new ArrayList<>();
                             garaMarkerList = new ArrayList<>();
                             googleMap.clear();
+                            if(mSelectedGaraMarker != null && mSelectedGaraModel != null){
+                                mSelectedGaraMarker.setTag(mSelectedGaraModel);
+                            }
                             for (int i = 0; i < listJsonGaras.length(); i++) {
                                 GarageModel garageModel =
                                         gson.fromJson(listJsonGaras.getJSONObject(i).toString(),
@@ -269,6 +273,7 @@ public class MapActivity extends GeneralActivity
                         if (((GarageModel) (marker.getTag())).getId() ==
                                 locationDataModel.getGarageModel().getId()) {
                             mSelectedGaraMarker = marker;
+                            mSelectedGaraModel = (GarageModel) mSelectedGaraMarker.getTag();
                         }
                     }
                     setMarkerInfo(mSelectedGaraMarker);
@@ -723,6 +728,7 @@ public class MapActivity extends GeneralActivity
                     @Override
                     public void onClick(View v) {
                         Intent bookingIntent = new Intent(getApplicationContext(), BookingActivity.class);
+                        GarageModel garageModel = (GarageModel) mSelectedGaraMarker.getTag();
                         bookingIntent.putExtra(Constant.GARA_DETAIL, (GarageModel) mSelectedGaraMarker.getTag());
                         bookingIntent.putExtra(Constant.MY_LOCATION, mLastKnownLocation == null ? new Location("") : mLastKnownLocation);
                         startActivityForResult(bookingIntent, Constant.REQUEST_CODE_BOOKING);
