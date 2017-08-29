@@ -204,6 +204,8 @@ public class Constant {
     public static final String RESPONSE_NOTI_TIME_OUT = "response_notification_time_out";
     public static final String BOOKING_DETAIL_STATUS = "booking_detail_status";
     public static final String BOOKING_DETAIL_STATUS_CANCEL = "cancel";
+    public static final String REQUEST_CANCEL_NOTIFICATION = "request_cancel_notification";
+    public static final String KEY_SELECTED_MARKER = "key_selected_marker";
 
     public static int PREF_MODE = 1;
     //        public static String SERVER_HOST = "http://54.255.178.120:5000";

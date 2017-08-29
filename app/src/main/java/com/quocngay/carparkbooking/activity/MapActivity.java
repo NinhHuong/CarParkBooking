@@ -123,7 +123,6 @@ public class MapActivity extends GeneralActivity
         setContentView(R.layout.activity_map);
         localData = new LocalData(getApplicationContext());
         initMapActivity();
-
     }
 
     @Override
@@ -152,10 +151,12 @@ public class MapActivity extends GeneralActivity
                             JSONArray listJsonGaras = jsonObject.getJSONArray(Constant.SERVER_GARAGES_RESULT);
                             garageModelList = new ArrayList<>();
                             garaMarkerList = new ArrayList<>();
-                            googleMap.clear();
-                            if(mSelectedGaraMarker != null && mSelectedGaraModel != null){
-                                mSelectedGaraMarker.setTag(mSelectedGaraModel);
+                            garageModelList.clear();
+                            garaMarkerList.clear();
+                            if (mSelectedGaraMarker != null) {
+                                mSelectedGaraModel = (GarageModel) mSelectedGaraMarker.getTag();
                             }
+                            googleMap.clear();
                             for (int i = 0; i < listJsonGaras.length(); i++) {
                                 GarageModel garageModel =
                                         gson.fromJson(listJsonGaras.getJSONObject(i).toString(),
@@ -163,6 +164,11 @@ public class MapActivity extends GeneralActivity
 
                                 garageModelList.add(garageModel);
                                 garaMarkerList.add(addCustomGaraMarker(garageModel));
+                                if (mSelectedGaraMarker != null && mSelectedGaraModel!= null) {
+                                    if (garageModel.getId() == mSelectedGaraModel.getId()) {
+                                        mSelectedGaraMarker.setTag(mSelectedGaraModel);
+                                    }
+                                }
                             }
                             SocketIOClient.client.mSocket.off(Constant.RESPONSE_GET_ALL_GARAGES);
                             initMapCheckBooking();
@@ -245,14 +251,6 @@ public class MapActivity extends GeneralActivity
                     Status status = PlaceAutocomplete.getStatus(this, data);
                     Log.i("TAG", status.getStatusMessage());
 
-                }
-                break;
-            case Constant.REQUEST_CODE_BOOKING:
-                if (resultCode == RESULT_OK) {
-                    Boolean bookingStatus = data.getBooleanExtra(Constant.BOOKING_STATUS, false);
-                    if (bookingStatus) {
-                        initMapCheckBooking();
-                    }
                 }
                 break;
             case Constant.REQUEST_CODE_NEAREST:
@@ -411,6 +409,17 @@ public class MapActivity extends GeneralActivity
                                 initMapGeneralStatus();
                             }
                             if (jsonObject.getString(Constant.MESSAGE).equals("checked_in")) {
+                                SocketIOClient.client.mSocket.emit(Constant.REQUEST_CANCEL_NOTIFICATION);
+                                AlertDialog.Builder builder =
+                                        new AlertDialog.Builder(MapActivity.this);
+                                builder.setTitle(R.string.dialog_booking_checked_in_title)
+                                        .setMessage(R.string.dialog_booking_checked_in_message)
+                                        .setPositiveButton(R.string.dialog_button_ok, new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int id) {
+                                                dialog.dismiss();
+                                            }
+                                        });
+                                builder.create().show();
                                 initMapGeneralStatus();
                             }
                         } else {
@@ -1007,11 +1016,25 @@ public class MapActivity extends GeneralActivity
     }
 
     @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        if (savedInstanceState != null) {
+            mSelectedGaraModel =
+                    (GarageModel) savedInstanceState.getSerializable(Constant.KEY_SELECTED_MARKER);
+
+        }
+    }
+
+    @Override
     protected void onSaveInstanceState(Bundle outState) {
         if (googleMap != null) {
             outState.putParcelable(Constant.KEY_CAMERA_POSITION, googleMap.getCameraPosition());
             outState.putParcelable(Constant.KEY_LOCATION, mLastKnownLocation);
             super.onSaveInstanceState(outState);
+        }
+        if (mSelectedGaraMarker != null) {
+            outState.putSerializable(Constant.KEY_SELECTED_MARKER,
+                    (GarageModel) mSelectedGaraMarker.getTag());
         }
     }
 }

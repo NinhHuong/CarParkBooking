@@ -218,4 +218,6 @@
     <string name="gps_not_enabled_title">Không có GPS</string>
     <string name="gps_not_enabled_message">Bạn có muốn bật GPS để sử dụng ứng dụng?</string>
     <string name="time_booked">Đặt vào lúc</string>
+    <string name="dialog_booking_checked_in_title">Vào bãi đỗ xe</string>
+    <string name="dialog_booking_checked_in_message">Xe của bạn đã được vào bãi đỗ xe.</string>
 </resources>
