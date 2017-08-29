@@ -11,15 +11,15 @@ import java.util.Locale;
 
 public class ParkingInfoModel {
     public int id;
-    public int carID;
-    public int garageID;
-    public String timeBooked;
-    public String timeGoIn;
-    public String timeGoOut;
-    public int parkingStatus;
-    SimpleDateFormat inputFormat =
+    private int carID;
+    private int garageID;
+    private String timeBooked;
+    private String timeGoIn;
+    private String timeGoOut;
+    private int parkingStatus;
+    private SimpleDateFormat inputFormat =
             new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.getDefault());
-    SimpleDateFormat timeFormat =
+    private SimpleDateFormat timeFormat =
             new SimpleDateFormat("HH:mm", Locale.getDefault());
 
     public String getTimeBookedFormatted(){

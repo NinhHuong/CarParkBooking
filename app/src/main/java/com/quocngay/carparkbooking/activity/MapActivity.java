@@ -134,6 +134,7 @@ public class MapActivity extends GeneralActivity
         getDeviceLocation();
         getAllGarages();
         initMapGeneralStatus();
+        Log.d("Tag", String.valueOf(mSelectedGaraMarker == null));
 
     }
 
@@ -153,20 +154,18 @@ public class MapActivity extends GeneralActivity
                             garaMarkerList = new ArrayList<>();
                             garageModelList.clear();
                             garaMarkerList.clear();
-                            if (mSelectedGaraMarker != null) {
-                                mSelectedGaraModel = (GarageModel) mSelectedGaraMarker.getTag();
-                            }
                             googleMap.clear();
                             for (int i = 0; i < listJsonGaras.length(); i++) {
                                 GarageModel garageModel =
                                         gson.fromJson(listJsonGaras.getJSONObject(i).toString(),
                                                 GarageModel.class);
-
                                 garageModelList.add(garageModel);
-                                garaMarkerList.add(addCustomGaraMarker(garageModel));
-                                if (mSelectedGaraMarker != null && mSelectedGaraModel!= null) {
-                                    if (garageModel.getId() == mSelectedGaraModel.getId()) {
-                                        mSelectedGaraMarker.setTag(mSelectedGaraModel);
+                                Marker marker = addCustomGaraMarker(garageModel);
+                                garaMarkerList.add(marker);
+                                if (mSelectedGaraMarker != null) {
+                                    if (marker.getPosition()
+                                            .equals(mSelectedGaraMarker.getPosition())) {
+                                        mSelectedGaraMarker = marker;
                                     }
                                 }
                             }
@@ -278,12 +277,12 @@ public class MapActivity extends GeneralActivity
                     btnMapStatus(BTN_STATUS_CHOOSE);
                 }
                 break;
-            case Constant.REQUEST_CODE_BOOKING_DETAIL:
-                if (resultCode == RESULT_OK) {
-                    if (data.getStringExtra(Constant.BOOKING_DETAIL_STATUS)
-                            .equals(Constant.BOOKING_DETAIL_STATUS_CANCEL))
-                        initMapGeneralStatus();
-                }
+//            case Constant.REQUEST_CODE_BOOKING_DETAIL:
+//                if (resultCode == RESULT_OK) {
+//                    if (data.getStringExtra(Constant.BOOKING_DETAIL_STATUS)
+//                            .equals(Constant.BOOKING_DETAIL_STATUS_CANCEL))
+//                        initMapGeneralStatus();
+//                }
 
         }
     }
@@ -1015,26 +1014,4 @@ public class MapActivity extends GeneralActivity
         }
     }
 
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        if (savedInstanceState != null) {
-            mSelectedGaraModel =
-                    (GarageModel) savedInstanceState.getSerializable(Constant.KEY_SELECTED_MARKER);
-
-        }
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        if (googleMap != null) {
-            outState.putParcelable(Constant.KEY_CAMERA_POSITION, googleMap.getCameraPosition());
-            outState.putParcelable(Constant.KEY_LOCATION, mLastKnownLocation);
-            super.onSaveInstanceState(outState);
-        }
-        if (mSelectedGaraMarker != null) {
-            outState.putSerializable(Constant.KEY_SELECTED_MARKER,
-                    (GarageModel) mSelectedGaraMarker.getTag());
-        }
-    }
 }
