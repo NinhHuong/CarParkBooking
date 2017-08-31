@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.quocngay.carparkbooking.R;
+import com.quocngay.carparkbooking.activity.CarManagerActivity;
 import com.quocngay.carparkbooking.model.CarModel;
 import com.quocngay.carparkbooking.other.Constant;
 import com.quocngay.carparkbooking.other.SocketIOClient;
@@ -29,12 +30,16 @@ public class CarListAdapter extends BaseAdapter {
     private List<CarModel> mCarList;
     private AlertDialog.Builder mDeleteDialog;
     private Activity parentActivity;
+    private CarManagerActivity.OnListInteractionListener listener;
 
 
-    public CarListAdapter(Activity parentActivity, Context mContext, List<CarModel> mCarList) {
+
+    public CarListAdapter(Activity parentActivity, Context mContext, List<CarModel> mCarList,
+                          CarManagerActivity.OnListInteractionListener listener) {
         this.parentActivity = parentActivity;
         this.mContext = mContext;
         this.mCarList = mCarList;
+        this.listener = listener;
     }
 
     @Override
@@ -68,7 +73,7 @@ public class CarListAdapter extends BaseAdapter {
                 mDeleteDialog.setMessage(R.string.dialog_delete_car)
                         .setPositiveButton(R.string.fire, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                SocketIOClient.client.mSocket.emit(Constant.REQUEST_REMOVE_CAR_BY_ID, mCarList.get(position).getId());
+                                listener.onCarDeleteListener(mCarList.get(position));
                             }
                         })
                         .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {

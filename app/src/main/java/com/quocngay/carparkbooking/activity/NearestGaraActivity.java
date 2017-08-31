@@ -161,8 +161,10 @@ public class NearestGaraActivity extends GeneralActivity implements View.OnClick
 
         @Override
         protected void onPostExecute(LocationDataModel result) {
-            dataModelList.add(result);
-                Collections.sort(dataModelList);
+            if(dataModelList.size() == 10){
+                dataModelList.add(result);
+            }
+            Collections.sort(dataModelList);
             recyclerViewAdapter.notifyDataSetChanged();
             mRecyclerView.setVisibility(View.VISIBLE);
         }

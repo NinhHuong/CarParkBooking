@@ -2,9 +2,6 @@ package com.quocngay.carparkbooking.activity;
 
 import android.app.Dialog;
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -17,9 +14,9 @@ import android.widget.Toast;
 import com.github.nkzawa.emitter.Emitter;
 import com.google.gson.Gson;
 import com.quocngay.carparkbooking.R;
+import com.quocngay.carparkbooking.adapter.CarListAdapter;
 import com.quocngay.carparkbooking.model.CarModel;
 import com.quocngay.carparkbooking.model.LocalData;
-import com.quocngay.carparkbooking.adapter.CarListAdapter;
 import com.quocngay.carparkbooking.other.Constant;
 import com.quocngay.carparkbooking.other.SocketIOClient;
 
@@ -52,18 +49,16 @@ public class CarManagerActivity extends GeneralActivity {
         btnAddNewCar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                    if (mCarList.size() >= 5) {
-                        Toast.makeText(CarManagerActivity.this,
-                                getResources().getString(R.string.error_add_license_limit),
-                                Toast.LENGTH_SHORT).show();
-                    } else {
-                        initAddLicenseDialog();
-                    }
+                if (mCarList.size() >= 5) {
+                    Toast.makeText(CarManagerActivity.this,
+                            getResources().getString(R.string.error_add_license_limit),
+                            Toast.LENGTH_SHORT).show();
+                } else {
+                    initAddLicenseDialog();
+                }
             }
         });
         SocketIOClient.client.mSocket.emit(Constant.REQUEST_FIND_CAR_BY_ACCOUNT_ID, accountid);
-
-        SocketIOClient.client.mSocket.on(Constant.RESPONSE_REMOVE_CAR_BY_ID, onDeleteCar);
         SocketIOClient.client.mSocket.on(Constant.RESPONSE_FIND_CAR_BY_ACCOUNT_ID, onGetCar);
     }
 
@@ -103,30 +98,6 @@ public class CarManagerActivity extends GeneralActivity {
         return true;
     }
 
-    private Emitter.Listener onDeleteCar = new Emitter.Listener() {
-
-        @Override
-        public void call(final Object... args) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    JSONObject data = (JSONObject) args[0];
-                    try {
-                        Boolean result = data.getBoolean(Constant.RESULT);
-                        if (result) {
-                            Toast.makeText(getApplicationContext(), R.string.had_delete_car, Toast.LENGTH_SHORT).show();
-                            SocketIOClient.client.mSocket.emit(Constant.REQUEST_FIND_CAR_BY_ACCOUNT_ID, accountid);
-                        } else
-                            Toast.makeText(getApplicationContext(), R.string.error_general, Toast.LENGTH_SHORT).show();
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
-        }
-    };
-
     private Emitter.Listener onAddCar = new Emitter.Listener() {
 
         @Override
@@ -151,8 +122,6 @@ public class CarManagerActivity extends GeneralActivity {
                             Log.w(getClass().getName(), "Error: " +
                                     data.getString(Constant.MESSAGE));
                         }
-
-                        SocketIOClient.client.mSocket.off(Constant.RESPONSE_REMOVE_CAR_BY_ID);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -200,11 +169,57 @@ public class CarManagerActivity extends GeneralActivity {
                 mCarList.add(p);
             }
 
-            adapter = new CarListAdapter(this, getBaseContext(), mCarList);
+            OnListInteractionListener listener = new OnListInteractionListener() {
+                @Override
+                public void onCarDeleteListener(final CarModel item) {
+
+                    Emitter.Listener onDeleteCar = new Emitter.Listener() {
+
+                        @Override
+                        public void call(final Object... args) {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    JSONObject data = (JSONObject) args[0];
+                                    try {
+                                        Boolean result = data.getBoolean(Constant.RESULT);
+                                        if (result) {
+                                            mCarList.remove(item);
+                                            adapter.notifyDataSetChanged();
+                                            Toast.makeText(getApplicationContext(),
+                                                    R.string.had_delete_car, Toast.LENGTH_SHORT).show();
+                                        } else {
+                                            Toast.makeText(getApplicationContext(),
+                                                    R.string.error_general,
+                                                    Toast.LENGTH_SHORT).show();
+                                        }
+                                        SocketIOClient.client.mSocket.off(Constant.RESPONSE_REMOVE_CAR_BY_ID);
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            });
+                        }
+                    };
+
+                    SocketIOClient.client.mSocket.emit(Constant.REQUEST_REMOVE_CAR_BY_ID,
+                            item.getId());
+                    SocketIOClient.client.mSocket.on(Constant.RESPONSE_REMOVE_CAR_BY_ID,
+                            onDeleteCar);
+                }
+            };
+
+            adapter = new CarListAdapter(this, getBaseContext(), mCarList, listener);
             lvCarList.setAdapter(adapter);
             adapter.notifyDataSetChanged();
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    public interface OnListInteractionListener {
+
+        void onCarDeleteListener(CarModel item);
+
     }
 }
